@@ -42,7 +42,7 @@ const EmployeeLeaveList = () => {
     const [hasMoreData, setHasMoreData] = useState(true);
     const { contextClientID, contaxtBranchID, contextUserName, contextCustomerID, contextRoleID,
         contextProfileImage, contextEmployeeID, contextCompanyName, contextLogoURL,
-        dashboard_notify_activity_related_id, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
+        dashboard_notify_activity_related_id,isAdmin, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
     const [employeeName, setEmployeeName] = useState([{ value: '', label: '' }]);
 
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -82,7 +82,7 @@ const EmployeeLeaveList = () => {
                 dashboard_notify_cust_id: '',
                 dashboard_notify_activity_related_id: '',
                 selectedClientCustomerID: '',
-                isAdmin: '',
+                isAdmin: isAdmin,
                 contextPARAM8: '',
 
             });

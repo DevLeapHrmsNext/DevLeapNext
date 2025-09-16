@@ -15,7 +15,7 @@ interface formHoliday{
     holidayYear:any
 }
 
-const BulkUploadForm = ({ uploadType, onClose }: { uploadType: string, onClose: () => void }) => {
+const BulkUploadForm = ({ uploadType, onClose }: { uploadType: string, onClose: (updatePage:any) => void }) => {
     const [uploadFile, setUploadFile] = useState<File | null>(null);
     const [branchArray, setBranchArray] = useState<ClientBranchTableModel[]>([]);
     const [holidayYearArray, setholidayYear] = useState<HolidayListYear[]>([]);
@@ -243,11 +243,12 @@ const BulkUploadForm = ({ uploadType, onClose }: { uploadType: string, onClose: 
             <LoadingDialog isLoading={isLoading} />
             {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent.length > 0 ? alertEndContent : " "} value1={""} value2={""} onOkClicked={function (): void {
                 setShowAlert(false)
+                if (alertForSuccess == 1) { onClose(1); }
 
             }} onCloseClicked={function (): void {
                 setShowAlert(false)
             }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
-            <div className='rightpoup_close' onClick={onClose}>
+            <div className='rightpoup_close' onClick={()=>onClose(0)}>
                 <img src={staticIconsBaseURL + "/images/close_white.png"} alt="Search Icon" title='Close' />
             </div>
 

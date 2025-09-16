@@ -468,7 +468,7 @@ async function getType() {
 
   let query = supabase
     .from('leap_asset_type')
-    .select();
+    .select().eq("client_id", 3).eq("is_deleted", false);
 
   const { data, error } = await query;
   if (error) {

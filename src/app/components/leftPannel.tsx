@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useGlobalContext } from '../contextProviders/loggedInGlobalContext';
 import supabase from '../api/supabaseConfig/supabase';
 import { staticIconsBaseURL } from '../pro_utils/stringConstants';
+import Link from 'next/link';
 
 type LeftPanelProps = {
     menuIndex: number;
@@ -95,7 +96,7 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                 dashboard_notify_cust_id: '',
                 dashboard_notify_activity_related_id: '',
                 selectedClientCustomerID: '',
-                isAdmin: '',
+                isAdmin: isAdmin,
                 contextPARAM8: '',
             });
         }
@@ -141,10 +142,10 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                             <div className="left_sticky">
                                 {contextRoleID == "2" && isAdmin=="1" ? <div className="left_menubox">
 
-                                    <a href={pageURL_dashboard} className={selectedLeftMenuItemIndex == leftMenuDashboardPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuDashboardPageNumbers) }}>
+                                    <Link href={pageURL_dashboard} className={selectedLeftMenuItemIndex == leftMenuDashboardPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuDashboardPageNumbers) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/home_icon.png)" }}></div>
                                         <div className="left_menutext">Dashboard</div>
-                                    </a>
+                                    </Link>
                                     <a href={pageURL_assetListing} className={selectedLeftMenuItemIndex == leftMenuAssetsPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAssetsPageNumbers) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/attendance_icon.png)" }}></div>
                                         <div className="left_menutext">Assets</div>
@@ -269,7 +270,7 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/help_icon.png)` }}></div>
                                                 <div className="left_menutext">Help</div>
                                             </a>}
-                                        </div> : <></>}
+                                        </div> : <>{contextRoleID}</>}
                                 <div onClick={middle_box} className="toggle_box"></div>
                             </div>
                         </div>

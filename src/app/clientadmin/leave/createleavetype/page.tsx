@@ -318,7 +318,10 @@ const CreateLeave: React.FC = () => {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-lg-12 mt-4"><input type='submit' value="Submit" className="red_button" onClick={handleSubmit} />&nbsp;&nbsp;<BackButton isCancelText={true} /></div>
+                  <div className="col-lg-12 ">
+                    <input type='submit' value="Submit" className="red_button" onClick={handleSubmit} style={{float: "left",marginTop: "18px",marginRight: "10px"}}/>&nbsp;&nbsp;
+                    <BackButton isCancelText={true} />
+                  </div>
                 </div>
               </div>
             </div>

@@ -23,7 +23,7 @@ const CustomerList = () => {
     const [showDialog, setShowDialog] = useState(false);
     const { contaxtBranchID, contextClientID, contextRoleID,
         contextUserName, contextCustomerID, contextEmployeeID, contextLogoURL, contextProfileImage,
-        contextCompanyName, dashboard_notify_activity_related_id, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
+        contextCompanyName,isAdmin, dashboard_notify_activity_related_id, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
     
     const [isLoading, setLoading] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
@@ -163,7 +163,7 @@ const CustomerList = () => {
                                                                         dashboard_notify_cust_id: '',
                                                                         dashboard_notify_activity_related_id: '',
                                                                         selectedClientCustomerID: data.client_id + '',
-                                                                        isAdmin: '',
+                                                                        isAdmin: isAdmin,
                                                                         contextPARAM8: '',
                                                                     });
                                                                     router.push(pageURL_CustomerProfile)

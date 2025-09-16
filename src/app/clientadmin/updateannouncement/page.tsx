@@ -11,7 +11,7 @@ import LeapHeader from '@/app/components/header';
 import LeftPannel from '@/app/components/leftPannel';
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext';
 import { announcementListingPage, deleteDataTypeAnnouncement, getImageApiURL, staticIconsBaseURL } from '@/app/pro_utils/stringConstants';
-import { leftMenuAnnouncementPageNumbers } from '@/app/pro_utils/stringRoutes';
+import { leftMenuAnnouncementPageNumbers, pageURL_announcementListingPage } from '@/app/pro_utils/stringRoutes';
 import React, { useEffect, useState } from 'react'
 import { DateRange, RangeKeyDict } from 'react-date-range';
 import { Range } from 'react-date-range';
@@ -20,6 +20,7 @@ import moment from 'moment';
 import LoadingDialog from '@/app/components/PageLoader';
 import DeleteConfirmation from '@/app/components/dialog_deleteConfirmation';
 import ShowAlertMessage from '@/app/components/alert';
+import { useRouter } from 'next/navigation';
 
 
 interface UpdateAnnouncementFormValues {
@@ -66,14 +67,14 @@ const UpdateAnnouncement = () => {
     const [ShowDeleteAnnouncementDialog, setShowDeleteAnnouncementDialog] = useState(false);
     const [AnnouncementDeleteTitle, setAnnouncementDeleteTitle] = useState('');
 
-    const [showAlert,setShowAlert]=useState(false);
-    const [alertForSuccess,setAlertForSuccess]=useState(0);
-    const [alertTitle,setAlertTitle]=useState('');
-    const [alertStartContent,setAlertStartContent]=useState('');
-    const [alertMidContent,setAlertMidContent]=useState('');
-    const [alertEndContent,setAlertEndContent]=useState('');
-    const [alertValue1,setAlertValue1]=useState('');
-    const [alertvalue2,setAlertValue2]=useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertForSuccess, setAlertForSuccess] = useState(0);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertStartContent, setAlertStartContent] = useState('');
+    const [alertMidContent, setAlertMidContent] = useState('');
+    const [alertEndContent, setAlertEndContent] = useState('');
+    const [alertValue1, setAlertValue1] = useState('');
+    const [alertvalue2, setAlertValue2] = useState('');
 
     const [announcementFormValues, setFormValues] = useState<UpdateAnnouncementFormValues>({
         announcement_id: 0,
@@ -106,6 +107,7 @@ const UpdateAnnouncement = () => {
     const [errors, setErrors] = useState<Partial<AnnouncementValues>>({});
     const [allRoleSelected, setAllRoleSelected] = useState(false);
     const [allBranchSelected, setAllBranchSelected] = useState(false);
+    const router = useRouter()
 
     useEffect(() => {
 
@@ -241,8 +243,39 @@ const UpdateAnnouncement = () => {
 
     };
 
+    const validate = () => {
+        const newErrors: Partial<AnnouncementValues> = {};
+        for (let i = 0; i < announcementFormValues.branchID.length; i++) {
+            if (announcementFormValues.branchID[i].isSelected) {
+                break;
+            }
+            else {
+                newErrors.branchID = "required";
+            }
+        }
+        for (let i = 0; i < announcementFormValues.roleTypes.length; i++) {
+            if (announcementFormValues.roleTypes[i].isSelected) {
+                break;
+            }
+            else {
+                newErrors.roleTypes = "required";
+            }
+        }
+        if (!announcementFormValues.announceTypeID) newErrors.announceTypeID = "required";
+        if (!announcementFormValues.title) newErrors.title = "required";
+        if (!announcementFormValues.description) newErrors.description = "required";
+        if (!announcementFormValues.image) newErrors.image = "required";
+        if (!announcementFormValues.startDate) newErrors.startDate = "required";
+        if (!announcementFormValues.endDate) newErrors.endDate = "required";
+
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!validate()) return;
         setLoading(true);
         const formData = new FormData();
         formData.append("client_id", contextClientID);
@@ -271,19 +304,28 @@ const UpdateAnnouncement = () => {
             const response = await apiCall.json();
             console.log(response);
 
-            if (apiCall.ok) {
+            if (apiCall.ok && response.status === 1) {
                 setLoading(false);
-                alert(response.message)
+                setShowAlert(true);
+                setAlertTitle("Success")
+                setAlertStartContent("Announcement Updated Successfully");
+                setAlertForSuccess(1)
             } else {
                 setLoading(false);
                 e.preventDefault();
-                alert("Failed to submit form.");
+                setShowAlert(true);
+                setAlertTitle("Error")
+                setAlertStartContent(response.message ? response.message : "Failed to update announcement");
+                setAlertForSuccess(2)
             }
         } catch (error) {
             setLoading(false);
             e.preventDefault();
             console.error("Error submitting form:", error);
-            alert("An error occurred while submitting the form." + error);
+            setShowAlert(true);
+            setAlertTitle("Exception")
+            setAlertStartContent("Failed to update announcement with exception:- " + error);
+            setAlertForSuccess(2)
         }
 
     }
@@ -401,14 +443,16 @@ const UpdateAnnouncement = () => {
                     <div className='container'>
                         <LoadingDialog isLoading={isLoading} />
                         {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
-                            fetchData();
+                            if (alertForSuccess == 1) {
+                                router.push(pageURL_announcementListingPage);
+                            }
                             setShowAlert(false)
                         }} onCloseClicked={function (): void {
                             setShowAlert(false)
                         }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
                         <div className="row heading25">
                             <div className="col-lg-8">
-                                Update <span>Announcement/ News</span>
+                                Update <span>Announcement/ News </span>
                             </div>
                         </div>
                         <div className="row">
@@ -419,12 +463,12 @@ const UpdateAnnouncement = () => {
                                             <div className="form_box mb-3">
                                                 <label htmlFor="formFile" className="form-label">Branch<span className='req_text'>*</span>:</label>
 
-                                                <div className="horizontal_scrolling pb-2" >
-                                                    <div onClick={() => handleAllSelected(true, allBranchSelected)} className={allBranchSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"}>
+                                                <div className="announcement_horizontal_scrolling pb-2" >
+                                                    <div onClick={() => handleAllSelected(true, allBranchSelected)} className={allBranchSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"}>
                                                         All
                                                     </div>
                                                     {announcementFormValues.branchID.map((branch) => (
-                                                        <div onClick={() => handleBranchToggle(branch.id, branch.isSelected)} className={branch.isSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"} key={branch.id} style={{ width: "auto" }}>
+                                                        <div onClick={() => handleBranchToggle(branch.id, branch.isSelected)} className={branch.isSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"} key={branch.id} style={{ width: "auto" }}>
                                                             {branch.branch_name}
                                                         </div>
                                                     ))}
@@ -434,23 +478,27 @@ const UpdateAnnouncement = () => {
                                         </div>
 
                                         <div className="col-md-12">
-                                            <div className="form_box mb-5">
+                                            <div className="form_box mb-1">
                                                 <label htmlFor="formFile" className="form-label">Role Type<span className='req_text'>*</span>:</label>
-                                                <div onClick={() => handleAllSelected(false, allRoleSelected)} className={allRoleSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"} style={{ width: "auto" }}>
-                                                    All
-                                                </div>
-                                                {announcementFormValues.roleTypes.map((roles) => (
-                                                    <div onClick={() => handleRoleToggle(roles.id, roles.isSelected)} className={roles.isSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"} key={roles.id} >
-                                                        {roles.role_types}
+                                                <div className="announcement_horizontal_scrolling pb-2" >
+
+                                                    <div onClick={() => handleAllSelected(false, allRoleSelected)} className={allRoleSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"} style={{ width: "auto" }}>
+                                                        All
                                                     </div>
-                                                ))}
-                                                {errors.roleTypes && <span className='error' style={{ color: "red" }}>{errors.roleTypes}</span>}
+                                                    {announcementFormValues.roleTypes.map((roles) => (
+                                                        <div onClick={() => handleRoleToggle(roles.id, roles.isSelected)} className={roles.isSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"} key={roles.id} >
+                                                            {roles.role_types}
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
+                                            {errors.roleTypes && <span className='error' style={{ color: "red", fontSize: "13px" }}>{errors.roleTypes}</span>}
+
                                         </div>
                                     </div>
 
-                                    <div className="row">
-                                        <div className="col-md-4">
+                                    <div className="row mt-2">
+                                        <div className="col-md-4 ">
                                             <div className="form_box mb-3">
                                                 <label htmlFor="formFile" className="form-label">Announcement Type<span className='req_text'>*</span>:</label>
                                                 <select id="announceTypeID" name="announceTypeID" value={announcementFormValues.announceTypeID} onChange={handleInputChange}>

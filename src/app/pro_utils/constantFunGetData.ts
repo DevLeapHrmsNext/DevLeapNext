@@ -479,7 +479,7 @@ export async function getUserRoles() {
 
 
 export async function funGetCustomer(customerID: any) {
-  console.log("================" + "funGetCustomer" + "=================");
+  // console.log("================" + "funGetCustomer" + "=================");
 
   const { data: customer, error } = await supabase.from("leap_customer")
     .select(`*`).eq('customer_id', customerID);
@@ -493,7 +493,7 @@ export async function funGetCustomer(customerID: any) {
 }
 
 export async function getAllActivitiesOfUsers(clientId: any, branchId: any,) {
-  console.log("================" + "getAllActivitiesOfUsers" + "=================");
+  // console.log("================" + "getAllActivitiesOfUsers" + "=================");
 
   try {
     let qwery = supabase.from("leap_client_useractivites")
@@ -519,7 +519,7 @@ export async function getAllActivitiesOfUsers(clientId: any, branchId: any,) {
   }
 }
 export async function getDashboardAllActivitiesOfUsers(clientId: any, branchId: any) {
-  console.log("================" + "getDashboardAllActivitiesOfUsers" + "=================");
+  // console.log("================" + "getDashboardAllActivitiesOfUsers" + "=================");
 
 
   try {
@@ -553,7 +553,7 @@ export async function getDashboardAllActivitiesOfUsers(clientId: any, branchId: 
   }
 }
 export async function getUserDashboardAllActivitiesOfUsers(clientId: any, customer_id: any, isManager: boolean) {
-  console.log("================" + "getDashboardAllActivitiesOfUsers" + "=================");
+  // console.log("================" + "getDashboardAllActivitiesOfUsers" + "=================");
 
   if (!isManager) {
     try {
@@ -636,7 +636,7 @@ export async function getUserDashboardAllActivitiesOfUsers(clientId: any, custom
   }
 }
 export async function funGetClientDocumentStatus(clientId: any, branchId: any) {
-  console.log("================" + "funGetClientDocumentStatus" + "=================");
+  // console.log("================" + "funGetClientDocumentStatus" + "=================");
 
   const oneMonthAgo = new Date();
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
@@ -657,7 +657,7 @@ export async function funGetClientDocumentStatus(clientId: any, branchId: any) {
 
 
 export async function funGetActivityTypeId(typeText: any) {
-  console.log("================" + "funGetActivityTypeId" + "=================");
+  // console.log("================" + "funGetActivityTypeId" + "=================");
 
   const { data: activityID, error } = await supabase.from("leap_user_activity_type")
     .select(`id`)
@@ -671,7 +671,7 @@ export async function funGetActivityTypeId(typeText: any) {
 }
 
 export async function funGetMidShortCutsList(client_id: any) {
-  console.log("================" + "funGetMidShortCutsList" + "=================");
+  // console.log("================" + "funGetMidShortCutsList" + "=================");
 
   const { data: shortCutList, error } = await supabase.from("leap_client_admin_mid_shortcuts")
     .select(`*,leap_dashboard_mid_shortcut(*)`).eq('client_id', client_id).eq('show_on_dashboard', true).limit(3);
@@ -769,7 +769,6 @@ export async function funGetMidShortCutsList(client_id: any) {
           })
         } else {
           let relatedData1 = [];
-          console.log("this is the leave log limit 2", leaves);
 
           for (let i = 0; i < leaves.length; i++) {
 

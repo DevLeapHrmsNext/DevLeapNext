@@ -160,8 +160,6 @@ export async function POST(request: NextRequest) {
                 is_primary: true,
                 address_type:"current",
                 created_at: new Date()
-
-
             }
         ])
 
@@ -185,8 +183,6 @@ export async function POST(request: NextRequest) {
                 is_primary: false,
                 address_type:"permanent",
                 created_at: new Date()
-
-
             }
         ])
         const { error: insertPermanentError } = await permanentAddress;

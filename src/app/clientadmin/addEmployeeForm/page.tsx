@@ -111,7 +111,7 @@ const AddEmployeeBasicDetails = () => {
     const [dob18YearsPrior, setdob18YearsPrior] = useState('');
 
     const { contextClientID, contaxtBranchID, contextCompanyName, contextCustomerID, contextEmployeeID,
-        contextLogoURL, contextRoleID, contextProfileImage, contextUserName,
+        contextLogoURL, contextRoleID,isAdmin, contextProfileImage, contextUserName,
         setGlobalState } = useGlobalContext();
 
     const [emergencyContactRelation, setEmergencyRelation] = useState<LeapRelationComponents[]>([]);
@@ -1050,7 +1050,7 @@ const AddEmployeeBasicDetails = () => {
         const newErrors: Partial<FormValues> = {};
 
         if (!formValues.firstName) newErrors.firstName = "First Name is required";
-        if (!formValues.middleName) newErrors.middleName = "Middle Name is required";
+        // if (!formValues.middleName) newErrors.middleName = "Middle Name is required";
         if (!formValues.lastName) newErrors.lastName = "Last Name is required";
         if (!formValues.dateOfBirth) newErrors.dateOfBirth = "Date of Birth is required";
         if (!formValues.bloodGroup) newErrors.bloodGroup = "Blood Group is required";
@@ -1269,7 +1269,7 @@ const AddEmployeeBasicDetails = () => {
                     dashboard_notify_cust_id: '',
                     dashboard_notify_activity_related_id: '',
                     selectedClientCustomerID: '',
-                    isAdmin: '',
+                    isAdmin: isAdmin,
                     contextPARAM8: '',
 
                 });
@@ -1347,7 +1347,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.nationalId, "NationalID");
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+                                                                        setAlertTitle("Error");
+                                                                        setAlertStartContent("Please choose a file!");
+                                                                        setAlertForSuccess(2);
+                                                                        e.preventDefault();
                                                                     }
                                                                 }} />
                                                             </div>
@@ -1369,7 +1373,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.panCard, "PanCard");
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+setAlertTitle("Error");
+setAlertStartContent("Please choose a file!");
+                setAlertForSuccess(2);
+                e.preventDefault();
                                                                     }
                                                                 }} />
                                                                 </div>
@@ -1391,7 +1399,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.passport, "Passport");
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+setAlertTitle("Error");
+setAlertStartContent("Please choose a file!");
+                setAlertForSuccess(2);
+                e.preventDefault();
                                                                     }
                                                                 }} />
                                                                 </div>
@@ -1413,7 +1425,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.workVisa, "WorkVisa");
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+setAlertTitle("Error");
+setAlertStartContent("Please choose a file!");
+                setAlertForSuccess(2);
+                e.preventDefault();
                                                                     }
                                                                 }} />
                                                                 </div>
@@ -1437,7 +1453,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.drivingLicense, "DrivingLicense");
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+setAlertTitle("Error");
+setAlertStartContent("Please choose a file!");
+                setAlertForSuccess(2);
+                e.preventDefault();
                                                                     }
                                                                 }} />
                                                                 </div>
@@ -1487,21 +1507,39 @@ const AddEmployeeBasicDetails = () => {
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >First Name<span className='req_text'>*</span>:  </label>
-                                                            <input type="text" className="form-control" value={formValues.firstName} name="firstName" onChange={handleInputChange} id="firstName" placeholder="Enter First Name" />
+                                                            <input type="text" className="form-control" 
+                                                            onKeyPress={(e) => {
+                                                                    if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                    e.preventDefault();
+                                                                    }
+                                                                }}
+                                                            value={formValues.firstName} name="firstName" onChange={handleInputChange} id="firstName" placeholder="Enter First Name" />
                                                             {errors.firstName && <span className="error" style={{ color: "red" }}>{errors.firstName}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="exampleFormControlInput1" className="form-label" >Middle Name<span className='req_text'>*</span>:</label>
-                                                            <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Enter Middle Name" value={formValues.middleName} name="middleName" onChange={handleInputChange} />
-                                                            {errors.firstName && <span className="error" style={{ color: "red" }}>{errors.middleName}</span>}
+                                                            <label htmlFor="exampleFormControlInput1" className="form-label" >Middle Name:</label>
+                                                            <input type="text" className="form-control" 
+                                                            onKeyPress={(e) => {
+                                                                    if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                    e.preventDefault();
+                                                                    }
+                                                                }}
+                                                            id="exampleFormControlInput1" placeholder="Enter Middle Name" value={formValues.middleName} name="middleName" onChange={handleInputChange} />
+                                                            {/* {errors.firstName && <span className="error" style={{ color: "red" }}>{errors.middleName}</span>} */}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Last Name<span className='req_text'>*</span>:</label>
-                                                            <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Enter Last Name" value={formValues.lastName} name="lastName" onChange={handleInputChange} />
+                                                            <input type="text" className="form-control" 
+                                                            onKeyPress={(e) => {
+                                                                    if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                    e.preventDefault();
+                                                                    }
+                                                                }}
+                                                            id="exampleFormControlInput1" placeholder="Enter Last Name" value={formValues.lastName} name="lastName" onChange={handleInputChange} />
                                                             {errors.lastName && <span className="error" style={{ color: "red" }}>{errors.lastName}</span>}
                                                         </div>
                                                     </div>
@@ -1553,7 +1591,13 @@ const AddEmployeeBasicDetails = () => {
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Nationality<span className='req_text'>*</span>:</label>
-                                                            <input type="text" className="form-control" id="exampleFormControlInput1" value={formValues.nationality} name="nationality" onChange={handleInputChange} placeholder="Enter Nationality" />
+                                                            <input type="text" className="form-control" 
+                                                            onKeyPress={(e) => {
+                                                                    if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                    e.preventDefault();
+                                                                    }
+                                                                }}
+                                                            id="exampleFormControlInput1" value={formValues.nationality} name="nationality" onChange={handleInputChange} placeholder="Enter Nationality" />
                                                             {errors.nationality && <span className='error' style={{ color: "red" }}>{errors.nationality}</span>}
                                                         </div>
                                                     </div>
@@ -1629,7 +1673,7 @@ const AddEmployeeBasicDetails = () => {
                                                     <div className="col-lg-3">
                                                         <div className="Form-fields">
                                                             <label htmlFor="password" className="Control-label Control-label--password">Set Password<span className='req_text'>*</span>:</label>
-                                                            <a className="info_icon" href="#">
+                                                            <a className="info_icon" >
                                                                 <img src={staticIconsBaseURL+"/images/info.png"} alt="Information Icon" width={16} height={16} />
                                                                 <div className="tooltiptext tooltip-top " >
                                                                     Password must contain combination of character, numbers and symbols.
@@ -1952,7 +1996,13 @@ const AddEmployeeBasicDetails = () => {
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Contact Name{index==0 && <span className='req_text'>*</span>}: </label>
-                                                            <input type="text" className="form-control" value={ContactData.emergencyContactName} name="emergencyContactName" onChange={(e) => handleEmergencyContactChange(e, index)} id="emergencyContactName" placeholder="Name" />
+                                                            <input type="text" className="form-control" 
+                                                            onKeyPress={(e) => {
+                                                                    if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                    e.preventDefault();
+                                                                    }
+                                                                }}
+                                                            value={ContactData.emergencyContactName} name="emergencyContactName" onChange={(e) => handleEmergencyContactChange(e, index)} id="emergencyContactName" placeholder="Name" />
                                                             {emergencyContactError.emergencyContactName && <span className='error' style={{ color: "red" }}>{emergencyContactError.emergencyContactName}</span>}
                                                         </div>
                                                     </div>
@@ -2008,7 +2058,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.bankbook, 'BankBook');
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+                                                                        setAlertTitle("Error");
+                                                                        setAlertStartContent("Please choose a file!");
+                                                                        setAlertForSuccess(2);
+                                                                        e.preventDefault();
                                                                     }
                                                                 }} />
                                                             </div>
@@ -2030,7 +2084,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.cheque, "Cheque");
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+                                                                        setAlertTitle("Error");
+                                                                        setAlertStartContent("Please choose a file!");
+                                                                        setAlertForSuccess(2);
+                                                                        e.preventDefault();
                                                                     }
                                                                 }} />
                                                                 </div>
@@ -2052,7 +2110,11 @@ const AddEmployeeBasicDetails = () => {
                                                                         extractText(formValues.bankStatement, "BankStatement");
                                                                         // readImageText(files[0])
                                                                     }else{
-                                                                        alert("Please choose a file!")
+                                                                        setShowAlert(true);
+                                                                        setAlertTitle("Error");
+                                                                        setAlertStartContent("Please choose a file!");
+                                                                        setAlertForSuccess(2);
+                                                                        e.preventDefault();
                                                                     }
                                                                 }} />
                                                                 </div>
@@ -2156,11 +2218,8 @@ async function getRelations() {
     const { data, error } = await query;
     if (error) {
         console.log(error);
-
         return [];
     } else {
-
-
         return data;
     }
 }
@@ -2176,7 +2235,6 @@ async function getBankFormComponents() {
 
         return [];
     } else {
-
 
         return data;
     }

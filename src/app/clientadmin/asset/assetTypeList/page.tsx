@@ -450,7 +450,7 @@ const AssetTypeList = () => {
 
                                                             <div className="row">
                                                                 <div className="row">
-                                                                    <div className="col-lg-12 mb-2">Asset Type Name<span className='req_text'>*</span>:</div>
+                                                                    <div className="col-lg-12 mb-2">Asset Type Name<span className='req_text' style={{color:"#ff0000"}}>* </span>:</div>
                                                                 </div>
                                                                 <div className="row">
                                                                     <div className="col-lg-9">

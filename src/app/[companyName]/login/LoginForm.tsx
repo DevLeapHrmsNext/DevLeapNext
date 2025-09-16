@@ -22,7 +22,7 @@ const LoginForm = () => {
 
 
   // const { session, login, logout } = useSession();
-  const { contextLogoURL, contextCompanyName, contextClientID, setGlobalState } = useGlobalContext();
+  const { contextLogoURL,isAdmin, contextCompanyName, contextClientID, setGlobalState } = useGlobalContext();
 
 
   const [formEmail, setEmail] = useState("");
@@ -108,7 +108,7 @@ const LoginForm = () => {
       const { data: userData, error: userError } = await supabase
         .from("leap_customer")
         .select("*,leap_client(*)")
-        .eq("authUuid", authID);
+        .eq("authUuid", authID).eq("employment_status", true);
 
       if (userError) {
         setLoading(false);
@@ -122,7 +122,7 @@ const LoginForm = () => {
         setLoading(false);
         setShowAlert(true);
         setAlertTitle("Error")
-        setAlertStartContent("No user found");
+        setAlertStartContent("No user found or user is not active.Please contact admin.");
         setAlertForSuccess(2)
         return;
       }
@@ -217,7 +217,7 @@ const LoginForm = () => {
       dashboard_notify_cust_id: '',
       dashboard_notify_activity_related_id: '',
       selectedClientCustomerID: '',
-      isAdmin: '',
+      isAdmin: loginData!.user_role==2 ? "1" : "0",
       contextPARAM8: '',
     })
     { loginData!.user_role != 2 ? router.push(pageURL_userEmpDashboard) : router.push(pageURL_dashboard) }
@@ -253,7 +253,7 @@ const LoginForm = () => {
       const { data: userData, error: userError } = await supabase
         .from("leap_customer")
         .select("*,leap_client(*)")
-        .eq("authUuid", authUUID);
+        .eq("authUuid", authUUID).eq("employment_status", true);
 
       if (userError) {
         console.error("Error fetching user details:", userError.message);
@@ -285,7 +285,7 @@ const LoginForm = () => {
           dashboard_notify_cust_id: '',
           dashboard_notify_activity_related_id: '',
           selectedClientCustomerID: '',
-          isAdmin: '',
+          isAdmin: userData[0].user_role==2 ? "1" : "0",
           contextPARAM8: '',
         });
         { userData[0].user_role != 2 ? router.push(pageURL_userEmpDashboard) : router.push(pageURL_dashboard) }
@@ -295,7 +295,7 @@ const LoginForm = () => {
         setLoading(false);
       setShowAlert(true);
       setAlertTitle("Error")
-      setAlertStartContent("No user found");
+      setAlertStartContent("No user found or user is not active.Please contact admin.");
       setAlertForSuccess(2)
         console.log("No user found with the provided authUUID.");
       }
@@ -338,7 +338,7 @@ const LoginForm = () => {
       const { data: userData, error: userError } = await supabase
         .from("leap_customer")
         .select("*,leap_client(*)")
-        .eq("authUuid", authUUID);
+        .eq("authUuid", authUUID).eq("employment_status", true);
 
       if (userError) {
         setLoading(false);
@@ -370,7 +370,7 @@ const LoginForm = () => {
           dashboard_notify_cust_id: '',
           dashboard_notify_activity_related_id: '',
           selectedClientCustomerID: '',
-          isAdmin: '',
+          isAdmin: userData[0].user_role==2 ? "1" : "0",
           contextPARAM8: '',
         });
         { userData[0].user_role != 2 ? router.push(pageURL_userEmpDashboard) : router.push(pageURL_dashboard) }
@@ -381,7 +381,7 @@ const LoginForm = () => {
       setAlertTitle("Error")
       setAlertStartContent("No user found");
       setAlertForSuccess(2)
-        alert("No User Found");
+        alert("No User Found or user is not active.Please contact admin.");
         console.log("No user found with the provided authUUID.");
       }
     } catch (error) {

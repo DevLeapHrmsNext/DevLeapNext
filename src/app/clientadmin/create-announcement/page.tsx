@@ -362,12 +362,11 @@ const AnnouncementListing = () => {
             setAlertForSuccess(2)
             }
         } catch (error) {
-            setLoading(false);
             console.error("Error submitting form:", error);
             setLoading(false);
             setShowAlert(true);
             setAlertTitle("Exception")
-            setAlertStartContent("Failed to get asset types");
+            setAlertStartContent("Failed to create announcement with exception:- "+error);
             setAlertForSuccess(2)
         }
 
@@ -403,12 +402,12 @@ const AnnouncementListing = () => {
                                         <div className="col-md-12">
                                             <div className="form_box mb-3">
                                                 <label htmlFor="formFile" className="form-label">Branch<span className='req_text'>*</span>:</label>                                                
-                                                <div className="horizontal_scrolling pb-2" style={{maxWidth:"100%"}} >
-                                                    <div onClick={() => handleAllSelected(true, allBranchSelected)} className={allBranchSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"}>
+                                                <div className="announcement_horizontal_scrolling pb-2" style={{maxWidth:"100%"}} >
+                                                    <div onClick={() => handleAllSelected(true, allBranchSelected)} className={allBranchSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"}>
                                                         All
                                                     </div>
                                                     {announcementFormValues.branchID.map((branch) => (
-                                                        <div onClick={() => handleBranchToggle(branch.id, branch.isSelected)} className={branch.isSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"} key={branch.id}>
+                                                        <div onClick={() => handleBranchToggle(branch.id, branch.isSelected)} className={branch.isSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"} key={branch.id}>
                                                             {branch.branch_name}
                                                         </div>
                                                     ))}
@@ -417,19 +416,24 @@ const AnnouncementListing = () => {
                                             </div>
                                         </div>
 
-                                        <div className="col-md-12">
-                                            <div className="form_box mb-5">
+                                        <div className="col-md-12 mb-3">
+                                            <div className="form_box ">
                                                 <label htmlFor="formFile" className="form-label">Role Type<span className='req_text'>*</span>:</label>
-                                                <div onClick={() => handleAllSelected(false, allRoleSelected)} className={allRoleSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"}>
+                                                <div className="announcement_horizontal_scrolling pb-2" style={{maxWidth:"100%"}} >
+
+                                                <div onClick={() => handleAllSelected(false, allRoleSelected)} className={allRoleSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"}>
                                                         All
                                                 </div>
                                                 {announcementFormValues.roleTypes.map((roles) => (
-                                                    <div onClick={() => handleRoleToggle(roles.id, roles.isSelected)} className={roles.isSelected ? "announcement_branch_box announcement_branch_box_selected" : "announcement_branch_box"} key={roles.id} >
+                                                    <div onClick={() => handleRoleToggle(roles.id, roles.isSelected)} className={roles.isSelected ? "announcement_page_branch_box announcement_branch_box_selected" : "announcement_page_branch_box"} key={roles.id}  >
                                                         {roles.role_types}
                                                     </div>
                                                 ))}
-                                                {errors.roleTypes && <span className='error' style={{ color: "red" }}>{errors.roleTypes}</span>}
                                             </div>
+
+                                            </div>
+                                            {errors.roleTypes && <span className='error' style={{ color: "red" ,fontSize:"11px"}}>{errors.roleTypes}</span>}
+
                                         </div>
                                     </div>
 
@@ -489,15 +493,16 @@ const AnnouncementListing = () => {
 
                                     </div>
 
-                                    <div className="row mb-2">
+                                    <div className="row">
                                         <div className="col-md-12">
-                                            <div className="form_box mb-3">
+                                            <div className="form_box ">
                                                 <label htmlFor="formFile" className="form-label">Image<span className='req_text'>*</span>:</label>
                                                 <div className="col-lg-12 mb-2">
                                                     <input type="file" className="upload_document" style={{width:"auto"}} accept="image/*" name="image" id="formFileSm" onChange={setImage} />
                                                 </div>
-                                                {errors.image && <span className='error' style={{ color: "red" }}>{errors.image}</span>}
                                             </div>
+                                                {errors.image && <span className='error' style={{ color: "red" ,fontSize:"11px"}}>{errors.image}</span>}
+
                                         </div>
                                         <div className="col-lg-12 " style={{ textAlign: "right" }}>
                                             

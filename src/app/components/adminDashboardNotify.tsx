@@ -10,7 +10,7 @@ const AdminDashboardNotify = ({ activity }: { activity: LeapUserActivitiesModel 
     let i = 1;
     const router=useRouter();
     const { contextClientID, contaxtBranchID, contextCompanyName, contextCustomerID, contextEmployeeID,
-            contextLogoURL, contextRoleID, contextProfileImage, contextUserName,
+            contextLogoURL, contextRoleID,isAdmin, contextProfileImage, contextUserName,
             setGlobalState } = useGlobalContext();
     const [leaveID,setLeaveID]=useState();        
     const [showLeaveApprovalDialog,setShowLeaveApprovalDialog]=useState(false);        
@@ -38,7 +38,7 @@ const AdminDashboardNotify = ({ activity }: { activity: LeapUserActivitiesModel 
                 dashboard_notify_cust_id: activity.customer_id+"",
                 dashboard_notify_activity_related_id: activity.activity_related_id,
                 selectedClientCustomerID: '',
-                isAdmin: '',
+                isAdmin: isAdmin,
                 contextPARAM8: '',
     
             });
@@ -63,7 +63,7 @@ const AdminDashboardNotify = ({ activity }: { activity: LeapUserActivitiesModel 
                 dashboard_notify_cust_id: activity.customer_id+"",
                 dashboard_notify_activity_related_id: activity.activity_related_id,
                 selectedClientCustomerID: '',
-                isAdmin: '',
+                isAdmin: isAdmin,
                 contextPARAM8: '',
     
             });
@@ -88,7 +88,7 @@ const AdminDashboardNotify = ({ activity }: { activity: LeapUserActivitiesModel 
                 dashboard_notify_cust_id: activity.customer_id+'',
                 dashboard_notify_activity_related_id: activity.activity_related_id,
                 selectedClientCustomerID: '',
-                isAdmin: '',
+                isAdmin: isAdmin,
                 contextPARAM8: '',
     
             });

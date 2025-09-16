@@ -18,7 +18,7 @@ interface NewUpdates {
 const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: () => void, supportRequestID: any }) => {
 
  const {contextClientID,contaxtBranchID,contextCompanyName,contextCustomerID,contextEmployeeID,
-        contextLogoURL,contextRoleID,contextProfileImage,contextUserName,
+        contextLogoURL,contextRoleID,isAdmin,contextProfileImage,contextUserName,
          setGlobalState}=useGlobalContext();
              const [statusArray, setStatus] = useState<SupportRequestStatus[]>([]);
     const [ssupportRequestData, setSupportRequestData] = useState<SingleSupportRequest>();
@@ -160,7 +160,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
                 dashboard_notify_cust_id: '',
                 dashboard_notify_activity_related_id: '',
                 selectedClientCustomerID: '',
-                isAdmin: '',
+                isAdmin: isAdmin,
                 contextPARAM8: '',
     
             });

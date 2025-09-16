@@ -795,6 +795,24 @@ return (
                                             </div>
                                         </div>
                                     </div>
+                                    {(contextRoleID=="3" || contextRoleID=="2") &&
+                                        <div className='row' style={{alignItems: "center"}}>
+                                        <div className="col-md-6">
+                                            <div className="form_box">
+                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Employment: </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="col-md-6">
+                                            <div className="form_box mb-2">
+                                                <select className="form-control" id="employment_status" value={userData?.employment_status ? "true" : "false"} name="employment_status" onChange={(e)=>setUserData((prev) => ({ ...prev, ['employment_status']: e.target.value == "true" ? true : false }))} >
+                                                    <option value="true">Active</option>
+                                                    <option value="false">Inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
                                     {(contextRoleID=="3" || contextRoleID=="2") &&<div className='row' style={{alignItems: "center"}}>
                                         <div className="col-md-6">
                                             <div className="form_box">
@@ -809,7 +827,7 @@ return (
                                                     setShowAlertCancel(true);
                                                     setAlertTitle("Warning")
                                                     setAlertStartContent(`Press ok to reset device ID`);
-                                                    setAlertForSuccess(2)
+                                                    setAlertForSuccess(3)
                                                 }} />
                                             </div>
                                         </div>

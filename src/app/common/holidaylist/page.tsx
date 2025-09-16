@@ -187,14 +187,14 @@ const HolidayList = () => {
 
                                 </div>
                                 <div className={showAddDialog ? "rightpoup rightpoupopen" : "rightpoup"}> 
-                                {showAddDialog && <AddHolidayForm onClose={() => setShowAddDialog(false)} />}
+                                {showAddDialog && <AddHolidayForm onClose={(updatePage:any) => {setShowAddDialog(false);if(updatePage==1){fetchData(filters.yearID,filters.branchID)}}} />}
                                 </div>
                                  <div className={showHolidayDialog ? "rightpoup rightpoupopen" : "rightpoup"}>    
-                                {showHolidayDialog && <AddHolidayYear onClose={() => setShowHolidayDialog(false)} isedit={false} editid={0}  />}
+                                {showHolidayDialog && <AddHolidayYear onClose={(updatePage) => {setShowHolidayDialog(false);if(updatePage==1){fetchData(filters.yearID,filters.branchID)}}} isedit={false} editid={0}  />}
                                 </div>
                                 <div className={showUploadDialog ? "rightpoup rightpoupopen" : "rightpoup"}> 
 
-                                    {showUploadDialog && <BulkUploadForm uploadType={bulkUploadTypeHolidays} onClose={() => setShowUploadDialog(false)} />}
+                                    {showUploadDialog && <BulkUploadForm uploadType={bulkUploadTypeHolidays} onClose={(updatePage) => {setShowUploadDialog(false);if(updatePage==1){fetchData(filters.yearID,filters.branchID)}}} />}
                                 </div>
                             </div>
 
@@ -211,7 +211,7 @@ const HolidayList = () => {
 
                                     </div>
                                 </div>
-                                <div className="col-lg-10">
+                                <div className="col-lg-10" style={{ display: "flex", flexWrap: "wrap" ,direction:"ltr",overflowX:"auto",overflowY:"hidden" }}>
                                     {branchArray.map((branch) => (
                                         <div className={brancheIDFilter === branch.id ? "list_view_box_selected" : "list_view_box"}
                                             key={branch.id} style={{ width: "15%", margin: "0 10px 10px 0", opacity: filters.yearID ? 1 : 0.5 }}>

@@ -32,7 +32,7 @@ async function sendAllAnnouncements(client_id: any, branch_id: any) {
         .eq('branch_id', branch_id)
         // .eq('isEnabled', true)
         // .eq('isDeleted', true);
-        .eq("isEnabled", true)
+        // .eq("isEnabled", true)
         .eq("isDeleted", false);
 
     const { data: TaskData, error: taskError } = await query;

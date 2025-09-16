@@ -179,7 +179,7 @@ const UserListProfile = () => {
             <header>
                 <LeapHeader title="Welcome!" />
             </header>
-            
+            <main className="flex-grow">
             <LeftPannel menuIndex={leftMenuEmployeeListPageNumbers} subMenuIndex={0} showLeftPanel={true} rightBoxUI={
                 
                
@@ -285,7 +285,7 @@ const UserListProfile = () => {
                 
             } />
             {/* </div> */}
-
+            </main>
             <div>
                 <Footer />
             </div>

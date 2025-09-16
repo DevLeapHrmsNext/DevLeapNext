@@ -20,7 +20,7 @@ interface FormValues {
     client_id: string
 }
 
-const AddHolidayYear = ({ isedit,editid,onClose }: { isedit:boolean,editid:number,onClose: () => void }) => {
+const AddHolidayYear = ({ isedit,editid,onClose }: { isedit:boolean,editid:number,onClose: (updatePage:any) => void }) => {
     const [formHolidayValues, setHolidayValues] = useState<FormValues>({
         id: '',
         list_name: '',
@@ -194,13 +194,13 @@ const AddHolidayYear = ({ isedit,editid,onClose }: { isedit:boolean,editid:numbe
             {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent.length > 0 ? alertEndContent : ""} value1={""} value2={""} onOkClicked={function (): void {
                 setShowAlert(false)
                 if (alertForSuccess == 1) {
-                    onClose();
+                    onClose(1);
                 }
 
             }} onCloseClicked={function (): void {
                 setShowAlert(false)
             }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
-            <div className='rightpoup_close' onClick={()=>onClose()}>
+            <div className='rightpoup_close' onClick={()=>onClose(0)}>
                 <img src={staticIconsBaseURL + "/images/close_white.png"} alt="Search Icon" title='Close' />
             </div>
             <div className="row">
@@ -212,12 +212,12 @@ const AddHolidayYear = ({ isedit,editid,onClose }: { isedit:boolean,editid:numbe
 
 
                 <div className="row" style={{ alignItems: "center" }}>
-                    <div className="col-md-4">
+                    <div className="col-md-5">
                         <div className="form_box mb-3">
-                            <label htmlFor="exampleFormControlInput1" className="form-label">Holiday List Name:</label>
+                            <label htmlFor="exampleFormControlInput1" className="form-label">Holiday List Name<span className='req_text'>* </span>:</label>
                         </div>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-7">
                         <div className="form_box mb-3">
                             <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Holiday List name" value={formHolidayValues.list_name} name="list_name" onChange={handleInputChange} />
                             {errors.list_name && <span className="error" style={{ color: "red" }}>{errors.list_name}</span>}
@@ -234,23 +234,23 @@ const AddHolidayYear = ({ isedit,editid,onClose }: { isedit:boolean,editid:numbe
                                 {errors.description && <span className="error" style={{color: "red"}}>{errors.description}</span>}
                             </div>
                         </div> */}
-                    <div className="col-md-4">
+                    <div className="col-md-5">
                         <div className="form_box mb-3">
-                            <label htmlFor="exampleFormControlInput1" className="form-label" > From Date:</label>
+                            <label htmlFor="exampleFormControlInput1" className="form-label" >From Date<span className='req_text'>*</span> :</label>
                         </div>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-7">
                         <div className="form_box mb-3">
                             <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="" value={formHolidayValues.from_date} name="from_date" onChange={handleInputChange} />
                             {errors.from_date && <span className="error" style={{ color: "red" }}>{errors.from_date}</span>}
                         </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-5">
                         <div className="form_box mb-3">
-                            <label htmlFor="exampleFormControlInput1" className="form-label" >To Date:</label>
+                            <label htmlFor="exampleFormControlInput1" className="form-label" >To Date<span className='req_text'>* </span> :</label>
                         </div>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-7">
                         <div className="form_box mb-4">
                             <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="" value={formHolidayValues.to_date} min={maxendDate} name="to_date" onChange={handleInputChange} />
                             {errors.to_date && <span className="error" style={{ color: "red" }}>{errors.to_date}</span>}

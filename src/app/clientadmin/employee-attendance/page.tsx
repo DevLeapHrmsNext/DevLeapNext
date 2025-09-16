@@ -512,7 +512,7 @@ const EmpAttendancePage = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
     const { contaxtBranchID, contextClientID, contextRoleID,
         contextUserName, contextCustomerID, contextEmployeeID, contextLogoURL, contextProfileImage,
-        contextCompanyName, dashboard_notify_activity_related_id, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
+        contextCompanyName, dashboard_notify_activity_related_id,isAdmin, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
     const [loadingCursor, setLoadingCursor] = useState(false);
     const [empAttendanceData, setEmpAttendanceData] = useState<Employee[]>([]);
     const [employeeName, setEmployeeNames] = useState([{ value: '', label: '' }]);
@@ -687,7 +687,7 @@ const EmpAttendancePage = () => {
             dashboard_notify_cust_id: customer_id,
             dashboard_notify_activity_related_id: '',
             selectedClientCustomerID: '',
-            isAdmin: '',
+            isAdmin: isAdmin,
             contextPARAM8: '',
 
         });

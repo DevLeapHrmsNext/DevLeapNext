@@ -89,7 +89,7 @@ import { ALERTMSG_exceptionString, deleteDataTypeAnnouncement, deleteDataTypeAss
 import ShowAlertMessage from './alert';
 import LoadingDialog from './PageLoader';
 
-const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose: () => void, id: any,deletionType:string,deleteDetail:string }) => {     
+const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose: (isDeleted:any) => void, id: any,deletionType:string,deleteDetail:string }) => {     
 
     const [ showResponseMessage,setResponseMessage ] = useState(false);
     
@@ -129,7 +129,7 @@ const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose
 
         }
         else if(deletionType==deleteDataTypeAnnouncement ||deletionType==deleteDataTypeAnnouncement){
-            alert("delete api announvcement")
+            
             formData.append("announcement_id", id); 
             response = await fetch("/api/clientAdmin/delete_announcement", {
                 method: "DELETE",
@@ -194,14 +194,17 @@ const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose
             <LoadingDialog isLoading={isLoading} />
             {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
                         setShowAlert(false)
-                        onClose()
+                        if(alertForSuccess == 1){
+                            onClose(1);
+                        }
+                        
                     }} onCloseClicked={function (): void {
                         setShowAlert(false)
                     }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
                 <div className="row">
                 <div className="col-lg-12" style={{textAlign: "right"}}>
                         <img src={staticIconsBaseURL + "/images/close.png"} className="img-fluid edit-icon" alt="Search Icon" style={{ width: "15px", paddingBottom: "5px", alignItems: "right", position: "absolute", margin:"-10px 0 0 -4px", cursor:"pointer" }}
-                     onClick={()=>onClose()}/>
+                     onClick={()=>onClose(0)}/>
                 </div>
                 </div>
                 {/* <form onSubmit={handleSubmit}> */}

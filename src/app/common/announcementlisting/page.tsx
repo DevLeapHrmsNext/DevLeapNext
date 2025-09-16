@@ -17,7 +17,7 @@ const AnnouncementListing = () => {
     const [AnnouncementDeleteTitle, setAnnouncementDeleteTitle] = useState('');
     const [announcementList, setAnnouncementList] = useState<AnnouncementList[]>([]);
     const { contextClientID, contaxtBranchID, contextCompanyName, contextCustomerID, contextEmployeeID,
-        contextLogoURL, contextRoleID, contextProfileImage, contextUserName, setGlobalState } = useGlobalContext();
+        contextLogoURL, contextRoleID, contextProfileImage,isAdmin, contextUserName, setGlobalState } = useGlobalContext();
     const router = useRouter();
     const [isLoading, setLoading] = useState(true);
     useEffect(() => {
@@ -44,7 +44,7 @@ const AnnouncementListing = () => {
             formData.append("client_id", contextClientID);
             formData.append("customer_id", contextCustomerID);
             formData.append("branch_id", contaxtBranchID);
-            formData.append("role_id", contaxtBranchID);
+            formData.append("role_id", contextRoleID);
 
 
             const res = await fetch(`/api/clientAdmin/getAnnouncementList`, {
@@ -80,6 +80,9 @@ const AnnouncementListing = () => {
     };
 
     const goToUpdate = (e: any, contextAnnouncementID: any) => {
+        console.log("edit", contextAnnouncementID);
+        
+        
         setGlobalState({
             contextUserName: contextUserName,
             contextClientID: contextClientID,
@@ -97,9 +100,10 @@ const AnnouncementListing = () => {
             dashboard_notify_cust_id: '',
             dashboard_notify_activity_related_id: '',
             selectedClientCustomerID: '',
-            isAdmin: '',
+            isAdmin: isAdmin,
             contextPARAM8: '',
-        })
+        });
+        
         router.push(pageURL_updateAnnouncement);
     }
 

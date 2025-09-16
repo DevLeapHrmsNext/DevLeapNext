@@ -87,7 +87,7 @@ import ShowAlertMessage from './alert';
 
 const UserProfileLeft = ({ card,isHerarchy,callFetchData }: { card: any,isHerarchy:boolean,callFetchData:() => void }) => {
     const {contextClientID,contaxtBranchID,contextCompanyName,contextCustomerID,contextEmployeeID,
-        contextLogoURL,contextRoleID,contextProfileImage,contextUserName,
+        contextLogoURL,contextRoleID,contextProfileImage,contextUserName,isAdmin,
          setGlobalState}=useGlobalContext();
          const[showEditDialog,setShowEditDialog]=useState(false);
     const router = useRouter();
@@ -151,7 +151,7 @@ const UserProfileLeft = ({ card,isHerarchy,callFetchData }: { card: any,isHerarc
             dashboard_notify_cust_id: '',
             dashboard_notify_activity_related_id: '',
             selectedClientCustomerID: '',
-            isAdmin: '',
+            isAdmin: isAdmin,
             contextPARAM8: '',
 
         });

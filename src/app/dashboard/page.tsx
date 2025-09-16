@@ -68,7 +68,7 @@ const Dashboard = () => {
     const swiperRef = useRef<any>(null);
 
     const { contextClientID, contaxtBranchID, contextCompanyName, contextCustomerID, contextEmployeeID,
-        contextLogoURL, contextRoleID, contextProfileImage, contextUserName,
+        contextLogoURL, contextRoleID,isAdmin, contextProfileImage, contextUserName,
         setGlobalState } = useGlobalContext();
 
     useEffect(() => {
@@ -268,7 +268,7 @@ const Dashboard = () => {
             dashboard_notify_cust_id: customerID,
             dashboard_notify_activity_related_id: attendanceID,
             selectedClientCustomerID: '',
-            isAdmin: '',
+            isAdmin: isAdmin,
             contextPARAM8: '',
 
         });
@@ -294,7 +294,7 @@ const Dashboard = () => {
             dashboard_notify_cust_id: '',
             dashboard_notify_activity_related_id: '',
             selectedClientCustomerID: '',
-            isAdmin: '',
+            isAdmin: isAdmin,
             contextPARAM8: '',
 
         });
