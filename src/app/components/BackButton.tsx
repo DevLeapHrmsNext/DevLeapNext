@@ -9,7 +9,7 @@ const BackButton = ({ isCancelText }: { isCancelText: boolean }) => {
 
   return (
     // <a  className="red_button" style={{marginRight:"10px"}} onClick={()=>router.back()}>{isCancelText?"Cancel":"Back"}</a>
-    <a onClick={() => router.back()} className='back_btn_anchore_tag' style={{ height: "36px", marginLeft: "5px" }}>
+    <a onClick={() => router.back()} className='back_btn_anchore_tag' style={{ height: "36px", marginLeft: "5px",float: "right" }}>
       {/* {isCancelText?"Cancel":"Back"} */}
       <div className="nw_user_tab_icon">
         <svg width="20" height="20" x="0" y="0" viewBox="0 0 299.021 299.021">

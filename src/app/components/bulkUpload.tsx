@@ -10,6 +10,9 @@ import { getImageApiURL, staticIconsBaseURL } from '../pro_utils/stringConstants
 import { ALERTMSG_exceptionString, bulkUploadTypeEmployee, bulkUploadTypeHolidays } from '../pro_utils/stringConstants';
 import ShowAlertMessage from './alert';
 
+import Select from "react-select";
+
+
 interface formHoliday{
     branchId:any,
     holidayYear:any
@@ -268,28 +271,46 @@ const BulkUploadForm = ({ uploadType, onClose }: { uploadType: string, onClose: 
                                 <a className='red_button filter_submit_btn ' style={{ cursor: "pointer", padding: "10px 12px", fontSize: "16px" }} href={xlsxFileURL} download>Sample xlsx</a>
                             </div>
                             {uploadType === bulkUploadTypeHolidays && <div className="col-lg-12">
-                                <div className="form_box mb-3">
-                                    <label htmlFor="formFile" className="form-label" style={{textAlign:"left",marginBottom: "10px",marginTop: "10px"}}>Branch<span className='req_text'>*</span>:<label style={{fontSize:"10px" }}>(multiple)</label></label>
-                                    <select id="branchID" name="branchID" multiple size={5} onChange={(e) => {
-                                        let selectedOptions = Array.from(
-                                            (e.target as HTMLSelectElement).selectedOptions
-                                        ).map((option) => option.value);
-
-                                        if (selectedOptions.includes("0")) {
-                                            // Select all branches
-                                            selectedOptions = branchArray.map((b) => String(b.id));
+                                <div className="form_box mb-1">
+                                    <label htmlFor="formFile" className="form-label" style={{textAlign:"left",marginBottom: "5px",marginTop: "10px"}}>Branch<span className='req_text'>*</span>:<label style={{fontSize:"10px" }}></label></label>
+                                    <Select
+                                        isMulti
+                                        id="branchID"
+                                        name="branchID"
+                                         styles={{
+                                            control: (base) => ({
+                                            ...base,
+                                            fontSize: "14px",   // input font size
+                                            minHeight: "36px",  // make box smaller
+                                            }),
+                                            option: (base) => ({
+                                            ...base,
+                                            fontSize: "14px",   // dropdown items font size
+                                            padding: "6px 10px",
+                                            }),
+                                            multiValue: (base) => ({
+                                            ...base,
+                                            fontSize: "12px",   // tags font size
+                                            }),
+                                        }}
+                                        options={branchArray.map((branch) => ({ value: String(branch.id), label: branch.branch_number }))}
+                                        onChange={
+                                            (selected) => {
+                                            const values = selected.map((s) => s.value);
+                                            if (values.includes("0")) {
+                                                setSelectedBranch(branchArray.map((b) => String(b.id)));
+                                            } else {
+                                                setSelectedBranch(values);
+                                            }
+                                            }
                                         }
-
-                                        setSelectedBranch(selectedOptions);
-                                        console.log("selected branch", selectedBranches);
-                                        
-                                    }}>
+                                    >
                                         {/* <option value="">Select</option> */}
-                                        <option value="0">All</option>
+                                        {/* <option value="0">All</option>
                                         {branchArray.map((branch, index) => (
                                             <option value={branch.id} key={branch.id}>{branch.branch_number}</option>
-                                        ))}
-                                    </select>
+                                        ))} */}
+                                    </Select>
                                     {errors.branchId && <span className='error' style={{ color: "red" }}>required</span>}
                                 </div>
                             </div>}

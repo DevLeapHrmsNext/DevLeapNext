@@ -520,14 +520,14 @@ input:checked+.slider:before {
 
 
 .selected {
-  float: left;
-  width: 90%;
-  font-family: Outfit-SemiBold;
-  padding: 7px 10px;
-  transition-duration: 0.3s;
-  font-size: 16px;
-  line-height: normal;
   color: #FFFFFF;
+    float: left;
+    width: 100%;
+    padding: 7px 10px 6px 15px;
+    transition-duration: 0.3s;
+    font-size: 14px;
+    line-height: normal;
+    white-space: nowrap;
 
 }
 
@@ -535,6 +535,8 @@ input:checked+.slider:before {
   float: left;
   width: 18%;
   margin: 0 20px 10px 0;
+  padding: 5 0 5p 0 ;
+  font-family: 'Outfit-SemiBold';
 }
 
 
@@ -1202,6 +1204,23 @@ input:checked+.slider:before {
   direction: ltr;
   scrollbar-color: #d4aa70 #e4e4e4;
   scrollbar-width: thin;
+}
+
+.holiday_branch_scroll{
+  display: flex;
+white-space: wrap;
+overflow-y: hidden;
+overflow-x: scroll;
+-ms-overflow-style: none;
+scrollbar-width: none;
+flex-wrap: nowrap;
+}
+.holiday_branch_noscroll{
+  display: flex;
+white-space: wrap;
+overflow-y: hidden;
+overflow-x: hidden;
+flex-wrap: nowrap;
 }
 .list_view_box_selected_scroll a {
   background-color: #ED2024;

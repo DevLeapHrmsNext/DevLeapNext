@@ -1,34 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import supabase from "../../supabaseConfig/supabase";
 import { apiStatusFailureCode, apiStatusSuccessCode, apiwentWrong } from "@/app/pro_utils/stringConstants";
-import { funSendApiException } from "@/app/pro_utils/constant";
+import { funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
 
 export async function POST(request: NextRequest) {
     try {
         const { client_id, customer_id } = await request.json();
 
         const { data, error } = await supabase
-            .from("leap_customer")
-            .select("customer_id, name, employment_status")
+            .from("leap_customer" )
+            .update({employment_status: "false"})
             .eq("client_id", client_id)
-            .eq("customer_id", customer_id)
-            .single();
+            .eq("customer_id", customer_id);
 
         if (error) {
-            if (error.code === "PGRST116" || error.message.includes("No rows")) {
-                return NextResponse.json({ message: "No such employee", status: 0 },
-                    { status: apiStatusFailureCode }
-                );
+              return funSendApiErrorMessage(error, "Account Disable Issue");
             }
-
-            return NextResponse.json({ message: apiwentWrong, error }, { status: apiStatusFailureCode });
-        }
-
-        const employmentStatus = data.employment_status ? "active" : "inactive";
 
         return NextResponse.json(
             {
-                message: `Employee is ${employmentStatus}`, status: 1,
+                message: `Employee account is disabled`, status: 1,
                 data: data
             },
             { status: apiStatusSuccessCode }

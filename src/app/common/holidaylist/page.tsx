@@ -15,6 +15,7 @@ import UpdateHolidayForm from '@/app/components/updateHolidayForm'
 import AddHolidayYear from '@/app/components/dialog_addHolidayYear'
 import { leftMenuDashboardPageNumbers } from '@/app/pro_utils/stringRoutes'
 import ShowAlertMessage from '@/app/components/alert'
+import { da } from 'date-fns/locale'
 
 interface filterApply {
     yearID: any,
@@ -51,7 +52,9 @@ const HolidayList = () => {
     useEffect(() => {
         const fetchBranches = async () => {
             setLoading(true);
-            const branches = await getBranch(contextClientID);
+            const branches = await getBranch(contextClientID) ;
+           
+
             setBranchArray(branches);
             if (branches) {
 
@@ -211,18 +214,22 @@ const HolidayList = () => {
 
                                     </div>
                                 </div>
-                                <div className="col-lg-10" style={{ display: "flex", flexWrap: "wrap" ,direction:"ltr",overflowX:"auto",overflowY:"hidden" }}>
+                                <div className="col-lg-10" >
+                                    <div className={filters.yearID?"holiday_branch_scroll":"holiday_branch_noscroll"}>
+
+                                    
                                     {branchArray.map((branch) => (
                                         <div className={brancheIDFilter === branch.id ? "list_view_box_selected" : "list_view_box"}
-                                            key={branch.id} style={{ width: "15%", margin: "0 10px 10px 0", opacity: filters.yearID ? 1 : 0.5 }}>
+                                            key={branch.id} style={{ width: "auto", margin: "0 10px 10px 0", opacity: filters.yearID ? 1 : 0.5 }}>
                                             <a onClick={() => { setFilters((prev) => ({ ...prev, branchID: branch.id }));if (filters.yearID){ fetchData(filters.yearID, branch.id);} }}
-                                                style={{ pointerEvents: filters.yearID ? "auto" : "none", cursor: filters.yearID ? "pointer" : "not-allowed" }}>
+                                                style={{ pointerEvents: filters.yearID ? "auto" : "none", cursor: filters.yearID ? "pointer" : "not-allowed" ,padding:"3px 0 3px 0"}}>
                                                 <div className={brancheIDFilter === branch.id ? "selected text-center" : "list_view_heading text-center"}>
                                                     {branch.branch_number}
                                                 </div>
                                             </a>
                                         </div>
                                     ))}
+                                </div>
                                 </div>
                             </div>
 
@@ -282,7 +289,15 @@ async function getBranch(clientID: any) {
         .select()
         .eq('client_id', clientID);
     const { data, error } = await query;
-    return error ? [] : data;
+    if(error){
+        return [];
+    }else{
+        // let dats:any=[];
+        // dats.push(...data);
+        // dats.push(...data);
+        return data;
+    }
+    
 }
 
 async function getHolidayYear(clientID: any) {

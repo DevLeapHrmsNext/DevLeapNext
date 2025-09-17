@@ -1,11 +1,12 @@
 // this API is used to insert support request data in the table
 
 import { NextRequest, NextResponse } from "next/server";
-import { funSendApiErrorMessage, funSendApiException, parseForm } from "@/app/pro_utils/constant";
+import { formatDateYYYYMMDD, funDataAddedSuccessMessage, funSendApiErrorMessage, funSendApiException, parseForm } from "@/app/pro_utils/constant";
 import fs from "fs/promises";
 import { addUserActivities } from "@/app/pro_utils/constantFunAddData";
 import supabase from "@/app/api/supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
+import { funGetAdminID, funGetSingleColumnValueCustomer } from "@/app/pro_utils/constantFunGetData";
 export const runtime = "nodejs";
 
 function formatToYYMMDD(date: Date) {
@@ -20,7 +21,7 @@ const formattedDate = formatToYYMMDD(currentDate);
 
 function generateTicketId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '#'+formattedDate+'-';
+  let result = '#' + formattedDate + '-';
   for (let i = 0; i < 6; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -29,7 +30,7 @@ function generateTicketId(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const {client_id, customer_id, branch_id, type_id, description, priority_level} = await request.json();
+    const { client_id, customer_id, branch_id, type_id, description, priority_level } = await request.json();
     // const fdata = {
     //   client_id: formData.get('client_id'),
     //   customer_id: formData.get('customer_id'),
@@ -57,12 +58,41 @@ export async function POST(request: NextRequest) {
     if (supportError) {
       return funSendApiErrorMessage(supportError, "Failed to raise support ticket");
     }
-    const addActivity= await addUserActivities(client_id, customer_id, branch_id, "Support", type_id, supportData[0].id,false);
-        if(addActivity=="1"){
-          return funSendApiErrorMessage(addActivity, "Customer Support Activity Insert Issue");
-        }
-    return NextResponse.json({ status: 1, message: "Support ticket raised successfully", data: supportData }, { status: apiStatusSuccessCode })
 
+    // const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", fields.leave_type[0], data[0].id, false);
+
+    const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", type_id, supportData[0].id, false);
+    (async () => {
+      if (customer_id) {
+        const custName = await funGetSingleColumnValueCustomer(customer_id, "name");
+        // const manager_id = await funGetSingleColumnValueCustomer(customer_id, "manager_id");
+        const admin_id = await await funGetAdminID(client_id);
+        try {
+          const { data: shouldNotify, error } = await supabase.from("leap_client_notification_selected_types").select("*").eq("selected_notify_type_id", 5);
+          if (shouldNotify && shouldNotify.length === 0) {
+            
+            if (admin_id) {
+              const adminFormData = new FormData();
+              adminFormData.append("customer_id", String(admin_id));
+              adminFormData.append("title", "Support Raised");
+              adminFormData.append("notify_type", "5");// its 5 for support in leap_push_notification_types table
+              adminFormData.append("message", custName + " has raised a support ticket: " + ticketId + ".");
+              const adminRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sendPushNotification`, {
+                method: "POST",
+                body: adminFormData
+              });
+            }
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    })();
+    if (addActivity == "1") {
+      return funSendApiErrorMessage(addActivity, "Customer Support Activity Insert Issue");
+    } else {
+      return funDataAddedSuccessMessage("Support ticket raised successfully");
+    }
   } catch (error) {
     return funSendApiException(error);
   }

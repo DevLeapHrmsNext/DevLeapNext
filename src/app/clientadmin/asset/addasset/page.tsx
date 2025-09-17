@@ -158,14 +158,16 @@ const AddAsset: React.FC = () => {
     let billUrl = "";
 
     if (formValues.asset_pic.length > 0) {
+      console.log(formValues.asset_pic.length);
+      
       for (let i = 0; i < formValues.asset_pic.length; i++) {
-        assetPicUrl.push(await fileUpload(formValues.asset_pic[i], "asset_pictures"));
+        assetPicUrl.push(await fileUpload(formValues.asset_pic[i], "asset_pictures",contextClientID,contextCustomerID));
       }
 
     }
 
     if (formValues.vendor_bill != null) {
-      billUrl = await fileUpload(formValues.vendor_bill, "vendor_bill");
+      billUrl = await fileUpload(formValues.vendor_bill, "vendor_bill",contextClientID,contextCustomerID);
     }
 
     formData.append("client_id", contextClientID);
@@ -336,7 +338,7 @@ const AddAsset: React.FC = () => {
 
                                 <div className="row">
                                   <div className="col-lg-12">
-                                    <input type="file" className="upload_document" name="vendor_bill" id="vendor_bill" onChange={(e) => setFormValues((prev) => ({ ...prev, ['vendor_bill']: e.target.files![0] }))} />
+                                    <input type="file" className="upload_document" name="vendor_bill" id="vendor_bill" onChange={(e) => {console.log(formValues.asset_pic.length);setFormValues((prev) => ({ ...prev, ['vendor_bill']: e.target.files![0] }))}} />
                                   </div>
                                   {/* <div className="col-lg-3">
                                     <input type="button" value="Upload" className="upload_btn" onClick={(e)=>fileUpload("Vendor Bill")}/>
@@ -354,10 +356,20 @@ const AddAsset: React.FC = () => {
                                   <div className="col-lg-12">
                                     {/* <input type="file" className="upload_document" name="asset_pic" id="asset_pic" onChange={(e) => setFormValues((prev) => ({ ...prev, ['asset_pic']: e.target.files![0] }))} /> */}
                                     <input type="file" accept="image/*" className="upload_document" multiple name="asset_pic" id="asset_pic" onChange={(e) => {
-                                      for (let i = 0; i < e.target.files!.length; i++) {
-                                        setImageThubnails(prev => [...prev, URL.createObjectURL(e.target.files![i])]);
-                                        setFormValues((prev) => ({ ...prev, asset_pic: [e.target.files![i]], }));
-                                      }
+                                        const newFiles = Array.from(e.target.files!);
+                                        setImageThubnails(prev => [
+                                                            ...prev, 
+                                                            ...newFiles.map(file => URL.createObjectURL(file))
+                                                          ]);
+
+                                          // Add to form values
+                                          setFormValues(prev => ({
+                                            ...prev,
+                                            asset_pic: [...(prev.asset_pic || []), ...newFiles],
+                                          }));
+                                      
+                                      console.log(formValues.asset_pic.length);
+                                      
 
                                     }} />
                                   </div>
@@ -383,7 +395,7 @@ const AddAsset: React.FC = () => {
                   </div> */}
 
                   <div className="row">
-                    <div className="col-lg-12" style={{ textAlign: "right" }}><BackButton isCancelText={true} /><input type='submit' value="Submit" className="red_button" onClick={handleSubmit} /></div>
+                    <div className="col-lg-12" style={{ textAlign: "right", }}><BackButton isCancelText={true} /><input type='submit' value="Submit" className="red_button" onClick={handleSubmit} /></div>
                   </div>
                 </div>
                 <div className='col-lg-4 p-0'>
@@ -498,12 +510,12 @@ async function getCondition() {
   }
 
 }
-async function fileUpload(file: File, docName: string) {
+async function fileUpload(file: File, docName: string, client_id:any,customerID:any) {
   try {
 
     const formData = new FormData();
-    formData.append("client_id", "3");
-    formData.append("customer_id", "3");
+    formData.append("client_id", client_id);
+    formData.append("customer_id", customerID);
     formData.append("docType", "assets");
     formData.append("docName", docName);
     formData.append("file", file);

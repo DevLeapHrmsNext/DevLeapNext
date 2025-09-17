@@ -20,6 +20,7 @@ import BackButton from '@/app/components/BackButton'
 import LoadingDialog from './PageLoader'
 import Select from "react-select";
 import ShowAlertMessage from './alert'
+import { set } from 'date-fns'
 
 
 
@@ -151,8 +152,10 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+        
         e.preventDefault();
         if (!validate()) return;
+        setLoading(true);
         console.log("handle submit called");
         let pictureURL = "";
         if (formValues.picture) {
@@ -176,9 +179,10 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
             // console.log(response);
             const responseData = await response.json();
             if (response.ok) {
-
+                setLoading(false);
                 onClose()
             } else {
+                setLoading(false);
                 // alert("Failed to submit form.");
                 setShowAlert(true);
                 setAlertTitle("Error")
@@ -186,6 +190,7 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
                 setAlertForSuccess(2)
             }
         } catch (error) {
+            setLoading(false);
             console.log("Error submitting form:", error);
             // alert("An error occurred while submitting the form.");
             setShowAlert(true);
@@ -264,7 +269,7 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
                                         <div className="row">
                                             <div className="col-md-12">
                                                 <div className="form_box mb-3">
-                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Employee:</label>
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Employee<span className='req_text'>*</span> :</label>
                                                     <Select
                                                         className="custom-select"
                                                         classNamePrefix="custom"
@@ -280,7 +285,7 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
                                             </div>
                                             <div className="col-md-6">
                                                 <div className="form_box mb-3">
-                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Asset Type:</label>
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Asset Type<span className='req_text'>*</span> :</label>
                                                     <select id="assetTypeID" name="assetTypeID" value={selectedAssetType} onChange={handleAssetTypeChange}>
                                                         <option value="">Select</option>
                                                         {assetTypeArray.map((type, index) => (
@@ -291,7 +296,7 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
                                             </div>
                                             <div className="col-md-6">
                                                 <div className="form_box mb-3">
-                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Asset:</label>
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Asset<span className='req_text'>*</span> :</label>
                                                     <select id="assetID" name="assetID" value={formValues.assetID} onChange={handleInputChange}>
                                                         <option value="">Select</option>
                                                         {assetArray.length > 0 ? (
@@ -309,7 +314,7 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
                                         <div className="row">
                                             <div className="col-md-12">
                                                 <div className="form_box mb-3">
-                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Remark:  </label>
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Remark<span className='req_text'>*</span> :  </label>
                                                     <textarea className="form-control" value={formValues.remark} name="remark" onChange={handleInputChange} id="remark"></textarea>
                                                     {errors.remark && <span className="error" style={{ color: "red" }}>{errors.remark}</span>}
                                                 </div>
@@ -318,7 +323,7 @@ const DialogAssignAsset = ({ asset_id, onClose }: { asset_id: any, onClose: () =
                                         <div className="row">
                                             <div className="col-lg-5">
                                                 <div className="row">
-                                                    <div className="col-lg-12 mb-1">Date of Allotment: </div>
+                                                    <div className="col-lg-12 mb-1">Date of Allotment<span className='req_text' style={{color:""}}>*</span> : </div>
                                                 </div>
                                                 <div className="form_box mb-3">
                                                     <input type="date" id="givenDate" name="givenDate" value={formValues.givenDate} onChange={handleInputChange} />

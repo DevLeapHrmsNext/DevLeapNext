@@ -115,9 +115,12 @@ const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose
             let response
             if(deletionType==deleteDataTypeAsset){
            response = await fetch("/api/client/asset/deleteAssetType", {
-              method: "DELETE",
-              body: formData,
-          });
+                method: "DELETE",
+                body: formData,
+            });
+            console.log("deleteAssetType response",response);
+            
+            
           setAlertStartContent("Asset type deleted successfully");
 
         }else if(deletionType==deleteDataTypeSalaryComponent){
@@ -163,7 +166,7 @@ const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose
             });
             setAlertStartContent("Designation deleted successfully");
         }
-        const resJson=await response.json();
+        const resJson= await response.json();
           if (response.ok && resJson.status==1) {
                 setLoading(false);
                 setShowAlert(true);
@@ -182,7 +185,7 @@ const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose
           console.log("Error submitting form:", error);
           setLoading(false);
           setShowAlert(true);
-          setAlertTitle("Exception")
+          setAlertTitle("Exception dsd")
           setAlertStartContent(ALERTMSG_exceptionString);
           setAlertForSuccess(2)
       }

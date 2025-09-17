@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { funDataAddedSuccessMessage, funDataMissingError, funISDataKeyPresent, funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
-import { getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
+import { formatDateYYYYMMDD, funDataAddedSuccessMessage, funDataMissingError, funISDataKeyPresent, funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
+import { funGetAdminID, funGetSingleColumnValueCustomer, getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
 import supabase from "../../supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
 import { addUserActivities } from "@/app/pro_utils/constantFunAddData";
@@ -38,10 +38,49 @@ export async function POST(request: NextRequest) {
             return funSendApiErrorMessage(taskError, "Failed to add task");
         }
         const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", task_details, TaskData[0].id,false);
+
+    (async () => {
+      if (customer_id) {
+        const custName = await funGetSingleColumnValueCustomer(customer_id, "name");
+        const manager_id = await funGetSingleColumnValueCustomer(customer_id, "manager_id");
+        const admin_id = await await funGetAdminID(client_id);
+        try {
+          const { data: shouldNotify, error } = await supabase.from("leap_client_notification_selected_types").select("*").eq("selected_notify_type_id", 6);
+          if (shouldNotify && shouldNotify.length === 0) {
+            if (manager_id) {
+              const managerFormData = new FormData();
+              managerFormData.append("customer_id", String(manager_id));
+              managerFormData.append("title", "Task Added");
+              managerFormData.append("notify_type", "6");// its 4 for leave in leap_push_notification_types table
+              managerFormData.append("message", custName + " has added a new task " + ".");
+              const managerRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sendPushNotification`, {
+                method: "POST",
+                body: managerFormData
+              });
+            }
+            if (admin_id) {
+              const adminFormData = new FormData();
+              adminFormData.append("customer_id", String(manager_id));
+              adminFormData.append("title", "Task Added");
+              adminFormData.append("notify_type", "6");// its 4 for leave in leap_push_notification_types table
+              adminFormData.append("message", custName + " has added a new task " + ".");
+              const adminRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sendPushNotification`, {
+                method: "POST",
+                body: adminFormData
+              });
+            }
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    })();
         if (addActivity == "1") {
             return funSendApiErrorMessage(addActivity, "Customer Task Activity Insert Issue");
-        }
-        return NextResponse.json({ status: 1, message: "Task Added Successfully", data: TaskData }, { status: apiStatusSuccessCode })
+        }else {
+      return funDataAddedSuccessMessage("Task Added Successfully");
+    }
+        // return NextResponse.json({ status: 1, message: "Task Added Successfully", data: TaskData }, { status: apiStatusSuccessCode })
     } catch (error) {
         return funSendApiException(error);
     }

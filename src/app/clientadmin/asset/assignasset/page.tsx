@@ -10,15 +10,18 @@ import { useParams, useRouter } from 'next/navigation';
 import { CustomerProfile } from '@/app/models/employeeDetailsModel'
 import { AssetList, AssetType } from '@/app/models/AssetModel'
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
-import { leftMenuAssetsPageNumbers } from '@/app/pro_utils/stringRoutes'
+import { leftMenuAssetsPageNumbers, pageURL_assetListing } from '@/app/pro_utils/stringRoutes'
 import BackButton from '@/app/components/BackButton'
 import Select from "react-select";
+import LoadingDialog from '@/app/components/PageLoader'
+import ShowAlertMessage from '@/app/components/alert'
 
 
 interface AssetForm {
     client_id: string,
     branchID: string,
     givenDate: string,
+    assetTypeID: string,
     customerID:string,
     assetID: string,
     remark: string,
@@ -34,13 +37,23 @@ const AddAsset : React.FC = () => {
   const [assetTypeArray, setAssetType] = useState<AssetType[]>([]);
 
   const [empArray, setEmp] = useState<CustomerProfile[]>([]);
-  const [deptArray, setDept] = useState<DepartmentTableModel[]>([]);
   const {contaxtBranchID,contextClientID,contextCustomerID}=useGlobalContext();
   const [selectedAssetType, setSelectedAssetType] = useState<string>("");
   const [employeeName, setEmployeeNames] = useState([{ value: '', label: '' }]);
 
+    const [isLoading, setLoading] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertForSuccess, setAlertForSuccess] = useState(0);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertStartContent, setAlertStartContent] = useState('');
+    const [alertMidContent, setAlertMidContent] = useState('');
+    const [alertEndContent, setAlertEndContent] = useState('');
+    const [alertValue1, setAlertValue1] = useState('');
+    const [alertvalue2, setAlertValue2] = useState('');
+
   const handleAssetTypeChange = async (e: ChangeEvent<HTMLSelectElement>) => {
       const value = e.target.value;
+      setFormValues((prev) => ({ ...prev, ["assetTypeID"]: value }));
       setSelectedAssetType(value);
       const getAssets = await getAsset(value);
       setAsset(getAssets);
@@ -52,9 +65,9 @@ const AddAsset : React.FC = () => {
       const fetchData = async () => {
        
 
-        const assetType = await getAssetType();
+        const assetType = await getAssetType(contextClientID);
         setAssetType(assetType);
-        const emp = await getEmployee();
+        const emp = await getEmployee(contextClientID);
         setEmp(emp);
         let name: any[] = []
             for (let i = 0; i < emp.length; i++) {
@@ -67,8 +80,7 @@ const AddAsset : React.FC = () => {
             console.log(name);
 
             setEmployeeNames(name);
-        const dept = await getDepartment();
-        setDept(dept);
+        
 
   };
   fetchData();
@@ -95,6 +107,7 @@ if (window.pageYOffset > 0) {
     givenDate: "",
     customerID: "",
     assetID: "",
+    assetTypeID: "",
     remark: "",
     picture: null,
     pictureUrl: "",
@@ -122,6 +135,7 @@ const handleEmpSelectChange = async (values: any) => {
       const newErrors: Partial<AssetForm> = {};
       if (!formValues.givenDate) newErrors.givenDate = "required";
       if (!formValues.customerID) newErrors.customerID = "required";
+      if (!formValues.assetTypeID) newErrors.assetTypeID = "required";
       if (!formValues.assetID) newErrors.assetID = "required";
       if (!formValues.remark) newErrors.remark = "required";
 
@@ -133,7 +147,10 @@ const handleEmpSelectChange = async (values: any) => {
     e.preventDefault();
     if (!validate()) return;
     console.log("handle submit called");
-
+    setLoading(true);
+    if (formValues.picture) {
+        await fileUpload("Asset Picture");
+    }
     formData.append("client_id", contextClientID || "3");
     formData.append("branch_id", contaxtBranchID || "3");
     formData.append("asset_id", formValues.assetID);
@@ -151,10 +168,15 @@ const handleEmpSelectChange = async (values: any) => {
       // console.log(response);
 
       if (response.ok) {
-          
-          router.push("/clientadmin/asset");
+          setLoading(false);
+          router.push(pageURL_assetListing);
       } else {
-          alert("Failed to submit form.");
+        setLoading(false);
+                setShowAlert(true);
+
+                setAlertTitle("Error")
+                setAlertStartContent("Failed to recive assets or no data avaialable.");
+                setAlertForSuccess(2)
       }
   } catch (error) {
       console.log("Error submitting form:", error);
@@ -204,8 +226,17 @@ const handleEmpSelectChange = async (values: any) => {
       <header>
       <LeapHeader title={addAssetTitle} />
       </header>
+  <LoadingDialog isLoading={isLoading} />
+                    {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
+                        setShowAlert(false)
+                        if(alertForSuccess===1){
+                            router.push(pageURL_assetListing)
+                        }
+                    }} onCloseClicked={function (): void {
+                        setShowAlert(false)
+                    }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
       <LeftPannel menuIndex={leftMenuAssetsPageNumbers} subMenuIndex={0} showLeftPanel={true} rightBoxUI={
-        
+
               <form onSubmit={handleSubmit}>
               <div className="container">
                 <div className="col-lg-12 heading25">
@@ -243,6 +274,8 @@ const handleEmpSelectChange = async (values: any) => {
                                                     <option value={type.id} key={type.id}>{type.asset_type}</option>
                                                 ))}
                                             </select> 
+                                        {errors.assetTypeID && <span className="error" style={{color: "red"}}>{errors.assetTypeID}</span>}                                   
+
                                     </div>
                                 </div>
                                 <div className="col-md-4">
@@ -292,9 +325,9 @@ const handleEmpSelectChange = async (values: any) => {
                                         <div className="col-lg-9">
                                             <input type="file" className="upload_document" accept="image/*" name="picture" id="picture" onChange={handleInputChange}/>
                                         </div>
-                                        <div className="col-lg-3">
-                                            <input type="button" value="Upload" className="upload_btn" onClick={(e)=>fileUpload("Asset Picture")}/>
-                                        </div>
+                                        {/* <div className="col-lg-3">
+                                            <input type="button" value="Upload" className="upload_btn" onClick={(e)=>}/>
+                                        </div> */}
                                     </div>
                                 </div>
                               </div>
@@ -324,11 +357,11 @@ const handleEmpSelectChange = async (values: any) => {
 
 export default AddAsset
 
-async function getAssetType() {
+async function getAssetType(client_id:any) {
 
     let query = supabase
         .from('leap_asset_type')
-        .select()
+        .select().eq("client_id", client_id).eq("is_deleted", false);
   
     const { data, error } = await query;
     if (error) {
@@ -343,11 +376,11 @@ async function getAssetType() {
   }
 
 
-  async function getEmployee() {
+  async function getEmployee(client_id:any) {
 
     let query = supabase
         .from('leap_customer')
-        .select();
+        .select("*").eq("client_id", client_id);
   
     const { data, error } = await query;
     if (error) {
@@ -360,23 +393,7 @@ async function getAssetType() {
     }
   
   }
-  async function getDepartment() {
 
-    let query = supabase
-        .from('leap_client_departments')
-        .select();
-  
-    const { data, error } = await query;
-    if (error) {
-        // console.log(error);
-  
-        return [];
-    } else {
-        // console.log(data);
-        return data;
-    }
-  
-  }
   async function getAsset(assetTypeID: string) {
     let query = supabase
         .from('leap_asset')
