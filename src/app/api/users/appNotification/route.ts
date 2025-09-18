@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
             // const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
             // const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
             let qwery = supabase.from("leap_client_useractivites")
-                .select(`customer_id,activity_details,activity_type_id(activity_type )`)
+                .select(`customer_id,activity_details,activity_type_id(id, activity_type )`)
                 .eq('client_id', client_id)
                 .eq('customer_id', customer_id)
                 // .eq("user_notify", true)
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
                 return funSendApiException(error);
             }
             const userNotiActivities = userActivities.map(a => ({ ...a, type: "user" }));
-            return NextResponse.json({ status: 200, message: "Notifications fetched successfully", data: userNotiActivities }, { status: 200 });
+            return NextResponse.json({ status: 1, message: "Notifications fetched successfully", data: userNotiActivities }, { status: 200 });
         } catch (error) {
             return funSendApiException(error);
         }
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
             // const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
             const { data: teamActivities, error: error1 } = await supabase
                 .from("leap_client_useractivites")
-                .select(`created_at, customer_id(name, profile_pic), activity_type_id(id, activity_type), activity_details, activity_related_id, activity_related_id`)
+                .select(`created_at, customer_name, activity_type_id(id, activity_type), activity_details, activity_related_id, activity_related_id`)
                 // .select(`*, leap_user_activity_type(*)`)
                 .in("customer_id", subordinateIds)
                 // .eq("user_notify", true)

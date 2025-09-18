@@ -657,28 +657,28 @@ const Dashboard = () => {
                                                     noti.type == "user" ?
                                                         <ul className="user_notification_list" key={index}>
                                                             <li>
-                                                                {noti.activity_type_id === 1 ? (
+                                                                {noti.activity_type_id.id === 1 ? (
                                                                     <a href={pageURL_userAttendance}>
                                                                         {noti.activity_details}
                                                                         <span className='notification_detail_icon'>
                                                                             <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" />
                                                                         </span>
                                                                     </a>
-                                                                ) : noti.activity_type_id === 2 ? (
+                                                                ) : noti.activity_type_id.id === 2 ? (
                                                                     <a href={pageURL_userTaskListingPage}>
                                                                         {noti.activity_details}
                                                                         <span className='notification_detail_icon'>
                                                                             <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" />
                                                                         </span>
                                                                     </a>
-                                                                ): noti.activity_type_id === 3 ? (
+                                                                ): noti.activity_type_id.id === 3 ? (
                                                                     <a href={pageURL_userLeave}>
                                                                         {noti.activity_details}
                                                                         <span className='notification_detail_icon'>
                                                                             <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" />
                                                                         </span>
                                                                     </a>
-                                                                ): noti.activity_type_id === 5 ? (
+                                                                ): noti.activity_type_id.id === 5 ? (
                                                                     <a href={pageURL_userSupport}>
                                                                         {noti.activity_details}
                                                                         <span className='notification_detail_icon'>
@@ -698,21 +698,21 @@ const Dashboard = () => {
                                                             <ul className="user_notification_list" key={index}>
                                                             {/* <li><a href="">{noti.customer_name} : {noti.activity_details}<span className='notification_detail_icon'><img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /></span></a></li> */}
                                                             <li>
-                                                                {noti.activity_type_id === 1 ? (
+                                                                {noti.activity_type_id.id === 1 ? (
                                                                     <a href={pageURL_userTeamAttendanceList}>
                                                                         {noti.customer_name} : {noti.activity_details}
                                                                         <span className='notification_detail_icon'>
                                                                             <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" />
                                                                         </span>
                                                                     </a>
-                                                                ) : noti.activity_type_id === 2 ? (
+                                                                ) : noti.activity_type_id.id === 2 ? (
                                                                     <a href={pageURL_userTaskListingPage}>
                                                                         {noti.customer_name} : {noti.activity_details}
                                                                         <span className='notification_detail_icon'>
                                                                             <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" />
                                                                         </span>
                                                                     </a>
-                                                                ): noti.activity_type_id === 3 ? (
+                                                                ): noti.activity_type_id.id === 3 ? (
                                                                     <a href={pageURL_userTeamLeave}>
                                                                         {noti.customer_name} : {noti.activity_details}
                                                                         <span className='notification_detail_icon'>

@@ -3,7 +3,7 @@ import supabase from "../../supabaseConfig/supabase";
 import { calculateNumDays, formatDateYYYYMMDD, funCalculateTimeDifference, funDataAddedSuccessMessage, funSendApiErrorMessage, funSendApiException, parseForm } from "@/app/pro_utils/constant";
 import fs from "fs/promises";
 import { error } from "console";
-import { funGetActivityTypeId, funGetAdminID, funGetSingleColumnValueCustomer } from "@/app/pro_utils/constantFunGetData";
+import { funGetActivityTypeId, funGetAdminID, funGetLeaveType, funGetSingleColumnValueCustomer } from "@/app/pro_utils/constantFunGetData";
 import { addUserActivities, apiUploadDocs } from "@/app/pro_utils/constantFunAddData";
 export const runtime = "nodejs";
 
@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
       console.log(error);
       return funSendApiErrorMessage(error, "Customer Apply Leave Insert Issue");
     }
-
-    const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", fields.leave_type[0], data[0].id, false);
+    const leaveType = await funGetLeaveType(fields.leave_type[0]);
+    const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", leaveType , data[0].id, false);
 
     (async () => {
       if (fields.customer_id[0]) {

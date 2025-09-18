@@ -293,8 +293,8 @@ export interface UserNotification {
   id: number
   client_id: number
   branch_id: any
-  customer_id: number
-  activity_type_id: number
+  customer_id: LeapUserActivityCustomer
+  activity_type_id: LeapUserActivityType
   designation_name: string
   department_name: string
   activity_details: string
@@ -305,10 +305,14 @@ export interface UserNotification {
   activity_related_id: number
   activity_status: number
   user_notify: boolean
-  leap_user_activity_type: LeapUserActivityType
+  // leap_user_activity_type: LeapUserActivityType
   type: string
 }
+export interface LeapUserActivityCustomer {
+  profile_pic: string
+  name: string
 
+}
 export interface LeapUserActivityType {
   id: number
   created_at: string

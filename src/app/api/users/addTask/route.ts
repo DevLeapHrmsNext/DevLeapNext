@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { formatDateYYYYMMDD, funDataAddedSuccessMessage, funDataMissingError, funISDataKeyPresent, funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
-import { funGetAdminID, funGetSingleColumnValueCustomer, getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
+import { funGetAdminID, funGetSingleColumnValueCustomer, funGetSubProjectType, getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
 import supabase from "../../supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
 import { addUserActivities } from "@/app/pro_utils/constantFunAddData";
@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
         if (taskError) {
             return funSendApiErrorMessage(taskError, "Failed to add task");
         }
-        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", task_details, TaskData[0].id,false);
+        const projectType = await funGetSubProjectType(sub_project_id);
+        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", projectType, TaskData[0].id,false);
 
     (async () => {
       if (customer_id) {

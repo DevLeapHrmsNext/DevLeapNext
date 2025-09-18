@@ -6,7 +6,7 @@ import fs from "fs/promises";
 import { addUserActivities } from "@/app/pro_utils/constantFunAddData";
 import supabase from "@/app/api/supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
-import { funGetAdminID, funGetSingleColumnValueCustomer } from "@/app/pro_utils/constantFunGetData";
+import { funGetAdminID, funGetSingleColumnValueCustomer, funGetSupportType } from "@/app/pro_utils/constantFunGetData";
 export const runtime = "nodejs";
 
 function formatToYYMMDD(date: Date) {
@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
     if (supportError) {
       return funSendApiErrorMessage(supportError, "Failed to raise support ticket");
     }
-
+    const supportType = await funGetSupportType(type_id);
     // const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", fields.leave_type[0], data[0].id, false);
 
-    const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", type_id, supportData[0].id, false);
+    const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", supportType + "-" + ticketId, supportData[0].id, false);
     (async () => {
       if (customer_id) {
         const custName = await funGetSingleColumnValueCustomer(customer_id, "name");
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         try {
           const { data: shouldNotify, error } = await supabase.from("leap_client_notification_selected_types").select("*").eq("selected_notify_type_id", 5);
           if (shouldNotify && shouldNotify.length === 0) {
-            
+
             if (admin_id) {
               const adminFormData = new FormData();
               adminFormData.append("customer_id", String(admin_id));

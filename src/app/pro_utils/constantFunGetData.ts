@@ -1312,3 +1312,43 @@ export async function funGetAdminID(client_id:any){
   }
 }
 
+export async function funGetSupportType(type_num:any){
+  const { data, error } = await supabase
+  .from('leap_request_master')
+  .select('type_name')
+  .eq('id', type_num)
+  .single();
+  if(error){
+    return null;
+  }else{
+    return data.type_name;
+  }
+}
+
+export async function funGetLeaveType(type_num:any){
+  const { data, error } = await supabase
+  .from('leap_client_leave')
+  .select('leave_name')
+  // .eq('client_id', client_id)
+  // .eq('branch_id', branch_id)
+  .eq('leave_id', type_num)
+  .single();
+  if(error){
+    return null;
+  }else{
+    return data.leave_name;
+  }
+}
+
+export async function funGetSubProjectType(type_num:any){
+  const { data, error } = await supabase
+  .from('leap_client_sub_projects')
+  .select('sub_project_name')
+  .eq('subproject_id', type_num)
+  .single();
+  if(error){
+    return null;
+  }else{
+    return data.sub_project_name;
+  }
+}
