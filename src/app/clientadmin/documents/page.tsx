@@ -107,19 +107,21 @@ const OrganizationalDocuments = () => {
                                     <div className="col-lg-3" style={{ textAlign: "right" }}>
                                         <div className="row" >
                                             <div className="col-lg-12">
-                                                <a className="red_button" onClick={() => {setShowUploadDialog(true)}}>Add Document</a>&nbsp;
+                                                <a className="red_button" onClick={() => { setShowUploadDialog(true)}}>Add Document</a>&nbsp;
                                             </div>
                                         </div>
                                     </div> : <></>
                                 }
                             </div>
-                            {documentsArray.length > 0 ?<div>
                             <div className={showUploadDialog ? "rightpoup rightpoupopen" : "rightpoup"}>
                             {showUploadDialog && <DialogUploadDocument onClose={() => {setShowUploadDialog(false);fetchData()}} docType={companyDocUpload} />}
                             </div>
                             <div className={showUpdateDialog ? "rightpoup rightpoupopen" : "rightpoup"}>
                             {showUpdateDialog && <DialogUpdateDocument onClose={() => { setShowUpdateDialog(false); fetchData() } } replaceType={companyDocUpload} edit_id={replaceDocID} />}
                             </div>
+                            {documentsArray.length > 0 ?<div>
+                            
+                            
                             <div className="row">
                                 <div className="col-lg-12">
                                     <div className="row">
@@ -159,7 +161,8 @@ const OrganizationalDocuments = () => {
                                         <h4 className="text-muted">No documents uploaded</h4>
                                             
                                     </div>
-                                ) }
+                                ) 
+                                }
 
                         </div>
                     </div>

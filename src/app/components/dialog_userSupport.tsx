@@ -260,7 +260,7 @@ const UserSupport = ({ onClose, id, selectedShortCutID }: { onClose: (fetchData:
                                                                     <><div className="col-lg-2 text-center" style={{ color: "red" }}>{updatedData.leap_request_status.status}</div></>
                                                                 }
                                                                 <div className="col-lg-4 text-center">{updatedData.comments}</div>
-                                                                <div className="col-lg-3 text-center">{formatDateYYYYMMDD(updatedData.created_at)}</div>
+                                                                <div className="col-lg-3 text-center">{moment(updatedData.created_at).format('DD-MM-YYYY')}</div>
                                                             </div>
                                                         ))
                                                     )}

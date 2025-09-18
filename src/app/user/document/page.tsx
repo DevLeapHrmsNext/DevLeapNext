@@ -78,9 +78,9 @@ const EmployeeDocuments = () => {
                 setOrgDoc([]);
                 // setLoading(false);
                 // setShowAlert(true);
-                setAlertTitle("Error")
-                setAlertStartContent("No documents uploaded yet!");
-                setAlertForSuccess(2)
+                // setAlertTitle("Error")
+                // setAlertStartContent("No documents uploaded yet!");
+                // setAlertForSuccess(2)
             }
         } catch (error) {
             // setLoading(false);
@@ -124,9 +124,9 @@ const EmployeeDocuments = () => {
                 setEmpOrgDoc(empOrgDoc);
                 // setLoading(false);
                 // setShowAlert(true);
-                setAlertTitle("Error")
-                setAlertStartContent("No documents uploaded yet!");
-                setAlertForSuccess(2)
+                // setAlertTitle("Error")
+                // setAlertStartContent("No documents uploaded yet!");
+                // setAlertForSuccess(2)
             }
             if (response.status == 1 && empPerDoc.length > 0) {
                 setEmpPerDoc(empPerDoc)
@@ -135,9 +135,9 @@ const EmployeeDocuments = () => {
                 setEmpPerDoc(empPerDoc);
                 // setLoading(false);
                 // setShowAlert(true);
-                setAlertTitle("Error")
-                setAlertStartContent("No documents uploaded yet!");
-                setAlertForSuccess(2)
+                // setAlertTitle("Error")
+                // setAlertStartContent("No documents uploaded yet!");
+                // setAlertForSuccess(2)
             }
         } catch (error) {
             // setLoading(false);
@@ -264,9 +264,15 @@ const EmployeeDocuments = () => {
                                                             {orgDocArray.map((doc, index) => {
                                                                 const docEntry = doc.leap_client_documents?.[0]; // ✅ might be undefined
                                                                 const fileUrl = docEntry?.document_url ?? ""; // fallback to empty string
-                                                                const fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-                                                                const fileExt = fileName.split(".").pop()?.toLowerCase() ?? "";
+                                                                // const fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+                                                                // const fileExt = fileName.split(".").pop()?.toLowerCase() ?? "";
 
+                                                                // const docEntry = doc.leap_customer_documents?.[0]; // ✅ might be undefined
+
+                                                                // const fileUrl = docEntry?.bucket_url ?? ""; // fallback to empty string
+                                                                const fullFileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+                                                                const fileExt = fullFileName.split(".").pop()?.toLowerCase() ?? "";
+                                                                const originalFileName = fullFileName.replace(/_client_org_docs.*$/, "");
                                                                 return (
                                                                     <div className="user_document_right_card_listing" key={index}>
                                                                         {/* ------ */}
@@ -288,11 +294,12 @@ const EmployeeDocuments = () => {
                                                                             </div>
                                                                         </div>
                                                                         <div className="user_document_right_card_content">
-                                                                            <div className="user_document_right_card_heading">
-                                                                                {doc.leap_client_documents[0].document_url.substring(doc.leap_client_documents[0].document_url.lastIndexOf('/') + 1)}
+                                                                            <div className="user_document_right_card_heading"  style={{maxHeight: "100px" }}>
+                                                                                {/* {doc.leap_client_documents[0].document_url.substring(doc.leap_client_documents[0].document_url.lastIndexOf('/') + 1)} */}
+                                                                                {originalFileName}
                                                                             </div>
                                                                             <div className="user_document_right_card_type">
-                                                                               {doc.document_name}
+                                                                                {doc.document_name}
                                                                             </div>
                                                                         </div>
                                                                         {/* ------ */}
@@ -315,7 +322,13 @@ const EmployeeDocuments = () => {
                                                             <div className="user_document_right_cardbox">
                                                                 {empOrgArray.map((doc, index) => {
                                                                     const fileName = doc.leap_customer_documents[0].bucket_url!.substring(doc.leap_customer_documents[0].bucket_url.lastIndexOf("/") + 1) || "";
-                                                                    const fileExt = fileName.split(".").pop().toLowerCase();
+                                                                    // const fileExt = fileName.split(".").pop().toLowerCase();
+                                                                    const docEntry = doc.leap_customer_documents?.[0]; // ✅ might be undefined
+
+                                                                    const fileUrl = docEntry?.bucket_url ?? ""; // fallback to empty string
+                                                                    const fullFileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+                                                                    const fileExt = fullFileName.split(".").pop()?.toLowerCase() ?? "";
+                                                                    const originalFileName = fullFileName.replace(/_client_org_docs.*$/, "");
                                                                     return (
                                                                         <div className="user_document_right_card_listing" key={index}>
                                                                             {/* ------ */}
@@ -338,7 +351,8 @@ const EmployeeDocuments = () => {
                                                                             </div>
                                                                             <div className="user_document_right_card_content">
                                                                                 <div className="user_document_right_card_heading">
-                                                                                    {doc.leap_customer_documents[0].bucket_url.substring(doc.leap_customer_documents[0].bucket_url.lastIndexOf('/') + 1)}
+                                                                                    {originalFileName}
+                                                                                    {/* {doc.leap_customer_documents[0].bucket_url.substring(doc.leap_customer_documents[0].bucket_url.lastIndexOf('/') + 1)} */}
                                                                                 </div>
                                                                                 <div className="user_document_right_card_type">
                                                                                     {doc.document_name}
@@ -377,7 +391,7 @@ const EmployeeDocuments = () => {
                                                                                         <img src={staticIconsBaseURL + "/images/user/adobe-pdf-icon.png"} alt="PDF icon" className="img-fluid" />
                                                                                     </div>
                                                                                     <div className="user_document_right_card_download">
-                                                                                        <a href={getImageApiURL + "/uploads/" + doc.leap_customer_documents[0].bucket_url} download> 
+                                                                                        <a href={getImageApiURL + "/uploads/" + doc.leap_customer_documents[0].bucket_url} download>
                                                                                             <svg width="20" height="20" x="0" y="0" viewBox="0 0 24 24">
                                                                                                 <g>
                                                                                                     <g fill="#000">

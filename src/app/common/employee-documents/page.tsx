@@ -265,7 +265,9 @@ async function getEmployees(client_id: any) {
 
     let query = supabase
         .from('leap_customer')
-        .select(`customer_id,name,emp_id,branch_id`).eq("client_id", client_id);
+        .select(`customer_id,name,emp_id,branch_id`).eq("client_id", client_id)
+        // .eq("employment_status",true)
+        .or('user_role.eq.2,user_role.eq.4,user_role.eq.5,user_role.eq.9');
 
     const { data, error } = await query;
 

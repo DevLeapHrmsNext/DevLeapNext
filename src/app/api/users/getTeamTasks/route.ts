@@ -39,7 +39,10 @@ export async function POST(request: NextRequest) {
     // Fetch task records for employees under this manager
     let query = supabase
       .from("leap_customer_project_task")
-      .select(`*, leap_project_task_types(*), leap_customer(name), leap_client_sub_projects(*), leap_task_status(*), leap_approval_status(*)`)
+      .select(`id, project_id, task_type_id, total_hours, total_minutes, task_details, task_date, sub_project_id, task_status, branch_id, approval_status, leap_project_task_types(task_type_id, task_type_name), leap_customer(name), 
+        leap_client_sub_projects(project_id, subproject_id, project_details, project_type_id, sub_project_name, project_manager_id, sub_project_status, completion_percentage),
+        leap_task_status(id, status), leap_approval_status(id, approval_type)`)
+      // .select(`*, leap_project_task_types(*), leap_customer(name), leap_client_sub_projects(*), leap_task_status(*), leap_approval_status(*)`)
       .in("customer_id", employeeIds)
       .order("updated_at", { ascending: false })
       // .range(start, end);
@@ -75,4 +78,3 @@ export async function POST(request: NextRequest) {
     return funSendApiException(error);
   }
 }
-

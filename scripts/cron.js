@@ -21,7 +21,18 @@ cron.schedule("0 */5 * * * *", async () => {
       headers: { "Content-Type": "application/json" }
     });
     const data = await res.json();
-    console.log("Stop Attendance Cron Job:", data);
+    console.log("Pause Attendance Cron Job:", data);
+});
+
+cron.schedule("0 */5 * * * *", async () => {
+    
+    
+    const res = await fetch(`${base_url}api/cron-apis/auto-stop-attendance`, {
+      method: "POST", // or "POST"
+      headers: { "Content-Type": "application/json" }
+    });
+    const data = await res.json();
+    console.log("Auto Stop Attendance Cron Job:", data);
 });
 
 console.log("🚀 Cron initialized...");

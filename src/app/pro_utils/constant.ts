@@ -60,7 +60,7 @@ export const parseForm = async (req: NextRequest): Promise<{ fields: any; files:
     form.parse(incomingReq, async (err: any, fields: any, files: any) => {
       if (err) {
         console.log("parse form error",err);
-        const log=await addErrorExceptionLog(fields.client_id[0],fields.customer_id[0],"Parse form error",JSON.stringify({err}))
+        // const log=await addErrorExceptionLog(fields.client_id[0],fields.customer_id[0],"Parse form error",JSON.stringify({err}))
         reject(err);
       } else {
         console.log("parse form function proper execution"+files.file);

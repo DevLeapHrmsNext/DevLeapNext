@@ -319,7 +319,7 @@ async function resumeAttendance(fields: any) {
 
     let totalPausedTime = 0
     for (let i = 0; i < await pausedTimeEndArray.length; i++) {
-      const totalHours = await funCalculateTimeDifference(new Date(pausedTimeEndArray[i]), new Date(todayAttendance[0].pause_start_time[i]));
+      const totalHours = await funCalculateTimeDifference( new Date(todayAttendance[0].pause_start_time[i]), new Date(pausedTimeEndArray[i]));
 
       totalPausedTime = totalPausedTime + parseFloat(totalHours);
     }

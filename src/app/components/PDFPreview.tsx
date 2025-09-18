@@ -36,7 +36,7 @@ const PDFPreview = ({ url }: { url: string }) => {
         canvas.width = viewport.width;
         canvas.height = viewport.height;
 
-        await page.render({ canvasContext: context, viewport }).promise;
+        await page.render({ canvasContext: context, viewport, canvas }).promise;
         console.log("PDF Rendered");
       } catch (err) {
         console.error("Error loading PDF:", err);

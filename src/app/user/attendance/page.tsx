@@ -427,7 +427,7 @@ const EmpAttendancePage = () => {
                         "customer_id": contextCustomerID,
                         "branch_id": contaxtBranchID,
                         "type_id": 8,
-                        "description": attDate,
+                        "description": moment(attDate).format('DD-MM-YYYY'),
                         "priority_level": 1
                     }),
                 });
