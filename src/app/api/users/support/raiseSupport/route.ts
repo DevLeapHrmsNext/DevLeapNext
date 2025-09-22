@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { formatDateYYYYMMDD, funDataAddedSuccessMessage, funSendApiErrorMessage, funSendApiException, parseForm } from "@/app/pro_utils/constant";
 import fs from "fs/promises";
-import { addUserActivities } from "@/app/pro_utils/constantFunAddData";
+import { addErrorExceptionLog, addUserActivities } from "@/app/pro_utils/constantFunAddData";
 import supabase from "@/app/api/supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
 import { funGetAdminID, funGetSingleColumnValueCustomer, funGetSupportType } from "@/app/pro_utils/constantFunGetData";
@@ -58,11 +58,26 @@ export async function POST(request: NextRequest) {
     if (supportError) {
       return funSendApiErrorMessage(supportError, "Failed to raise support ticket");
     }
-    const supportType = await funGetSupportType(type_id);
+    // const s/upportType = await funGetSupportType(type_id);
     // const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", fields.leave_type[0], data[0].id, false);
 
-    const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", supportType + "-" + ticketId, supportData[0].id, false);
+    // const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", supportType + "-" + ticketId, supportData[0].id, false);
     (async () => {
+      let supportType = "";
+      try {
+        const supportType = await funGetSupportType(type_id);
+        const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", supportType + "-" + ticketId, supportData[0].id, false);
+        // console.log("throww error: ", addActivity);
+        throw addActivity;
+      } catch (err) {
+
+        if (err === "1") {
+          // console.log(err);
+          const dataPassed = { client_id: client_id, customer_id: customer_id, branch_id: branch_id, activity_type: "Support", activity_details: supportType + "-" + ticketId, activity_related_id: supportData[0].id, user_notify: false };
+          await addErrorExceptionLog(client_id, customer_id, "Raise support activity log error", `failed to raise support activity log with data :${dataPassed}`);
+        }
+        else if (err) { await addErrorExceptionLog(client_id, customer_id, "Raise support activity log error", { exception: err.toString() }); }
+      }
       if (customer_id) {
         const custName = await funGetSingleColumnValueCustomer(customer_id, "name");
         // const manager_id = await funGetSingleColumnValueCustomer(customer_id, "manager_id");
@@ -88,11 +103,11 @@ export async function POST(request: NextRequest) {
         }
       }
     })();
-    if (addActivity == "1") {
-      return funSendApiErrorMessage(addActivity, "Customer Support Activity Insert Issue");
-    } else {
-      return funDataAddedSuccessMessage("Support ticket raised successfully");
-    }
+    // if (addActivity == "1") {
+    //   return funSendApiErrorMessage(addActivity, "Customer Support Activity Insert Issue");
+    // } else {
+    return funDataAddedSuccessMessage("Support ticket raised successfully");
+    // }
   } catch (error) {
     return funSendApiException(error);
   }

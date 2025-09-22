@@ -161,7 +161,9 @@ const AnnouncementListing = () => {
                                         </div>
                                     </div>
                                 </div>
-                            )):isLoading?<></>:<div className="text-center">No Announcement Available</div>}
+                            )):isLoading?<></>:<div className="no_data_available">
+                                        <h4 className="text-muted">No Announcement Available</h4>
+                                    </div>}
                         </div>
                     </div> </div>} />
             <Footer />

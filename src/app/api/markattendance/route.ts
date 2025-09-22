@@ -157,22 +157,35 @@ async function startAttendance(fields: any, files: { file: any; }) {
 
   if (latLngError) {
     return NextResponse.json({ error: "latlng Error :- " + latLngError.message }, { status: 401 });
-  } else {
+  }
+  // else {
+  (async () => {
     const date = new Date(fields.punch_date_time[0]);
     const hours = date.getUTCHours().toString().padStart(2, '0');
     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
 
     const formattedTime = `${hours}:${minutes}`;
+    try {
+      const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance started at " + formattedTime, data[0].attendance_id, false);
+      throw addActivity;
+    } catch (err) {
 
-    const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance started at " + formattedTime, data[0].attendance_id, false);
-    if (addActivity == "1") {
-      return NextResponse.json({ message: "Attendance started successfully but no Activity Added", status: 1, data: data, latLngData });
-
+      if (err === "1") {
+        // console.log(err);
+        const dataPassed = { client_id: fields.client_id[0], customer_id: fields.customer_id[0], branch_id: "", activity_type: "Attendance", activity_details: "Attendance started at " + formattedTime, activity_related_id: data[0].attendance_id, user_notify: false };
+        await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance start activity log error", `failed to start atttendance activity log with data :${dataPassed}`);
+      }
+      else if (err) { await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance start activity log error", { exception: err.toString() }); }
     }
-  }
+  })();
+
+  // if (addActivity == "1") {
+  //   return NextResponse.json({ message: "Attendance started successfully but no Activity Added", status: 1, data: data, latLngData });
+
+  // }
+  // }
   return NextResponse.json({ message: "Attendance started successfully", status: 1, data: data, latLngData });
 }
-
 
 async function stopAttendance(fields: any) {
   try {
@@ -210,18 +223,29 @@ async function stopAttendance(fields: any) {
 
     if (latLngError) {
       return NextResponse.json({ error: "latlng Stop error :- " + latLngError.message }, { status: 401 });
-    } else {
-      const date = new Date(fields.punch_date_time[0]);
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-
-    const formattedTime = `${hours}:${minutes}`;
-      const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance stopped at " + formattedTime, fields.attendance_id[0], false);
-      if (addActivity == "1") {
-        return NextResponse.json({ message: "Attendance Stoped Successfully but no Activity Added", status: 1, data: data, latLngData });
-
-      }
     }
+
+    (async () => {
+      const date = new Date(fields.punch_date_time[0]);
+      const hours = date.getUTCHours().toString().padStart(2, '0');
+      const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+
+      const formattedTime = `${hours}:${minutes}`;
+      try {
+        const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance stopped at " + formattedTime, fields.attendance_id[0], false);
+
+        throw addActivity;
+      } catch (err) {
+
+        if (err === "1") {
+          // console.log(err);
+          const dataPassed = { client_id: fields.client_id[0], customer_id: fields.customer_id[0], branch_id: "", activity_type: "Attendance", activity_details: "Attendance stopped at " + formattedTime, activity_related_id: data[0].attendance_id, user_notify: false };
+          await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance stop activity log error", `failed to stop atttendance activity log with data :${dataPassed}`);
+        }
+        else if (err) { await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance stop activity log error", { exception: err.toString() }); }
+      }
+    })();
+
     return NextResponse.json({ message: "Attendance Stop Successfull", status: 1, data: data, latLngData });
   }
   catch (err) {
@@ -286,19 +310,31 @@ async function pauseAttendance(fields: any) {
 
     if (latLngError) {
       return NextResponse.json({ error: "latlng Stop error :- " + latLngError.message }, { status: 401 });
-    } else {
-      const date = new Date(fields.punch_date_time[0]);
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-
-    const formattedTime = `${hours}:${minutes}`;
-      const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance paused at " + formattedTime, fields.attendance_id[0], false);
-      if (addActivity == "1") {
-        return NextResponse.json({ message: "Attendance Paused Successfully but no Activity Added", status: 1, data: data, latLngData });
-
-      }
-      return NextResponse.json({ message: "Attendance Paused Successfull", status: 1, data: data, latLngData });
     }
+
+
+    (async () => {
+      const date = new Date(fields.punch_date_time[0]);
+      const hours = date.getUTCHours().toString().padStart(2, '0');
+      const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+
+      const formattedTime = `${hours}:${minutes}`;
+      try {
+        const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance paused at " + formattedTime, fields.attendance_id[0], false);
+
+        throw addActivity;
+      } catch (err) {
+
+        if (err === "1") {
+          // console.log(err);
+          const dataPassed = { client_id: fields.client_id[0], customer_id: fields.customer_id[0], branch_id: "", activity_type: "Attendance", activity_details: "Attendance paused at " + formattedTime, activity_related_id: data[0].attendance_id, user_notify: false };
+          await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance pause activity log error", `failed to pause atttendance activity log with data :${dataPassed}`);
+        }
+        else if (err) { await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance pause activity log error", { exception: err.toString() }); }
+      }
+    })();
+    return NextResponse.json({ message: "Attendance Paused Successfull", status: 1, data: data, latLngData });
+
 
 
 
@@ -364,19 +400,30 @@ async function resumeAttendance(fields: any) {
 
     if (latLngError) {
       return NextResponse.json({ error: "latlng Stop error :- " + latLngError.message }, { status: 401 });
-    } else {
-      const date = new Date(fields.punch_date_time[0]);
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-
-    const formattedTime = `${hours}:${minutes}`;
-      const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance resumed at " + formattedTime, fields.attendance_id[0], false);
-      if (addActivity == "1") {
-        return NextResponse.json({ message: "Attendance Resumed Successfully but no Activity Added", status: 1 });
-
-      }
-      return NextResponse.json({ message: "Attendance Resumed Successfull", status: 1, data: data, latLngData });
     }
+
+    (async () => {
+      const date = new Date(fields.punch_date_time[0]);
+      const hours = date.getUTCHours().toString().padStart(2, '0');
+      const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+
+      const formattedTime = `${hours}:${minutes}`;
+      try {
+        const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], "", "Attendance", "Attendance resumed at " + formattedTime, fields.attendance_id[0], false);
+
+        throw addActivity;
+      } catch (err) {
+
+        if (err === "1") {
+          // console.log(err);
+          const dataPassed = { client_id: fields.client_id[0], customer_id: fields.customer_id[0], branch_id: "", activity_type: "Attendance", activity_details: "Attendance resumed at " + formattedTime, activity_related_id: data[0].attendance_id, user_notify: false };
+          await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance resume activity log error", `failed to resume atttendance activity log with data :${dataPassed}`);
+        }
+        else if (err) { await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Atttendance resume activity log error", { exception: err.toString() }); }
+      }
+    })();
+    return NextResponse.json({ message: "Attendance Resumed Successfull", status: 1, data: data, latLngData });
+
 
   } catch (err) {
     console.log(err);
@@ -416,6 +463,5 @@ async function getAttendanceGeoLocation(attendanceID: number) {
     return data;
   }
 }
-
 
 

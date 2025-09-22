@@ -247,6 +247,7 @@ const UpdateAnnouncement = () => {
         const newErrors: Partial<AnnouncementValues> = {};
         for (let i = 0; i < announcementFormValues.branchID.length; i++) {
             if (announcementFormValues.branchID[i].isSelected) {
+                delete newErrors.branchID;
                 break;
             }
             else {
@@ -255,6 +256,7 @@ const UpdateAnnouncement = () => {
         }
         for (let i = 0; i < announcementFormValues.roleTypes.length; i++) {
             if (announcementFormValues.roleTypes[i].isSelected) {
+                delete newErrors.roleTypes;
                 break;
             }
             else {
@@ -596,7 +598,7 @@ const UpdateAnnouncement = () => {
                                                     setAnnouncementDeleteTitle(announcementFormValues.title)
                                                 }}
                                             /> */}
-                                            {ShowDeleteAnnouncementDialog && <DeleteConfirmation onClose={() => { setShowDeleteAnnouncementDialog(false), fetchData() }} id={AnnouncementDeleteID} deletionType={deleteDataTypeAnnouncement} deleteDetail={AnnouncementDeleteTitle} />}
+                                            {ShowDeleteAnnouncementDialog && <DeleteConfirmation onClose={(isDeleted) => { setShowDeleteAnnouncementDialog(false);if(isDeleted==1){router.push(pageURL_announcementListingPage);} }} id={AnnouncementDeleteID} deletionType={deleteDataTypeAnnouncement} deleteDetail={AnnouncementDeleteTitle} />}
                                         </div>
                                     </div>
                                 </div>

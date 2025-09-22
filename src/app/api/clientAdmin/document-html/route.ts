@@ -5,12 +5,12 @@ import { parseForm } from "@/app/pro_utils/constant";
 // import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
 // If you get "Cannot find module", you may need to install types or use dynamic import as below:
 
-let pdfjsLib: any;
-try {
-    pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
-} catch (e) {
-    pdfjsLib = null;
-}
+// let pdfjsLib: any;
+// try {
+//     pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
+// } catch (e) {
+//     pdfjsLib = null;
+// }
 
 import fs from "fs/promises";
 

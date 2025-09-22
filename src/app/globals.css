@@ -1259,6 +1259,75 @@ flex-wrap: nowrap;
   min-width: auto;
 }
 
+
+.switch_user_admin {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch_user_admin input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.switch_user_admin .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.switch_user_admin .slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.switch_user_admin input:checked+.slider {
+  background-color: #ff0000;
+}
+
+.switch_user_admin input:focus+.slider {
+  box-shadow: 0 0 1px #ff0000;
+}
+
+.switch_user_admin input:checked+.slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.switch_user_admin .slider.round {
+  border-radius: 34px;
+}
+
+.switch_user_admin .slider.round:before {
+  border-radius: 50%;
+}
+
+.no_data_available{
+  height: 400px;
+  align-items: center !important ;
+  justify-content: center !important;
+  display: flex !important;
+}
+
 /*----------------------Nikhil Declared CSS END------------------------------------ */
 
 /*------------------------------- client admin css start--------------------------------------------- */
@@ -1531,7 +1600,7 @@ header {
   border-radius: 10px;
   position: absolute;
   box-shadow: rgba(2, 2, 2, 0.08) 1px 0px 3px;
-  width: 20%;
+  width: 55px;
   height: 100%;
   left: 0px;
   margin: -10px 0 0 -10px;
@@ -2750,6 +2819,7 @@ background-color: #fff;
   top: 0;
   right: 0;
   transition-duration: 0.5s;
+  float: right;
 }
 
 .info_icon:hover .tooltiptext {
@@ -4644,7 +4714,7 @@ input.new_upload_btn_input {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  word-break: break-word;
+  /* word-break: break-word; */
   font-size: 14px;
   padding: 15px;
 }
@@ -5321,15 +5391,7 @@ input.new_upload_btn_input {
   border-radius: 12px;
   position: relative;
 }
-.nw_notification_table_listing {
-  /* display: grid; */
-  grid-template-columns: 160px 1fr 1fr 1fr 1fr 40px;
-  gap: 20px;
-  padding: 8px;
-  border: 1px solid #dedede;
-  border-radius: 12px;
-  position: relative;
-}
+
 .nw_leave_table_first_box {
   display: grid;
   grid-template-columns: 25px 1fr;

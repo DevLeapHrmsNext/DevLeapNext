@@ -67,30 +67,33 @@ async function authUserDetails(authUUID: any, platform: any, fcm_token: any) {
 
   const { data: cust, error: custFetchError } = await supabase
     .from("leap_customer")
-    .select("customer_id, auth_token")
+    .select("customer_id, auth_token, employment_status")
     .eq("authUuid", authUUID)
-    .neq("employment_status", false);
+    // .neq("employment_status", false);
 
   if (custFetchError) {
     return funSendApiErrorMessage(custFetchError, "Unable to fetch customer");
   }
 
-  if (!cust || cust.length === 0) {
-     const { data: inactiveUser } = await supabase
-      .from("leap_customer")
-      .select("customer_id")
-      .eq("authUuid", authUUID)
-      .eq("employment_status", false)
-      .single();
-
-    if (inactiveUser) {
-      return NextResponse.json(
+  if (cust[0].employment_status == false) {
+    return NextResponse.json(
         { status: 0, message: "Your account is inactive. Please contact support." },
         { status: 200 }
       );
-    }
+    //  const { data: inactiveUser } = await supabase
+    //   .from("leap_customer")
+    //   .select("customer_id")
+    //   .eq("authUuid", authUUID)
+    //   .eq("employment_status", false)
+    //   .single();
 
-    return NextResponse.json({ status: 0, message: "No customer found" }, { status: 200 });
+    // if (inactiveUser) {
+    //   return NextResponse.json(
+    //     { status: 0, message: "Your account is inactive. Please contact support." },
+    //     { status: 200 }
+    //   );
+    // }
+
   }
 
   const customer = cust[0];

@@ -6,6 +6,21 @@ import { useGlobalContext } from "./app/contextProviders/loggedInGlobalContext";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   console.log("Middel waare is getting called ---------------------------------- ----- -- ",pathname);
+  const isAdmin = request.cookies.get("isAdmin")?.value;
+  console.log("Middel waare is getting called ---------------------------------- ----- -- ",isAdmin);
+
+  // if(isAdmin){
+  //   if (request.nextUrl.pathname.startsWith("/user") && isAdmin.toString()=="true") {
+  //       console.log("Middel waare is getting called ----",isAdmin);
+      
+  //     return NextResponse.redirect(new URL("/dashboard", request.url));
+  //   }else{
+      
+  //     return NextResponse.redirect(new URL("/user/dashboard", request.url));
+      
+  //   }
+  // }
+
 
   // ✅ Allow password reset & confirmation pages to be accessed
   if (pathname === "/" || pathname.toLowerCase().includes("login")

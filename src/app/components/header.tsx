@@ -1,5 +1,6 @@
 'use client';
 import Head from 'next/head';
+import { cookies } from "next/headers"; // only for server actions
 import React, { useRef, useState } from 'react'
 import { createClient } from '../../../utils/supabase/client';
 import { useGlobalContext } from '../contextProviders/loggedInGlobalContext';
@@ -77,9 +78,12 @@ const LeapHeader = ({ title }: any) => {
 
         const handleAdminEmpToggle = async () => {
             if(isAdmin=="1"){
-                router.push(pageURL_userEmpDashboard)
+                document.cookie = `isAdmin=true; path=/;SameSite=Lax`;
+                window.location.replace(pageURL_userEmpDashboard)
             }else{
-                router.push(pageURL_dashboard)
+                document.cookie = `isAdmin=false; path=/;SameSite=Lax`;
+
+                window.location.replace(pageURL_dashboard)
             }
             setGlobalState({
                 contextUserName: contextUserName,
@@ -169,13 +173,28 @@ const LeapHeader = ({ title }: any) => {
                         <div className="dash_logo"><img src={getImageApiURL + "/uploads/" + contextLogoURL} className="header-logo" style={{ cursor: "pointer" }} onClick={() => { navigateToDashboard() }} /></div>
                         {/* <div className="dash_logo"><img src="/images/dashboard-logo.png" className="img-fluid" /></div> */}
                         <div className="dash_topbox">
-                            <div className="welcome_text">
+                            <div className="welcome_text" style={{display:"flex"}}>
                                 {subTitle}<span>{title} {contextUserName}</span>
                                 <div style={{ display: "none" }}>{contextLogoURL}</div>
+                                
                             </div>
+                            
+                            
                             {(contextRoleID == "3" || contextRoleID == "2") && isAdmin=="1" ?
                                 <div className="dash_topotherbox">
-                                    <div className="option">
+                                    {contextRoleID=="2" && 
+                                        <div className='row'>
+                                            <div className="col-lg-12" style={{marginLeft:"10px"  ,display: "flex",alignItems: "center"}}>
+                                                <label htmlFor="formFile" className="form-label" style={{fontSize:"11px", fontFamily: 'Outfit-Regular',padding: "9px 5px 0px 0px"}}>{isAdmin=="1"?"Switch to user":"Switch to Admin"}</label>
+                                                <label className="switch_user_admin">
+                                                    <input type="checkbox" name="showToUsers" onChange={handleAdminEmpToggle} checked={isAdmin=="1"}/>
+                                                    <span className="slider round"></span>
+                                                </label>
+                                            </div>
+                                        
+                                        </div>
+                                    }
+                                    {/* <div className="option">
                                         {!isSearchVisible && (
                                             <a onClick={handleSearchClick} style={{ cursor: 'pointer' }}>
                                                 <img src={staticIconsBaseURL + "/images/search_icon.png"} className="img-fluid" alt="Search Icon" />
@@ -196,7 +215,7 @@ const LeapHeader = ({ title }: any) => {
                                                 </div>
                                             </div>
                                         )}
-                                    </div>
+                                    </div> */}
                                     <div className="option">
                                         <a href="#"><img src={staticIconsBaseURL + "/images/notification_icon.png"} className="img-fluid" /><div className="option_label">Notification</div></a>
                                     </div>
@@ -205,7 +224,7 @@ const LeapHeader = ({ title }: any) => {
                                         onMouseEnter={() => setDropdownVisible(true)} // Show dropdown on hover
                                         onMouseLeave={() => setDropdownVisible(false)} // Hide dropdown when not hovering
                                     >
-                                        <div className="option profile_box" onClick={toggleDropdown} style={{ cursor: "pointer" }}>
+                                        {/* <div className="option profile_box" onClick={toggleDropdown} style={{ cursor: "pointer" }}>
                                             <img src={getImageApiURL + "/uploads/" + contextProfileImage} className="img-fluid" style={{ maxHeight: "35px" }} />
                                             <div className="profile_dropdown">
                                                 <div onClick={(e) => { navigateToProfile(1) }}>Profile</div>
@@ -213,12 +232,68 @@ const LeapHeader = ({ title }: any) => {
                                                 <div onClick={handleLogout}>Logout</div>
                                                 <div onClick={handleAdminEmpToggle}>{}Switch User</div>
                                             </div>
-                                        </div>
+                                        </div> */}
+                                        <div className="user_dash_top_profile_box">
+                                                <div className="user_dash_top_profile_name_imgbox">
+                                                    <div className="user_dash_top_profile_name">
+                                                        {contextUserName.split(' ')[0]}
+                                                    </div>
+                                                    <div className="user_dash_top_profile_img">
+                                                        <img src="/images/userpic.png" alt="Profile picture" className="img-fluid" />
+                                                    </div>
+                                                </div>
+                                                <div className="user_dash_top_profile_dropdown">
+                                                    <div className="user_dash_top_profile_listing">
+                                                        <div className="user_dash_top_profile_icon">
+                                                            <svg width="16" height="16" x="0" y="0" viewBox="0 0 512 512">
+                                                                <g transform="matrix(0.9600000000000001,0,0,0.9600000000000001,10.240001220703107,10.23999999999998)"><path d="M333.187 237.405c32.761-23.893 54.095-62.561 54.095-106.123C387.282 58.893 328.389 0 256 0S124.718 58.893 124.718 131.282c0 43.562 21.333 82.23 54.095 106.123-81.44 31.165-139.428 110.126-139.428 202.39 0 39.814 32.391 72.205 72.205 72.205h288.82c39.814 0 72.205-32.391 72.205-72.205 0-92.264-57.988-171.225-139.428-202.39zM164.103 131.282c0-50.672 41.225-91.897 91.897-91.897s91.897 41.225 91.897 91.897S306.672 223.18 256 223.18s-91.897-41.226-91.897-91.898zM400.41 472.615H111.59c-18.097 0-32.82-14.723-32.82-32.821 0-97.726 79.504-177.231 177.231-177.231s177.231 79.504 177.231 177.231c-.001 18.098-14.724 32.821-32.822 32.821z" fill="#707070" opacity="1" data-original="#000000"></path>
+                                                                </g>
+                                                            </svg>
+                                                        </div>
+                                                        <div className="user_dash_top_profile_logout" onClick={(e) => { navigateToProfile(2) }}>
+                                                            Profile
+                                                        </div>
+                                                    </div>
+                                                    <div className="user_dash_top_profile_listing">
+                                                        <div className="user_dash_top_profile_icon">
+                                                            <svg width="16" height="16" x="0" y="0" viewBox="0 0 24 24"><g><path d="M13.12 24h-2.24a1.498 1.498 0 0 1-1.486-1.32l-.239-1.876a9.45 9.45 0 0 1-1.374-.569l-1.494 1.161a1.492 1.492 0 0 1-1.985-.126l-1.575-1.575a1.488 1.488 0 0 1-.122-1.979l1.161-1.495a9.232 9.232 0 0 1-.569-1.374l-1.88-.239A1.501 1.501 0 0 1 0 13.12v-2.24c0-.757.567-1.396 1.32-1.486l1.876-.239a9.45 9.45 0 0 1 .569-1.374l-1.16-1.494a1.49 1.49 0 0 1 .127-1.986l1.575-1.575a1.489 1.489 0 0 1 1.979-.122L7.78 3.766a9.416 9.416 0 0 1 1.375-.569l.239-1.88C9.484.567 10.123 0 10.88 0h2.24c.757 0 1.396.567 1.486 1.32l.239 1.876c.478.155.938.346 1.375.569l1.494-1.161a1.49 1.49 0 0 1 1.985.127l1.575 1.575c.537.521.591 1.374.122 1.979L20.235 7.78c.224.437.415.897.569 1.374l1.88.239A1.5 1.5 0 0 1 24 10.88v2.24c0 .757-.567 1.396-1.32 1.486l-1.876.239a9.45 9.45 0 0 1-.569 1.374l1.161 1.494a1.49 1.49 0 0 1-.127 1.985l-1.575 1.575a1.487 1.487 0 0 1-1.979.122l-1.495-1.161a9.232 9.232 0 0 1-1.374.569l-.239 1.88A1.5 1.5 0 0 1 13.12 24zm-5.39-4.86c.083 0 .168.021.244.063a8.393 8.393 0 0 0 1.774.736.5.5 0 0 1 .358.417l.28 2.2c.03.251.247.444.494.444h2.24a.504.504 0 0 0 .493-.439l.281-2.204a.5.5 0 0 1 .358-.417 8.393 8.393 0 0 0 1.774-.736.499.499 0 0 1 .55.042l1.75 1.36a.492.492 0 0 0 .655-.034l1.585-1.585a.495.495 0 0 0 .039-.66l-1.36-1.75a.5.5 0 0 1-.042-.55 8.393 8.393 0 0 0 .736-1.774.5.5 0 0 1 .417-.358l2.2-.28A.507.507 0 0 0 23 13.12v-2.24a.504.504 0 0 0-.439-.493l-2.204-.281a.5.5 0 0 1-.417-.358 8.393 8.393 0 0 0-.736-1.774.497.497 0 0 1 .042-.55l1.36-1.75a.49.49 0 0 0-.033-.654l-1.585-1.585a.492.492 0 0 0-.66-.039l-1.75 1.36a.5.5 0 0 1-.551.042 8.359 8.359 0 0 0-1.774-.736.5.5 0 0 1-.358-.417l-.28-2.2A.507.507 0 0 0 13.12 1h-2.24a.504.504 0 0 0-.493.439l-.281 2.204a.502.502 0 0 1-.358.418 8.356 8.356 0 0 0-1.774.735.5.5 0 0 1-.551-.041l-1.75-1.36a.49.49 0 0 0-.654.033L3.434 5.014a.495.495 0 0 0-.039.66l1.36 1.75a.5.5 0 0 1 .042.55 8.341 8.341 0 0 0-.736 1.774.5.5 0 0 1-.417.358l-2.2.28A.505.505 0 0 0 1 10.88v2.24c0 .247.193.464.439.493l2.204.281a.5.5 0 0 1 .417.358c.18.626.428 1.223.736 1.774a.497.497 0 0 1-.042.55l-1.36 1.75a.49.49 0 0 0 .033.654l1.585 1.585a.494.494 0 0 0 .66.039l1.75-1.36a.515.515 0 0 1 .308-.104z" fill="#000000" opacity="1" data-original="#000000"></path><path d="M12 17c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5zm0-9c-2.206 0-4 1.794-4 4s1.794 4 4 4 4-1.794 4-4-1.794-4-4-4z" fill="#000000" opacity="1" data-original="#000000"></path></g></svg>
+                                                        </div>
+                                                        <div className="user_dash_top_profile_logout" onClick={(e) => { navigateToProfile(2) }}>
+                                                            Settings
+                                                        </div>
+                                                    </div>
+                                                    <div className="user_dash_top_profile_listing">
+                                                        <div className="user_dash_top_profile_icon">
+                                                            <svg width="16" height="16" x="0" y="0" viewBox="0 0 24 24">
+                                                                <g transform="matrix(1.17,0,0,1.17,-2.0397450995445237,-2.0399100208282466)">
+                                                                    <path fill="#707070" fill-rule="evenodd" d="M12 2a1 1 0 0 1 1 1v10a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zM8.866 5.57A1 1 0 0 1 8.5 6.936a7 7 0 1 0 6.999 0 1 1 0 0 1 1-1.731 9 9 0 1 1-9.001 0 1 1 0 0 1 1.367.365z" clip-rule="evenodd" opacity="1" data-original="#000000"></path>
+                                                                </g>
+                                                            </svg>
+                                                        </div>
+                                                        <div className="user_dash_top_profile_logout" onClick={handleLogout}>
+                                                            Logout
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
                                     </div>
                                 </div> :
                                 contextRoleID == "5" || contextRoleID == "9" || contextRoleID == "4" || isAdmin=="0" ?
                                     <div className="dash_topotherbox">
-                                        <div className="user_dash_top_other_box">
+                                        {contextRoleID=="2" && 
+                                        <div className='row'>
+                                            <div className="col-lg-12" style={{marginLeft:"10px" ,display: "flex",alignItems: "center"}}>
+                                                <label htmlFor="formFile" className="form-label" style={{fontSize:"11px", fontFamily: 'Outfit-Regular',padding: "9px 5px 0px 0px"}}>{isAdmin=="1"?"Switch to user":"Switch to Admin"}</label>
+                                                <label className="switch_user_admin">
+                                                    <input type="checkbox" name="showToUsers" onChange={handleAdminEmpToggle} checked={isAdmin=="1"}/>
+                                                    <span className="slider round"></span>
+                                                </label>
+                                            </div>
+                                        
+                                        </div>
+                                    }
+                                        <div className="user_dash_top_other_box" >
                                             <div className="user_dash_top_notification_box">
                                                 {/* <svg width="28" height="28" x="0" y="0" viewBox="0 0 512 512">
                                                     <circle r="256" cx="256" cy="256" fill="#f2f2f2"></circle>
@@ -260,7 +335,7 @@ const LeapHeader = ({ title }: any) => {
                                                             Logout
                                                         </div>
                                                     </div>
-                                                    {contextRoleID=="2" && isAdmin=="0" &&
+                                                    {/* {contextRoleID=="2" && isAdmin=="0" &&
                                                     <div className="user_dash_top_profile_listing">
                                                         <div className="user_dash_top_profile_icon">
                                                             <svg width="16" height="16" x="0" y="0" viewBox="0 0 24 24">
@@ -275,7 +350,7 @@ const LeapHeader = ({ title }: any) => {
                                                     </div>
 
 
-                                                    }
+                                                    } */}
                                                 </div>
                                             </div>
                                         </div>

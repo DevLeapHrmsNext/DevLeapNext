@@ -4,7 +4,7 @@ import { calculateNumDays, formatDateYYYYMMDD, funCalculateTimeDifference, funDa
 import fs from "fs/promises";
 import { error } from "console";
 import { funGetActivityTypeId, funGetAdminID, funGetLeaveType, funGetSingleColumnValueCustomer } from "@/app/pro_utils/constantFunGetData";
-import { addUserActivities, apiUploadDocs } from "@/app/pro_utils/constantFunAddData";
+import { addErrorExceptionLog, addUserActivities, apiUploadDocs } from "@/app/pro_utils/constantFunAddData";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
@@ -42,10 +42,23 @@ export async function POST(request: NextRequest) {
       console.log(error);
       return funSendApiErrorMessage(error, "Customer Apply Leave Insert Issue");
     }
-    const leaveType = await funGetLeaveType(fields.leave_type[0]);
-    const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", leaveType , data[0].id, false);
 
     (async () => {
+      let leaveType = "";
+      try {
+        const leaveType = await funGetLeaveType(fields.leave_type[0]);
+        const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", leaveType, data[0].id, false);
+        // console.log("throww error: ", addActivity);
+        throw addActivity;
+      } catch (err) {
+
+        if (err === "1") {
+          // console.log(err);
+          const dataPassed = { client_id: fields.client_id[0], customer_id: fields.customer_id[0], branch_id: fields.branch_id[0], activity_type: "Leave", activity_details: leaveType, activity_related_id: data[0].id, user_notify: false };
+          await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Add leave activity log error", `failed to add leave activity log with data :${dataPassed}`);
+        }
+        else if (err) { await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "Add leave activity log error", { exception: err.toString() }); }
+      }
       if (fields.customer_id[0]) {
         const custName = await funGetSingleColumnValueCustomer(fields.customer_id[0], "name");
         const manager_id = await funGetSingleColumnValueCustomer(fields.customer_id[0], "manager_id");
@@ -81,16 +94,15 @@ export async function POST(request: NextRequest) {
         }
       }
     })();
-    if (addActivity == "1") {
-      return funSendApiErrorMessage(addActivity, "Customer Leave Activity Insert Issue");
-    }
-    else {
-      return funDataAddedSuccessMessage("Leave Applied Successfully");
-    }
+    // if (addActivity == "1") {
+    //   return funSendApiErrorMessage(addActivity, "Customer Leave Activity Insert Issue");
+    // }
+    // else {
+    return funDataAddedSuccessMessage("Leave Applied Successfully");
+    // }
   } catch (error) {
     console.log(error);
     return funSendApiException(error);
   }
 }
-
 

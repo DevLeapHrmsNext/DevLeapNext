@@ -159,6 +159,7 @@ const AnnouncementListing = () => {
         const newErrors: Partial<AnnouncementValues> = {};
         for(let i=0;i<announcementFormValues.branchID.length;i++){
             if(announcementFormValues.branchID[i].isSelected){
+                delete newErrors.branchID;
                 break;
             }
             else {
@@ -167,6 +168,7 @@ const AnnouncementListing = () => {
         }
         for(let i=0;i<announcementFormValues.roleTypes.length;i++){
             if(announcementFormValues.roleTypes[i].isSelected){
+                delete newErrors.roleTypes;
                 break;
             }
             else {

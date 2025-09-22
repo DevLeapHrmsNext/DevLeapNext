@@ -3,44 +3,58 @@ import { formatDateYYYYMMDD, funDataAddedSuccessMessage, funDataMissingError, fu
 import { funGetAdminID, funGetSingleColumnValueCustomer, funGetSubProjectType, getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
 import supabase from "../../supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
-import { addUserActivities } from "@/app/pro_utils/constantFunAddData";
+import { addErrorExceptionLog, addUserActivities } from "@/app/pro_utils/constantFunAddData";
+import { error, log } from "console";
 
 export async function POST(request: NextRequest) {
 
-    try {
-        // const { data: user, error: userError } = await supabase.auth.getUser();
+  try {
+    // const { data: user, error: userError } = await supabase.auth.getUser();
 
-        // // Handle case where the user is not authenticated
-        // if (userError || !user) {
-        //   return NextResponse.json(
-        //     { error: 'User not authenticated' },
-        //     { status: 401 }
-        //   );
-        // }
-        const { client_id, customer_id, task_status, branch_id, sub_project_id, task_type_id, total_hours, total_minutes, task_details, task_date } = await request.json();
+    // // Handle case where the user is not authenticated
+    // if (userError || !user) {
+    //   return NextResponse.json(
+    //     { error: 'User not authenticated' },
+    //     { status: 401 }
+    //   );
+    // }
+    const { client_id, customer_id, task_status, branch_id, sub_project_id, task_type_id, total_hours, total_minutes, task_details, task_date } = await request.json();
 
-        const { data: TaskData, error: taskError } = await supabase.from('leap_customer_project_task')
-            .insert({
-                client_id: client_id,
-                branch_id: branch_id,
-                customer_id: customer_id,
-                // project_id: project_id,
-                sub_project_id: sub_project_id,
-                task_type_id: task_type_id,
-                task_status: task_status,
-                total_hours: total_hours || 0,
-                total_minutes: total_minutes || 0,
-                task_details: task_details,
-                task_date: task_date,
-                created_at: new Date().toISOString()
-            }).select();
-        if (taskError) {
-            return funSendApiErrorMessage(taskError, "Failed to add task");
-        }
-        const projectType = await funGetSubProjectType(sub_project_id);
-        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", projectType, TaskData[0].id,false);
+    const { data: TaskData, error: taskError } = await supabase.from('leap_customer_project_task')
+      .insert({
+        client_id: client_id,
+        branch_id: branch_id,
+        customer_id: customer_id,
+        // project_id: project_id,
+        sub_project_id: sub_project_id,
+        task_type_id: task_type_id,
+        task_status: task_status,
+        total_hours: total_hours || 0,
+        total_minutes: total_minutes || 0,
+        task_details: task_details,
+        task_date: task_date,
+        created_at: new Date().toISOString()
+      }).select();
+    if (taskError) {
+      return funSendApiErrorMessage(taskError, "Failed to add task");
+    }
 
     (async () => {
+      let projectType = "";
+      try {
+        projectType = await funGetSubProjectType(sub_project_id);
+        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", projectType, TaskData[0].id, false);
+        // console.log("throww error: ", addActivity);
+        throw addActivity;
+      } catch (err) {
+
+        if (err === "1") {
+          // console.log(err);
+          const dataPassed = { client_id: client_id, customer_id: customer_id, branch_id: "", activity_type: "Work task", activity_details: projectType, activity_related_id: TaskData[0].id, user_notify: false };
+          await addErrorExceptionLog(client_id, customer_id, "Add task activity log error", `failed to add task activity log with data :${dataPassed}`);
+        }
+        else if (err) { await addErrorExceptionLog(client_id, customer_id, "Add task activity log error", { exception: err.toString() }); }
+      }
       if (customer_id) {
         const custName = await funGetSingleColumnValueCustomer(customer_id, "name");
         const manager_id = await funGetSingleColumnValueCustomer(customer_id, "manager_id");
@@ -76,13 +90,13 @@ export async function POST(request: NextRequest) {
         }
       }
     })();
-        if (addActivity == "1") {
-            return funSendApiErrorMessage(addActivity, "Customer Task Activity Insert Issue");
-        }else {
-      return funDataAddedSuccessMessage("Task Added Successfully");
-    }
-        // return NextResponse.json({ status: 1, message: "Task Added Successfully", data: TaskData }, { status: apiStatusSuccessCode })
-    } catch (error) {
-        return funSendApiException(error);
-    }
+    // if (addActivity == "1") {
+    //     return funSendApiErrorMessage(addActivity, "Customer Task Activity Insert Issue");
+    // }else {
+    return funDataAddedSuccessMessage("Task Added Successfully");
+    // }
+    // return NextResponse.json({ status: 1, message: "Task Added Successfully", data: TaskData }, { status: apiStatusSuccessCode })
+  } catch (error) {
+    return funSendApiException(error);
+  }
 }

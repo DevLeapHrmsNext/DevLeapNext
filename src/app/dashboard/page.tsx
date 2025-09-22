@@ -49,6 +49,7 @@ type DashboardData = {
     };
 };
 const Dashboard = () => {
+    // document.cookie = "isAdmin=; path=/dashboard"
     const router = useRouter();
     const [branchData, setBranchData] = useState<Branches[]>([]);
     const [data, setResponseData] = useState<DashboardData>();
