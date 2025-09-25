@@ -28,7 +28,7 @@ import UserAttendanceTimer from '@/app/components/userAttendanceTimer';
 import { CustomerLeavePendingCount } from '@/app/models/leaveModel';
 import moment from 'moment';
 import {  pageURL_userAnnouncement, pageURL_userApplyLeaveForm, pageURL_userAsset, pageURL_userAttendance, pageURL_userDoc, pageURL_userFillTask, pageURL_userLeave, pageURL_userSupport, pageURL_userSupportForm, pageURL_userTaskListingPage, pageURL_userTeamAttendanceList, pageURL_userTeamLeave } from '@/app/pro_utils/stringRoutes';
-import { AttendanceTimer, ManagerData, MyTask, Subordinate, TeamMember, UserNotification} from '@/app/models/userDashboardModel';
+import { AttendanceTimer, ManagerData, MyTask, Subordinate, TeamMember, UserDashboardNotification, UserNotification} from '@/app/models/userDashboardModel';
 import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 import UserNotificationCorner from '@/app/components/userNotification';
 
@@ -50,7 +50,7 @@ const Dashboard = () => {
     const [tabSelectedIndex, setTabSelectedIndex] = useState(0);
     const [attendanceData, setAttendanceData] = useState<AttendanceTimer>();
     const [greetArray, setGreetData] = useState<any>();
-    const [notificationData, setNotifyData] = useState<UserNotification[]>([]);
+    const [notificationData, setNotifyData] = useState<UserDashboardNotification[]>([]);
     const [showNoti, setShowNoti] = useState(false);
 
     const [showAlert, setShowAlert] = useState(false);

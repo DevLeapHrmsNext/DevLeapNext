@@ -460,6 +460,8 @@ import { useGlobalContext } from '../contextProviders/loggedInGlobalContext';
 export const UserAddress = () => {
     // const [userData, setUserData] = useState<Address>();
     const router = useRouter();
+        const [isBothAddressSame, setBothAddressSame] = useState(false);
+    
     
     const[isLoading,setLoading]=useState(false)
     const [emergencyContactRelation, setEmergencyRelation] = useState<LeapRelations[]>([]);
@@ -508,10 +510,14 @@ export const UserAddress = () => {
             relation_type: '',
         }
     })
+    const [addressformErrors, setAddressFormErrors] = useState<Partial<CustomerAddress>>({});
+    const [peraddressFormErrors, setPerAddressFormErrors] = useState<Partial<CustomerAddress>>({});
+    const [emergencyFieldErrors, setEmergencyFieldErrors] = useState<Partial<EmergencyContactNew>>({});
+    
 
     useEffect(() => {
         const fetchData = async () => {
-
+            const formData = new FormData();
             const relationsType = await getRelations();
             setEmergencyRelation(relationsType);
 
@@ -558,10 +564,21 @@ export const UserAddress = () => {
         fetchData();
     }, []);
 
-    const formData = new FormData();
+    
 
- 
+ const sameAddress = (setSame: boolean) => {
 
+        if (setSame) {
+            setpermenant((prev) => ({ ...prev, ["address_line1"]:  currentAdd.address_line1}))
+            setpermenant((prev) => ({ ...prev, ["address_line2"]:  currentAdd.address_line2}))
+            setpermenant((prev) => ({ ...prev, ["city"]:  currentAdd.city}))
+            setpermenant((prev) => ({ ...prev, ["state"]:  currentAdd.state}))
+            setpermenant((prev) => ({ ...prev, ["postal_code"]:  currentAdd.postal_code}))
+            setpermenant((prev) => ({ ...prev, ["country"]:  currentAdd.country}))
+            setpermenant((prev) => ({ ...prev, ["latitude"]:  currentAdd.latitude}))
+            setpermenant((prev) => ({ ...prev, ["longitude"]:  currentAdd.longitude}))
+        }
+    }
     // const handleInputChange = (e: any) => {
     //     const { name, value, type, files } = e.target;
     //     console.log("Form values updated:", userData);
@@ -569,14 +586,52 @@ export const UserAddress = () => {
     // };
     const {contextClientID,contextRoleID,contextSelectedCustId}=useGlobalContext();
 
+    const validate = () => {
+        const currAddErrors: Partial<CustomerAddress> = {};
+        const perAddErrors: Partial<CustomerAddress> = {};
+        const emerFieldErrors: Partial<EmergencyContactNew> = {};
+        if (!currentAdd.address_line1) currAddErrors.address_line1 = "required";
+        if (!currentAdd.address_line2) currAddErrors.address_line2 = "required";
+        if (!currentAdd.city) currAddErrors.city = "required";
+        if (!currentAdd.state) currAddErrors.state = "required";
+        if (!currentAdd.postal_code) currAddErrors.postal_code = "required";
+        if (!currentAdd.country) currAddErrors.country = "required";
+        
+        if (!permenantAdd.address_line1) perAddErrors.address_line1 = "required";
+        if (!permenantAdd.address_line2) perAddErrors.address_line2 = "required";
+        if (!permenantAdd.city) perAddErrors.city = "required";
+        if (!permenantAdd.state) perAddErrors.state = "required";
+        if (!permenantAdd.postal_code) perAddErrors.postal_code = "required";
+        if (!permenantAdd.country) perAddErrors.country = "required";
+
+        if (!emergencyContact.contact_name) emerFieldErrors.contact_name = "required";
+        if (!emergencyContact.emergency_contact) emerFieldErrors.emergency_contact = "required";
+        if (!emergencyContact.relation) emerFieldErrors.relation = { id: 0, relation_type: "required" };
+
+        setAddressFormErrors(currAddErrors);
+        setPerAddressFormErrors(perAddErrors);
+        setEmergencyFieldErrors(emerFieldErrors);
+
+        const validationSuccess =
+            Object.keys(currAddErrors).length === 0 &&
+            Object.keys(perAddErrors).length === 0 &&
+            Object.keys(emerFieldErrors).length === 0;
+
+        return validationSuccess;
+
+
+    }
     const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if(!validate()) return;
         setLoading(true);
         {/* AddressDetails details 1 */ }
-        e.preventDefault();
+
         console.log("Emeekhbhdhfsdhaba ada-d---------",emergencyContact.emergency_contact);
-        
+        const formData = new FormData();
         formData.append("customer_id", currentAdd.customer_id+'');
         formData.append("role_id", contextRoleID);
+        formData.append("client_id", contextClientID);
         formData.append("current_id", currentAdd.id+'');
         formData.append("c_address_line1", currentAdd.address_line1);
         formData.append("c_address_line2", currentAdd.address_line2);
@@ -642,69 +697,124 @@ export const UserAddress = () => {
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Line 1:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Line 1<span className='req_text'>*</span> :  </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="address_line1" readOnly={isReadonly()} value={currentAdd.address_line1|| ""}  name="address_line1" onChange={(e) => setcurrent((prev) => ({ ...prev, ["address_line1"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="address_line1" readOnly={isReadonly()} value={currentAdd.address_line1|| ""}  name="address_line1" 
+                                                        onChange={(e) => 
+                                                            {setcurrent((prev) => ({ ...prev, ["address_line1"]: e.target.value })); 
+                                                            if(isBothAddressSame){            
+                                                                setpermenant((prev) => ({ ...prev, ["address_line1"]:  e.target.value}))
+                                                                }}} />
+                                                        {addressformErrors.address_line1 && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" > Line 2:</label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Line 2<span className='req_text'>*</span> :</label>
                                                     </div>
                                                 </div>
 
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="address_line2" readOnly={isReadonly()} value={currentAdd.address_line2|| ""} name="address_line2" onChange={(e) => setcurrent((prev) => ({ ...prev, ["address_line2"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="address_line2" readOnly={isReadonly()} value={currentAdd.address_line2|| ""} name="address_line2" 
+                                                        onChange={(e) => {
+                                                        setcurrent((prev) => ({ ...prev, ["address_line2"]: e.target.value }));
+                                                    if(isBothAddressSame){            
+                                                                setpermenant((prev) => ({ ...prev, ["address_line2"]:  e.target.value}))
+                                                                }}}  />
+                                                        {addressformErrors.address_line2 && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >City:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >City<span className='req_text'>*</span> :</label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="city" readOnly={isReadonly()} value={currentAdd.city|| ""} name="city" onChange={(e) => setcurrent((prev) => ({ ...prev, ["city"]: e.target.value }))} />
+                                                        <input type="text" 
+                                                        onKeyPress={(e) => {
+                                                                                if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                                    e.preventDefault();
+                                                                                }
+                                                                            }}
+                                                        className="form-control" id="city" readOnly={isReadonly()} value={currentAdd.city|| ""} name="city" 
+                                                        onChange={(e) => {
+                                                            setcurrent((prev) => ({ ...prev, ["city"]: e.target.value }));
+                                                            if(isBothAddressSame){            
+                                                                setpermenant((prev) => ({ ...prev, ["city"]:  e.target.value}))
+                                                                }}}  />
+                                                        {addressformErrors.city && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >State: </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >State<span className='req_text'>*</span> : </label>
+                                                        
                                                     </div>
                                                 </div>
 
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="state" readOnly={isReadonly()} value={currentAdd.state|| ""} name="state" onChange={(e) => setcurrent((prev) => ({ ...prev, ["state"]: e.target.value }))} />
+                                                        <input type="text" 
+                                                        onKeyPress={(e) => {
+                                                                                if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                                    e.preventDefault();
+                                                                                }
+                                                                            }}
+                                                        className="form-control" id="state" readOnly={isReadonly()} value={currentAdd.state|| ""} name="state" 
+                                                        onChange={(e) => {
+                                                            setcurrent((prev) => ({ ...prev, ["state"]: e.target.value }));
+                                                            if(isBothAddressSame){            
+                                                                setpermenant((prev) => ({ ...prev, ["state"]:  e.target.value}));
+                                                                }}}  />
+                                                        {addressformErrors.state && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-2">
                                                     <div className="form_box">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Postal code:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Postal code<span className='req_text'>*</span> :  </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className="form_box">
-                                                        <input type="text" className="form-control" id="postal_code" readOnly={isReadonly()} value={currentAdd.postal_code|| ""} name="postal_code" onChange={(e) => setcurrent((prev) => ({ ...prev, ["postal_code"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="postal_code" maxLength={10} readOnly={isReadonly()} value={currentAdd.postal_code|| ""} name="postal_code" 
+                                                        onChange={(e) => {
+                                                        setcurrent((prev) => ({ ...prev, ["postal_code"]: e.target.value }))
+                                                        if(isBothAddressSame){            
+                                                                setpermenant((prev) => ({ ...prev, ["postal_code"]:  e.target.value}))
+                                                                }}}  />
+                                                        {addressformErrors.postal_code && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                                 <div className="col-md-2">
                                                     <div className="form_box">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Country:</label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Country<span className='req_text'>*</span> :</label>
                                                     </div>
                                                 </div>
 
                                                 <div className="col-md-4">
                                                     <div className="form_box">
-                                                        <input type="text" className="form-control" id="country" readOnly={isReadonly()} value={currentAdd.country|| ""} name="country" onChange={(e) => setcurrent((prev) => ({ ...prev, ["country"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="country" 
+                                                        onKeyPress={(e) => {
+                                                                                if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                                    e.preventDefault();
+                                                                                }
+                                                                            }}
+                                                        readOnly={isReadonly()} value={currentAdd.country|| ""} name="country" 
+                                                        onChange={(e) => {
+                                                            setcurrent((prev) => ({ ...prev, ["country"]: e.target.value }));
+                                                            if(isBothAddressSame){            
+                                                                setpermenant((prev) => ({ ...prev, ["country"]:  e.target.value}))
+                                                                }}}  />
+                                                        {addressformErrors.country && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                             </div>
@@ -727,75 +837,137 @@ export const UserAddress = () => {
                                             <div className="row">
                                                 <div className="col-lg-12 mb-4 inner_heading25">
                                                     Permanent Address Details:
+                                                    <div className='sameadd_box'>
+                                                            <input type="checkbox" id='sameadd' name='sameadd' />
+                                                            <label htmlFor='sameadd' onClick={(e) => {
+                                                                isBothAddressSame ? setBothAddressSame(false) : setBothAddressSame(true);
+                                                                sameAddress(isBothAddressSame ? false : true)
+                                                            }}>Copy Current Address</label>
+                                                    </div>
                                                 </div>
+                                                
                                             </div>
 
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Line 1:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Line 1<span className='req_text'>*</span> :  </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="address_line1" readOnly={isReadonly()} value={permenantAdd.address_line1|| ""} name="address_line1" onChange={(e) => setpermenant((prev) => ({ ...prev, ["address_line1"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="address_line1" readOnly={isReadonly()} value={permenantAdd.address_line1|| ""} name="address_line1" 
+                                                        onChange={(e) => {
+                                                            setpermenant((prev) => ({ ...prev, ["address_line1"]: e.target.value }))
+                                                            if(isBothAddressSame){            
+                                                                setcurrent((prev) => ({ ...prev, ["address_line1"]:  e.target.value}))
+                                                                }}}  />
+                                                        {peraddressFormErrors.address_line1 && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Line 2:</label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Line 2<span className='req_text'>*</span> :</label>
                                                     </div>
                                                 </div>
 
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="address_line2" readOnly={isReadonly()} value={permenantAdd.address_line2|| ""} name="address_line2" onChange={(e) => setpermenant((prev) => ({ ...prev, ["address_line2"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="address_line2" readOnly={isReadonly()} value={permenantAdd.address_line2|| ""} name="address_line2" 
+                                                        onChange={(e) => {setpermenant((prev) => ({ ...prev, ["address_line2"]: e.target.value }));
+                                                        if(isBothAddressSame){            
+                                                                setcurrent((prev) => ({ ...prev, ["address_line2"]:  e.target.value}))
+                                                                }}} />
+                                                        {peraddressFormErrors.address_line2 && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >City:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >City<span className='req_text'>*</span> :  </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="city" readOnly={isReadonly()} value={permenantAdd.city|| ""} name="city" onChange={(e) => setpermenant((prev) => ({ ...prev, ["city"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="city" 
+                                                        onKeyPress={(e) => {
+                                                                                if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                                    e.preventDefault();
+                                                                                }
+                                                                            }}
+                                                        readOnly={isReadonly()} value={permenantAdd.city|| ""} name="city" 
+                                                        onChange={(e) => {
+                                                            setpermenant((prev) => ({ ...prev, ["city"]: e.target.value }))
+                                                            if(isBothAddressSame){            
+                                                                setcurrent((prev) => ({ ...prev, ["city"]:  e.target.value}))
+                                                                }}} />
+                                                        {peraddressFormErrors.city && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                                 <div className="col-md-2">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >State: </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >State<span className='req_text'>*</span> : </label>
                                                     </div>
                                                 </div>
 
                                                 <div className="col-md-4">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="state"  readOnly={isReadonly()} value={permenantAdd.state|| ""} name="state" onChange={(e) => setpermenant((prev) => ({ ...prev, ["state"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="state"  
+                                                        onKeyPress={(e) => {
+                                                                                if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                                    e.preventDefault();
+                                                                                }
+                                                                            }}
+                                                        readOnly={isReadonly()} value={permenantAdd.state|| ""} name="state" 
+                                                        onChange={(e) => {
+                                                            setpermenant((prev) => ({ ...prev, ["state"]: e.target.value }))
+                                                            if(isBothAddressSame){            
+                                                                setcurrent((prev) => ({ ...prev, ["state"]:  e.target.value}))
+                                                                }}} />
+                                                        {peraddressFormErrors.state && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-2">
                                                     <div className="form_box">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Postal code:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Postal code<span className='req_text'>*</span> :  </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <div className="form_box">
-                                                        <input type="text" className="form-control" id="postal_code" readOnly={isReadonly()} value={permenantAdd.postal_code|| ""} name="postal_code" onChange={(e) => setpermenant((prev) => ({ ...prev, ["postal_code"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="postal_code" maxLength={10} readOnly={isReadonly()} value={permenantAdd.postal_code|| ""} name="postal_code" 
+                                                        onChange={(e) => {
+                                                            setpermenant((prev) => ({ ...prev, ["postal_code"]: e.target.value }))
+                                                            if(isBothAddressSame){            
+                                                                setcurrent((prev) => ({ ...prev, ["postal_code"]:  e.target.value}))
+                                                                }}} />
+                                                        {peraddressFormErrors.postal_code && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                                 <div className="col-md-2">
                                                     <div className="form_box">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Country:</label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Country<span className='req_text'>*</span> :</label>
+                                                        
                                                     </div>
                                                 </div>
 
                                                 <div className="col-md-4">
                                                     <div className="form_box">
-                                                        <input type="text" className="form-control" id="country" readOnly={isReadonly()} value={permenantAdd.country|| ""} name="country" onChange={(e) => setpermenant((prev) => ({ ...prev, ["country"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" 
+                                                        onKeyPress={(e) => {
+                                                                                if (!/^[A-Za-z\s]$/.test(e.key)) {
+                                                                                    e.preventDefault();
+                                                                                }
+                                                                            }}
+                                                        id="country" readOnly={isReadonly()} value={permenantAdd.country|| ""} name="country" 
+                                                        onChange={(e) => {
+                                                            setpermenant((prev) => ({ ...prev, ["country"]: e.target.value }))
+                                                            if(isBothAddressSame){            
+                                                                setcurrent((prev) => ({ ...prev, ["country"]:  e.target.value}))
+                                                                }}} />
+                                                        {peraddressFormErrors.country && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
                                                     </div>
                                                 </div>
                                             </div>
@@ -825,30 +997,46 @@ export const UserAddress = () => {
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-3">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Emergency contact:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Emergency contact<span className='req_text'>*</span> :  </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="emergency_contact" readOnly={isReadonly()} value={emergencyContact?.emergency_contact|| ""} name="emergency_contact" onChange={(e) => setEmergencyContact((prev) => ({ ...prev, ["emergency_contact"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="emergency_contact" maxLength={12} 
+                                                        onKeyDown={(e) => {
+                                                                if (!/^[0-9]$/.test(e.key) && // allow only digits
+                                                                    e.key !== "Backspace" &&
+                                                                    e.key !== "Delete" &&
+                                                                    e.key !== "ArrowLeft" && // allow navigation
+                                                                    e.key !== "ArrowRight" &&
+                                                                    e.key !== "Tab") {
+                                                                    e.preventDefault();
+                                                                }
+                                                            }}
+                                                        readOnly={isReadonly()} value={emergencyContact?.emergency_contact|| ""} name="emergency_contact" onChange={(e) => setEmergencyContact((prev) => ({ ...prev, ["emergency_contact"]: e.target.value }))} />
+                                                        {emergencyFieldErrors.emergency_contact && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
                                                     <div className="form_box mb-3">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Contact person name</label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Contact person name<span className='req_text'>*</span> :</label>
+                                                        
                                                     </div>
                                                 </div>
 
                                                 <div className="col-md-3">
                                                     <div className="form_box mb-3">
                                                         <input type="text" className="form-control" id="contact_name" readOnly={isReadonly()} value={emergencyContact?.contact_name|| ""} name="contact_name" onChange={(e) => setEmergencyContact((prev) => ({ ...prev, ["contact_name"]: e.target.value }))} />
+                                                        {emergencyFieldErrors.contact_name && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-3">
                                                     <div className="form_box">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Relation:  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Relation<span className='req_text'>*</span> :  </label>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
@@ -869,6 +1057,8 @@ export const UserAddress = () => {
                                                                 <option value={relationsType.id} key={relationsType.id} disabled={isReadonly()}>{relationsType.relation_type}</option>
                                                             ))}
                                                         </select>
+                                                        {emergencyFieldErrors.relation && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
                                                     </div>
                                                 </div>
 

@@ -139,6 +139,10 @@ const AddEmployeeBasicDetails = () => {
     const [ocrImageType, setOcrImageType] = useState('');
     const [ocrSetParsingFile, setOCRSetParsingFile] = useState<File>();
     const [errors, setErrors] = useState<Partial<FormValues>>({});
+    const [addressErrors, setAddressErrors] = useState<Partial<cAddressFormValues>>({});
+    const [paddressErrors, setpAddressErrors] = useState<Partial<pAddressFormValues>>({});
+    const [bankErrors, setBankErrors] = useState<Partial<BankFormValues>>({});
+    const [emergencyContactError, setEmergencyContactError] = useState<Partial<EmergencyContactData>>({});
 
     const [showAlert, setShowAlert] = useState(false);
     const [alertForSuccess, setAlertForSuccess] = useState(0);
@@ -148,8 +152,50 @@ const AddEmployeeBasicDetails = () => {
     const [alertEndContent, setAlertEndContent] = useState('');
     const [alertValue1, setAlertValue1] = useState('');
     const [alertvalue2, setAlertValue2] = useState('');
+ const basicinputRefs: { [key: string]: React.RefObject<any> } = {
+        firstName: useRef<HTMLInputElement>(null),
+        lastName: useRef<HTMLInputElement>(null),
+        // employeePhoto: useRef<InputRef>(null),
+        dateOfBirth: useRef<HTMLInputElement>(null),
+        bloodGroup: useRef<HTMLSelectElement>(null),
+        nationality: useRef<InputRef>(null),
+        gender: useRef<HTMLSelectElement>(null),
+        maritalStatus: useRef<HTMLSelectElement>(null),
+        contactPrimary: useRef<HTMLInputElement>(null),
+        contactAlternate: useRef<HTMLInputElement>(null),
+        emailPersonal: useRef<HTMLInputElement>(null),
+        emailOfficial: useRef<HTMLInputElement>(null),
+        password: useRef<HTMLInputElement>(null),
+        confirmPassword: useRef<HTMLInputElement>(null),
 
+        // current address
+        currentAddressLineOne: useRef<HTMLInputElement>(null),
+        currentAddressLineTwo: useRef<HTMLInputElement>(null),
+        currentCity: useRef<HTMLInputElement>(null),
+        currentState: useRef<HTMLInputElement>(null),
+        currentPostalCode: useRef<HTMLInputElement>(null),
+        currentCountry: useRef<HTMLInputElement>(null),
 
+        // permanent address
+        permanentAddressLineOne: useRef<HTMLInputElement>(null),
+        permanentAddressLineTwo: useRef<HTMLInputElement>(null),
+        permanentCity: useRef<HTMLInputElement>(null),
+        permanentState: useRef<HTMLInputElement>(null),
+        permanentPostalCode: useRef<HTMLInputElement>(null),
+        permanentCountry: useRef<HTMLInputElement>(null),
+
+        // emergency contact
+        emergencyContactName: useRef<HTMLInputElement>(null),
+        emergencyContactNumber: useRef<HTMLInputElement>(null),
+        emergencyContactRelationID: useRef<HTMLSelectElement>(null),
+
+    }
+const combinedErrors = {
+    ...errors,
+    ...addressErrors,
+    ...paddressErrors,
+    ...emergencyContactError,
+  };
     useEffect(() => {
         const today = new Date();
         const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -198,12 +244,33 @@ const AddEmployeeBasicDetails = () => {
 
         // Call fetchActivities every 5 seconds
 
-
+        
         window.addEventListener('scroll', handleScroll);
+
+        const allErrors = {
+    ...errors,
+    ...addressErrors,
+    ...paddressErrors,
+    ...emergencyContactError,
+  };
+console.log("All Errors", allErrors);
+
+  const firstErrorKey = Object.keys(allErrors)[0];
+
+  if (firstErrorKey && basicinputRefs[firstErrorKey]?.current) {
+    // Delay to ensure element is mounted
+    console.log("First error chosen:", firstErrorKey);
+
+    setTimeout(() => {
+      basicinputRefs[firstErrorKey].current?.focus();
+    }, 0);
+  }
         return () => {
 
             window.removeEventListener('scroll', handleScroll);
         };
+
+       
 
         //   setActivities(activies);
     }, []);
@@ -247,11 +314,7 @@ const AddEmployeeBasicDetails = () => {
         emergencyContactRelationID: "",
     }])
 
-    const [addressErrors, setAddressErrors] = useState<Partial<cAddressFormValues>>({});
-    const [paddressErrors, setpAddressErrors] = useState<Partial<pAddressFormValues>>({});
-    const [bankErrors, setBankErrors] = useState<Partial<BankFormValues>>({});
-    const [emergencyContactError, setEmergencyContactError] = useState<Partial<EmergencyContactData>>({});
-
+    
     const handleAddressInputChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         section: keyof address
@@ -1043,44 +1106,7 @@ const AddEmployeeBasicDetails = () => {
     });
     type InputRef = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-    const basicinputRefs: { [key: string]: React.RefObject<any> } = {
-        firstName: useRef<HTMLInputElement>(null),
-        lastName: useRef<HTMLInputElement>(null),
-        // employeePhoto: useRef<InputRef>(null),
-        dateOfBirth: useRef<HTMLInputElement>(null),
-        bloodGroup: useRef<HTMLSelectElement>(null),
-        nationality: useRef<InputRef>(null),
-        gender: useRef<HTMLSelectElement>(null),
-        maritalStatus: useRef<HTMLSelectElement>(null),
-        contactPrimary: useRef<HTMLInputElement>(null),
-        contactAlternate: useRef<HTMLInputElement>(null),
-        emailPersonal: useRef<HTMLInputElement>(null),
-        emailOfficial: useRef<HTMLInputElement>(null),
-        password: useRef<HTMLInputElement>(null),
-        confirmPassword: useRef<HTMLInputElement>(null),
-
-        // current address
-        currentAddressLineOne: useRef<HTMLInputElement>(null),
-        currentAddressLineTwo: useRef<HTMLInputElement>(null),
-        currentCity: useRef<HTMLInputElement>(null),
-        currentState: useRef<HTMLInputElement>(null),
-        currentPostalCode: useRef<HTMLInputElement>(null),
-        currentCountry: useRef<HTMLInputElement>(null),
-
-        // permanent address
-        permanentAddressLineOne: useRef<HTMLInputElement>(null),
-        permanentAddressLineTwo: useRef<HTMLInputElement>(null),
-        permanentCity: useRef<HTMLInputElement>(null),
-        permanentState: useRef<HTMLInputElement>(null),
-        permanentPostalCode: useRef<HTMLInputElement>(null),
-        permanentCountry: useRef<HTMLInputElement>(null),
-
-        // emergency contact
-        emergencyContactName: useRef<HTMLInputElement>(null),
-        emergencyContactNumber: useRef<HTMLInputElement>(null),
-        emergencyContactRelationID: useRef<HTMLSelectElement>(null),
-
-    }
+   
 
 
 
@@ -1134,28 +1160,30 @@ const AddEmployeeBasicDetails = () => {
         if (!formValues.emailPersonal){ 
             newErrors.emailPersonal = "Personal email is required";
         }
-        else if (formValues.emailPersonal && !emailRegex.test(formValues.emailPersonal)) {
-            newErrors.emailPersonal = "Valid personal email is required";
-        }
+        
+        // if (formValues.emailPersonal && formValues.emailPersonal.length>0 && !emailRegex.test(formValues.emailPersonal)) {
+        //     alert("invalid per")
+        //     newErrors.emailPersonal = "Valid personal email is required";
+        // }
         if (!formValues.emailOfficial) {
             newErrors.emailOfficial = "Official email is required";
         }
-        else if (formValues.emailOfficial && !emailRegex.test(formValues.emailOfficial)) {
-            newErrors.emailOfficial = "Enter a valid official email address";
-        }
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/
+        //  if (formValues.emailOfficial && formValues.emailOfficial.length>0 && !emailRegex.test(formValues.emailOfficial)) {
+        //     alert("invalid Off")
+        //     newErrors.emailOfficial = "Enter a valid official email address";
+        // }
+       
         if (!formValues.password) {
             newErrors.password = "Password is required";
         }
-        else if (formValues.password && formValues.password.length < 6) {
-            newErrors.password = "Password must be at least 6 characters long";
-        }
-        else if (formValues.password && !passwordRegex.test(formValues.password)) {
-            newErrors.password = "Password must be combination of numbers and characters";
-        }
-        if (formValues.password && formValues.confirmPassword && formValues.password !== formValues.confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match";
-        }
+        
+        // else if (formValues.password && !passwordRegex.test(formValues.password)) {
+        //     newErrors.password = "Password must be combination of numbers and characters";
+        // }
+        // if (formValues.password && formValues.confirmPassword && formValues.password !== formValues.confirmPassword) {
+        //     newErrors.confirmPassword = "Passwords do not match";
+        // }
+        
         const addressDetailsErrors: Partial<cAddressFormValues> = {};
         const paddressDetailsErrors: Partial<pAddressFormValues> = {};
 
@@ -1208,46 +1236,46 @@ const AddEmployeeBasicDetails = () => {
         //         }
         //     }
         // }
+        
+        console.log("this are the new erros in validate----",newErrors);
+
         setErrors(newErrors);
         // setBankErrors(bankErrors);
         setEmergencyContactError(emergencydetailsErrors);
         setAddressErrors(addressDetailsErrors);
         setpAddressErrors(paddressDetailsErrors);
-        const firstErrorKey =
-            Object.keys(newErrors)[0] ||
-            Object.keys(addressDetailsErrors)[0] ||
-            Object.keys(paddressDetailsErrors)[0] ||
-            Object.keys(emergencydetailsErrors)[0];
-
-        if (firstErrorKey && basicinputRefs[firstErrorKey]?.current) {
-            basicinputRefs[firstErrorKey].current.focus();
-        }
+        
         console.log("Object.keys(newErrors).length===============", Object.keys(newErrors).length);
         console.log("Object.keys(emergencydetailsErrors).length===============", Object.keys(emergencydetailsErrors).length);
         console.log("Object.keys(addressDetailsErrors).length===============", Object.keys(addressDetailsErrors).length);
-        let validationSucess = false;
-        if (Object.keys(newErrors).length === 0) {
-            validationSucess = true;
-        } else {
-            validationSucess = false;
-        }
-        if (Object.keys(addressDetailsErrors).length === 0 && validationSucess) {
-            validationSucess = true;
-        } else {
-            validationSucess = false;
-        }
-        if (Object.keys(paddressDetailsErrors).length === 0 && validationSucess) {
-            validationSucess = true;
-        } else {
-            validationSucess = false;
-        }
-        if (Object.keys(emergencydetailsErrors).length === 0 && validationSucess) {
-            validationSucess = true;
-        } else {
-            validationSucess = false;
-        }
+        // let validationSucess = false;
+        // if (Object.keys(newErrors).length === 0) {
+        //     validationSucess = true;
+        // } else {
+        //     validationSucess = false;
+        // }
+        // if (Object.keys(addressDetailsErrors).length === 0 && validationSucess) {
+        //     validationSucess = true;
+        // } else {
+        //     validationSucess = false;
+        // }
+        // if (Object.keys(paddressDetailsErrors).length === 0 && validationSucess) {
+        //     validationSucess = true;
+        // } else {
+        //     validationSucess = false;
+        // }
+        // if (Object.keys(emergencydetailsErrors).length === 0 && validationSucess) {
+        //     validationSucess = true;
+        // } else {
+        //     validationSucess = false;
+        // }
+        const validationSuccess =
+            Object.keys(newErrors).length === 0 &&
+            Object.keys(addressDetailsErrors).length === 0 &&
+            Object.keys(paddressDetailsErrors).length === 0 &&
+            Object.keys(emergencydetailsErrors).length === 0;
 
-        return validationSucess;
+        return validationSuccess;
     };
 
     const handleInputChange = (e: any) => {
@@ -1266,7 +1294,75 @@ const AddEmployeeBasicDetails = () => {
         }
     };
 
+    const handleBlur = (e:any) => {
+    const { name } = e.target;
+    validateField(name);
+    };
+   
 
+
+    const validateField = (fieldName: string) => {
+    const fieldErrors: Partial<FormValues> = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (fieldName === "emailPersonal") {
+        
+        if (!formValues.emailPersonal) {
+        fieldErrors.emailPersonal = "Personal email is required";
+        } else if (!emailRegex.test(formValues.emailPersonal)) {
+        fieldErrors.emailPersonal = "Enter a valid personal email";
+        }else{
+            delete errors.emailPersonal;
+        }
+    }else{
+    if (!formValues.emailOfficial) {
+        fieldErrors.emailOfficial = "Official email is required";
+        } else if (!emailRegex.test(formValues.emailPersonal)) {
+        fieldErrors.emailOfficial = "Enter a valid official email";
+        }else{
+            
+            delete errors.emailOfficial;
+        }
+    }
+
+
+    // repeat for other fields if needed
+
+    setErrors(prev => ({ ...prev, ...fieldErrors }));
+    };
+     const handlePasswordBlur = (e:any) => {
+    const { name } = e.target;
+    validatePasswordField(name);
+    };
+    const validatePasswordField = (fieldName: string) => {
+        const fieldErrors: Partial<FormValues> = {};
+        console.log("validate password is called-----------------");
+        
+         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/
+        if (fieldName === "password") {
+            if (!formValues.password) {
+                fieldErrors.password = "Password is required";
+            }else if (formValues.password && formValues.password.length < 6) {
+                fieldErrors.password = "Password must be at least 6 characters long";
+            }
+            else if (!passwordRegex.test(formValues.password)) {
+                fieldErrors.password = "Password must be combination of numbers and characters";
+            }else{
+                delete errors.password;
+            }
+        }else{
+            if (!formValues.confirmPassword) {
+                fieldErrors.confirmPassword = "Confirm password is required";
+                } else if (formValues.password != formValues.confirmPassword) {
+                fieldErrors.confirmPassword = "Password does not match";
+                }else{
+                    
+                    delete errors.confirmPassword;
+                }
+            }
+        setErrors(prev => ({ ...prev, ...fieldErrors }));
+    }
+
+    
     const handleSubmit = async (e: React.FormEvent) => {
         console.log("handle submit is called");
 
@@ -1280,125 +1376,125 @@ const AddEmployeeBasicDetails = () => {
         setIsMoreLoading(true);
         console.log("handle submit is called===============after validate log", validate());
         const sendDocumentsArray = ocrDocumentsDetails;
-        //     if(sendDocumentsArray.length>0){
-        //     for(let i=0;i<sendDocumentsArray.length;i++){
+            if(sendDocumentsArray.length>0){
+            for(let i=0;i<sendDocumentsArray.length;i++){
 
-        //     try {
+            try {
 
-        //         const formData = new FormData();
-        //         formData.append("client_id", contextClientID);
-        //         formData.append("customer_id", '');
-        //         formData.append("docType", "OCR_Docs");
-        //         formData.append("docName",sendDocumentsArray[i].document_name);
-        //         formData.append("file", sendDocumentsArray[i].file!);
+                const formData = new FormData();
+                formData.append("client_id", contextClientID);
+                formData.append("customer_id", '');
+                formData.append("docType", "OCR_Docs");
+                formData.append("docName",sendDocumentsArray[i].document_name);
+                formData.append("file", sendDocumentsArray[i].file!);
 
-        //         const fileUploadURL = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/api/UploadFiles/uploadDocuments", {
-        //           method: "POST",
-        //           // headers:{"Content-Type":"multipart/form-data"},
-        //           body: formData,
-        //         });
+                const fileUploadURL = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/api/UploadFiles/uploadDocuments", {
+                  method: "POST",
+                  // headers:{"Content-Type":"multipart/form-data"},
+                  body: formData,
+                });
 
-        //         const fileUploadResponse = await fileUploadURL.json();
-        //         console.log(`file upload response======${i}====`,fileUploadResponse);
-        //         sendDocumentsArray[i].document_url=fileUploadResponse.data;
-        //         sendDocumentsArray[i].file=null;
+                const fileUploadResponse = await fileUploadURL.json();
+                console.log(`file upload response======${i}====`,fileUploadResponse);
+                sendDocumentsArray[i].document_url=fileUploadResponse.data;
+                sendDocumentsArray[i].file=null;
 
-        //         console.log(`file upload response===sendDocumentsArray===${i}====`,sendDocumentsArray);
+                console.log(`file upload response===sendDocumentsArray===${i}====`,sendDocumentsArray);
 
-        //       } catch (error) {
-        //         console.log(error);
-        //         // return ""
-        //       }
-        //     }
-        // }
+              } catch (error) {
+                console.log(error);
+                // return ""
+              }
+            }
+        }
 
-        //     console.log("handle submit called after documents upload");
+            console.log("handle submit called after documents upload");
 
-        //     const formData = new FormData();
-        //     formData.append("client_id", contextClientID);
-        //     formData.append("branch_id", contaxtBranchID);
-        //     formData.append("name", formValues.firstName.trim() + " " + formValues.middleName.trim() + " " + formValues.lastName.trim());
-        //     formData.append("dob", formValues.dateOfBirth);
-        //     formData.append("gender", selectedGender);
-        //     formData.append("marital_status", selectedMaritialStatus);
-        //     formData.append("nationality", formValues.nationality);
-        //     formData.append("blood_group", formValues.bloodGroup);
-        //     formData.append("contact_number", formValues.contactPrimary);
-        //     formData.append("email_id", formValues.emailOfficial);
-        //     formData.append("p_email_id", formValues.emailPersonal);
-        //     formData.append("password", formValues.password);
+            const formData = new FormData();
+            formData.append("client_id", contextClientID);
+            formData.append("branch_id", contaxtBranchID);
+            formData.append("name", formValues.firstName.trim() + " " + formValues.middleName.trim() + " " + formValues.lastName.trim());
+            formData.append("dob", formValues.dateOfBirth);
+            formData.append("gender", selectedGender);
+            formData.append("marital_status", selectedMaritialStatus);
+            formData.append("nationality", formValues.nationality);
+            formData.append("blood_group", formValues.bloodGroup);
+            formData.append("contact_number", formValues.contactPrimary);
+            formData.append("email_id", formValues.emailOfficial);
+            formData.append("p_email_id", formValues.emailPersonal);
+            formData.append("password", formValues.password);
 
-        //     formData.append("bank_details_array", JSON.stringify(bankFormValues));
-        //     formData.append("emergency_contact_details_array", JSON.stringify(emergencyContactData));
+            formData.append("bank_details_array", JSON.stringify(bankFormValues));
+            formData.append("emergency_contact_details_array", JSON.stringify(emergencyContactData));
 
-        //     formData.append("address_details", JSON.stringify(addressFormValues));
-        //     formData.append("ocr_details", JSON.stringify(sendDocumentsArray));
+            formData.append("address_details", JSON.stringify(addressFormValues));
+            formData.append("ocr_details", JSON.stringify(sendDocumentsArray));
 
 
-        //     for (const key in formValues) {
-        //         const value = formValues[key as keyof FormValues];
-        //         if (value instanceof File)
-        //             formData.append("file", value);
-        //     }
-        //     console.log(formData);
+            for (const key in formValues) {
+                const value = formValues[key as keyof FormValues];
+                if (value instanceof File)
+                    formData.append("file", value);
+            }
+            console.log(formData);
 
-        //     try {
-        //         const response = await fetch("/api/clientAdmin/addEmployee", {
-        //             method: "POST",
-        //             body: formData,
+            try {
+                const response = await fetch("/api/clientAdmin/addEmployee", {
+                    method: "POST",
+                    body: formData,
 
-        //         });
+                });
 
-        //         const res = await response.json();
-        //         console.log(res);
-        //         if (response.ok && res.status === 1) {
+                const res = await response.json();
+                console.log(res);
+                if (response.ok && res.status === 1) {
 
-        //             // window.history.pushState({ addEmpCustidEmpId: { customer_id: 'John', emp_id: 1 } }, '', addUserAddressBankForm);
-        //             setGlobalState({
-        //                 contextUserName: contextUserName,
-        //                 contextClientID: contextClientID,
-        //                 contaxtBranchID: contaxtBranchID,
-        //                 contextCustomerID: contextCustomerID,
-        //                 contextRoleID: contextRoleID,
-        //                 contextProfileImage: contextProfileImage,
-        //                 contextEmployeeID: contextEmployeeID,
-        //                 contextCompanyName: contextCompanyName,
-        //                 contextLogoURL: contextLogoURL,
-        //                 contextSelectedCustId: '',
-        //                 contextAddFormEmpID: res.data[0].emp_id,
-        //                 contextAnnouncementID: '',
-        //                 contextAddFormCustID: res.data[0].customer_id,
-        //                 dashboard_notify_cust_id: '',
-        //                 dashboard_notify_activity_related_id: '',
-        //                 selectedClientCustomerID: '',
-        //                 isAdmin: isAdmin,
-        //                 contextPARAM8: '',
+                    // window.history.pushState({ addEmpCustidEmpId: { customer_id: 'John', emp_id: 1 } }, '', addUserAddressBankForm);
+                    setGlobalState({
+                        contextUserName: contextUserName,
+                        contextClientID: contextClientID,
+                        contaxtBranchID: contaxtBranchID,
+                        contextCustomerID: contextCustomerID,
+                        contextRoleID: contextRoleID,
+                        contextProfileImage: contextProfileImage,
+                        contextEmployeeID: contextEmployeeID,
+                        contextCompanyName: contextCompanyName,
+                        contextLogoURL: contextLogoURL,
+                        contextSelectedCustId: '',
+                        contextAddFormEmpID: res.data[0].emp_id,
+                        contextAnnouncementID: '',
+                        contextAddFormCustID: res.data[0].customer_id,
+                        dashboard_notify_cust_id: '',
+                        dashboard_notify_activity_related_id: '',
+                        selectedClientCustomerID: '',
+                        isAdmin: isAdmin,
+                        contextPARAM8: '',
 
-        //             });
+                    });
 
-        //             setIsMoreLoading(false);
-        //             setShowAlert(true);
-        //             setAlertTitle("Success");
-        //             setAlertStartContent(formValues.firstName+" basic details added successfully.");
-        //             setAlertForSuccess(1);
-        //         } else {
-
-        //             setIsMoreLoading(false);
-        //             setShowAlert(true);
-        //             setAlertTitle("Error");
-        //             setAlertStartContent("Failed to add Basic Details of the employee");
-        //             setAlertForSuccess(2);
-        //             e.preventDefault();
-        //         }
-        //     } catch (error) {
-        //         e.preventDefault();
-        //         setIsMoreLoading(false);
-        //         console.error("Error submitting form:", error);
-        //         setShowAlert(true);
-        //         setAlertTitle("Exception");
-        //         setAlertStartContent(ALERTMSG_exceptionString);
-        //         setAlertForSuccess(2);
-        //     }
+                    setIsMoreLoading(false);
+                    setShowAlert(true);
+                    setAlertTitle("Success");
+                    setAlertStartContent(formValues.firstName+" basic details added successfully.");
+                    setAlertForSuccess(1);
+                } else {
+                    e.preventDefault();
+                    setIsMoreLoading(false);
+                    setShowAlert(true);
+                    setAlertTitle("Error");
+                    setAlertStartContent("Failed to add Basic Details of the employee");
+                    setAlertForSuccess(2);
+                    
+                }
+            } catch (error) {
+                e.preventDefault();
+                setIsMoreLoading(false);
+                console.error("Error submitting form:", error);
+                setShowAlert(true);
+                setAlertTitle("Exception");
+                setAlertStartContent(ALERTMSG_exceptionString);
+                setAlertForSuccess(2);
+            }
     }
     // upload document
 
@@ -1616,7 +1712,7 @@ const AddEmployeeBasicDetails = () => {
                                                                     }
                                                                 }}
                                                                 value={formValues.firstName} name="firstName" onChange={handleInputChange} id="firstName" placeholder="Enter First Name" />
-                                                            {errors.firstName && <span className="error" style={{ color: "red" }}>{errors.firstName}</span>}
+                                                            {combinedErrors.firstName && <span className="error" style={{ color: "red" }}>{combinedErrors.firstName}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
@@ -1642,7 +1738,7 @@ const AddEmployeeBasicDetails = () => {
                                                                     }
                                                                 }}
                                                                 id="exampleFormControlInput1" placeholder="Enter Last Name" value={formValues.lastName} name="lastName" onChange={handleInputChange} />
-                                                            {errors.lastName && <span className="error" style={{ color: "red" }}>{errors.lastName}</span>}
+                                                            {combinedErrors.lastName && <span className="error" style={{ color: "red" }}>{combinedErrors.lastName}</span>}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1657,14 +1753,14 @@ const AddEmployeeBasicDetails = () => {
                                                                 <option value="Female">Female</option>
                                                                 <option value="Other">Other</option>
                                                             </select>
-                                                            {errors.gender && <span className="error" style={{ color: "red" }}>{errors.gender}</span>}
+                                                            {combinedErrors.gender && <span className="error" style={{ color: "red" }}>{combinedErrors.gender}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
                                                             <label htmlFor="formFile" className="form-label">Date of Birth<span className='req_text'>*</span>: </label>
                                                             <input ref={basicinputRefs.dateOfBirth} type="date" id="date" name="dateOfBirth" max={dob18YearsPrior} value={formValues.dateOfBirth} onChange={handleInputChange} />
-                                                            {errors.dateOfBirth && <span className='error' style={{ color: "red" }}>{errors.dateOfBirth}</span>}
+                                                            {combinedErrors.dateOfBirth && <span className='error' style={{ color: "red" }}>{combinedErrors.dateOfBirth}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
@@ -1672,17 +1768,17 @@ const AddEmployeeBasicDetails = () => {
                                                             <label htmlFor="formFile" className="form-label">Blood Group<span className='req_text'>*</span>: </label>
                                                             <select ref={basicinputRefs.bloodGroup} id="blood-group" name="bloodGroup" value={formValues.bloodGroup} onChange={handleInputChange}>
                                                                 <option value="">Select Blood Group</option>
-                                                                <option value="a-positive">A+</option>
-                                                                <option value="a-negative">A-</option>
-                                                                <option value="b-positive">B+</option>
-                                                                <option value="b-negative">B-</option>
-                                                                <option value="ab-positive">AB+</option>
-                                                                <option value="ab-negative">AB-</option>
-                                                                <option value="o-positive">O+</option>
-                                                                <option value="o-negative">O-</option>
-                                                                <option value="rare">Rare Blood Types</option>
+                                                                <option value="A+">A+</option>
+                                                                <option value="A-">A-</option>
+                                                                <option value="B+">B+</option>
+                                                                <option value="B-">B-</option>
+                                                                <option value="AB+">AB+</option>
+                                                                <option value="AB-">AB-</option>
+                                                                <option value="O+">O+</option>
+                                                                <option value="O-">O-</option>
+                                                                <option value="Rare">Rare Blood Types</option>
                                                             </select>
-                                                            {errors.bloodGroup && <span className='error' style={{ color: "red" }}>{errors.bloodGroup}</span>}
+                                                            {combinedErrors.bloodGroup && <span className='error' style={{ color: "red" }}>{combinedErrors.bloodGroup}</span>}
                                                         </div>
                                                     </div>
 
@@ -1700,7 +1796,7 @@ const AddEmployeeBasicDetails = () => {
                                                                     }
                                                                 }}
                                                                 id="exampleFormControlInput1" value={formValues.nationality} name="nationality" onChange={handleInputChange} placeholder="Enter Nationality" />
-                                                            {errors.nationality && <span className='error' style={{ color: "red" }}>{errors.nationality}</span>}
+                                                            {combinedErrors.nationality && <span className='error' style={{ color: "red" }}>{combinedErrors.nationality}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
@@ -1711,7 +1807,7 @@ const AddEmployeeBasicDetails = () => {
                                                                 <option value="Single">Single</option>
                                                                 <option value="Married">Married</option>
                                                             </select>
-                                                            {errors.maritalStatus && <span className='error' style={{ color: "red" }}>{errors.maritalStatus}</span>}
+                                                            {combinedErrors.maritalStatus && <span className='error' style={{ color: "red" }}>{combinedErrors.maritalStatus}</span>}
 
                                                         </div>
                                                     </div>
@@ -1732,7 +1828,7 @@ const AddEmployeeBasicDetails = () => {
                                                                 });
                                                             }} />
                                                             <span>(Primary)</span>
-                                                            {errors.contactPrimary && <span className='error' style={{ color: "red" }}>{errors.contactPrimary}</span>}
+                                                            {combinedErrors.contactPrimary && <span className='error' style={{ color: "red" }}>{combinedErrors.contactPrimary}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-3">
@@ -1748,23 +1844,23 @@ const AddEmployeeBasicDetails = () => {
                                                                 });
                                                             }} />
                                                             <span>(Alternate)</span>
-                                                            {errors.contactAlternate && <span className='error' style={{ color: "red" }}>{errors.contactAlternate}</span>}
+                                                            {combinedErrors.contactAlternate && <span className='error' style={{ color: "red" }}>{combinedErrors.contactAlternate}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-3">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Email Address{errors.emailPersonal}<span className='req_text'>*</span>:</label>
-                                                            <input ref={basicinputRefs.emailPersonal} type="email" className="form-control" id="exampleFormControlInput1" placeholder="Enter Personal Email" value={formValues.emailPersonal} name="emailPersonal" onChange={handleInputChange} />
+                                                            <label htmlFor="formFile" className="form-label">Email Address<span className='req_text'>*</span>:</label>
+                                                            <input ref={basicinputRefs.emailPersonal} onBlur={handleBlur} type="email" className="form-control" id="exampleFormControlInput1" placeholder="Enter Personal Email" value={formValues.emailPersonal} name="emailPersonal" onChange={handleInputChange} />
                                                             <span>(Personal)</span>
-                                                            {errors.emailPersonal && <span className='error' style={{ color: "red" }}>{errors.emailPersonal}</span>}
+                                                            {combinedErrors.emailPersonal && <span className='error' style={{ color: "red" }}>{combinedErrors.emailPersonal}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-3">
                                                         <div className="form_box mb-3">
                                                             <label htmlFor="formFile" className="form-label">&nbsp;</label>
-                                                            <input ref={basicinputRefs.emailOfficial} type="email" className="form-control" id="exampleFormControlInput1" placeholder="Enter Official Email" value={formValues.emailOfficial} name="emailOfficial" onChange={handleInputChange} />
+                                                            <input ref={basicinputRefs.emailOfficial} onBlur={handleBlur} type="email" className="form-control" id="exampleFormControlInput1" placeholder="Enter Official Email" value={formValues.emailOfficial} name="emailOfficial" onChange={handleInputChange} />
                                                             <span>(Official)</span>
-                                                            {errors.emailOfficial && <span className='error' style={{ color: "red" }}>{errors.emailOfficial}</span>}
+                                                            {combinedErrors.emailOfficial && <span className='error' style={{ color: "red" }}>{combinedErrors.emailOfficial}</span>}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1815,12 +1911,12 @@ const AddEmployeeBasicDetails = () => {
                                                                 autoComplete="off"
                                                                 autoCapitalize="off"
                                                                 autoCorrect="off"
-
+                                                                onBlur={handlePasswordBlur}
                                                                 pattern=".{6,}"
                                                                 className="ControlInput ControlInput--password"
                                                                 value={formValues.password} name="password" onChange={handleInputChange}
                                                             />
-                                                            {errors.password && <span className='error' style={{ color: "red", fontSize: "12px" }}>{errors.password}</span>}
+                                                            {combinedErrors.password && <span className='error' style={{ color: "red", fontSize: "12px" }}>{combinedErrors.password}</span>}
 
                                                         </div>
 
@@ -1879,12 +1975,12 @@ const AddEmployeeBasicDetails = () => {
                                                                 autoComplete="off"
                                                                 autoCapitalize="off"
                                                                 autoCorrect="off"
-
+                                                                onBlur={handlePasswordBlur}
                                                                 pattern=".{6,}"
                                                                 className="ControlInput ControlInput--password"
                                                                 value={formValues.confirmPassword} name="confirmPassword" onChange={handleInputChange}
                                                             />
-                                                            {errors.confirmPassword && <span className='error' style={{ color: "red",fontSize: "12px"  }}>{errors.confirmPassword}</span>}
+                                                            {combinedErrors.confirmPassword && <span className='error' style={{ color: "red",fontSize: "12px"  }}>{combinedErrors.confirmPassword}</span>}
 
                                                         </div>
 
@@ -1932,14 +2028,14 @@ const AddEmployeeBasicDetails = () => {
                                                                         <div className="form_box mb-3">
                                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Address Line 1<span className='req_text'>*</span>: </label>
                                                                             <input ref={basicinputRefs.currentAddressLineOne} type="text" className="form-control" value={addressFormValues.current.currentAddressLineOne} name="currentAddressLineOne" onChange={(e) => handleAddressInputChange(e, "current")} id="currentAddressLineOne" placeholder="Flat, House no., Building, Apartment" />
-                                                                            {addressErrors.currentAddressLineOne && <span className='error' style={{ color: "red" }}>{addressErrors.currentAddressLineOne}</span>}
+                                                                            {combinedErrors.currentAddressLineOne && <span className='error' style={{ color: "red" }}>{combinedErrors.currentAddressLineOne}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-6">
                                                                         <div className="form_box mb-3">
                                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Address Line 2<span className='req_text'>*</span>:  </label>
                                                                             <input ref={basicinputRefs.currentAddressLineTwo} type="text" className="form-control" value={addressFormValues.current.currentAddressLineTwo} name="currentAddressLineTwo" onChange={(e) => handleAddressInputChange(e, "current")} id="currentAddressLineTwo" placeholder="Area, Sector, Street, Village" />
-                                                                            {addressErrors.currentAddressLineTwo && <span className='error' style={{ color: "red" }}>{addressErrors.currentAddressLineTwo}</span>}
+                                                                            {combinedErrors.currentAddressLineTwo && <span className='error' style={{ color: "red" }}>{combinedErrors.currentAddressLineTwo}</span>}
                                                                         </div>
                                                                     </div>
 
@@ -1953,7 +2049,7 @@ const AddEmployeeBasicDetails = () => {
                                                                                     e.preventDefault();
                                                                                 }
                                                                             }} type="text" className="form-control" value={addressFormValues.current.currentCity} name="currentCity" onChange={(e) => handleAddressInputChange(e, "current")} id="currentCity" placeholder="City" />
-                                                                            {addressErrors.currentCity && <span className='error' style={{ color: "red" }}>{addressErrors.currentCity}</span>}
+                                                                            {combinedErrors.currentCity && <span className='error' style={{ color: "red" }}>{combinedErrors.currentCity}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-3">
@@ -1964,14 +2060,14 @@ const AddEmployeeBasicDetails = () => {
                                                                                 }
                                                                             }} className="form-label" >State<span className='req_text'>*</span>:  </label>
                                                                             <input ref={basicinputRefs.currentState} type="text" className="form-control" value={addressFormValues.current.currentState} name="currentState" onChange={(e) => handleAddressInputChange(e, "current")} id="currentState" placeholder="State" />
-                                                                            {addressErrors.currentState && <span className='error' style={{ color: "red" }}>{addressErrors.currentState}</span>}
+                                                                            {combinedErrors.currentState && <span className='error' style={{ color: "red" }}>{combinedErrors.currentState}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-3">
                                                                         <div className="form_box mb-3">
                                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Postal Code<span className='req_text'>*</span>:</label>
                                                                             <input ref={basicinputRefs.currentPostalCode} type="text" className="form-control" value={addressFormValues.current.currentPostalCode} name="currentPostalCode" onChange={(e) => handleAddressInputChange(e, "current")} id="currentPostalCode" placeholder="Pincode" />
-                                                                            {addressErrors.currentPostalCode && <span className='error' style={{ color: "red" }}>{addressErrors.currentPostalCode}</span>}
+                                                                            {combinedErrors.currentPostalCode && <span className='error' style={{ color: "red" }}>{combinedErrors.currentPostalCode}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-3">
@@ -1982,7 +2078,7 @@ const AddEmployeeBasicDetails = () => {
                                                                                 }
                                                                             }} className="form-label" >Country<span className='req_text'>*</span>: </label>
                                                                             <input ref={basicinputRefs.currentCountry} type="text" className="form-control" value={addressFormValues.current.currentCountry} name="currentCountry" onChange={(e) => handleAddressInputChange(e, "current")} id="currentCountry" placeholder="Country" />
-                                                                            {addressErrors.currentCountry && <span className='error' style={{ color: "red" }}>{addressErrors.currentCountry}</span>}
+                                                                            {combinedErrors.currentCountry && <span className='error' style={{ color: "red" }}>{combinedErrors.currentCountry}</span>}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2023,14 +2119,14 @@ const AddEmployeeBasicDetails = () => {
                                                                         <div className="form_box mb-3">
                                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Address Line 1<span className='req_text'>*</span>: </label>
                                                                             <input ref={basicinputRefs.currentAddressLineOne} type="text" className="form-control" value={addressFormValues.permanent.currentAddressLineOne} name="currentAddressLineOne" onChange={(e) => handleAddressInputChange(e, "permanent")} id="currentAddressLineOne" placeholder="Flat, House no., Building, Apartment" />
-                                                                            {paddressErrors.currentAddressLineOne && <span className='error' style={{ color: "red" }}>{paddressErrors.currentAddressLineOne}</span>}
+                                                                            {combinedErrors.currentAddressLineOne && <span className='error' style={{ color: "red" }}>{combinedErrors.currentAddressLineOne}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-6">
                                                                         <div className="form_box mb-3">
                                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Address Line 2<span className='req_text'>*</span>: </label>
                                                                             <input type="text" className="form-control" value={addressFormValues.permanent.currentAddressLineTwo} name="currentAddressLineTwo" onChange={(e) => handleAddressInputChange(e, "permanent")} id="currentAddressLineTwo" placeholder="Area, Sector, Street, Village" />
-                                                                            {paddressErrors.currentAddressLineTwo && <span className='error' style={{ color: "red" }}>{paddressErrors.currentAddressLineTwo}</span>}
+                                                                            {combinedErrors.currentAddressLineTwo && <span className='error' style={{ color: "red" }}>{combinedErrors.currentAddressLineTwo}</span>}
                                                                         </div>
                                                                     </div>
 
@@ -2044,7 +2140,7 @@ const AddEmployeeBasicDetails = () => {
                                                                                     e.preventDefault();
                                                                                 }
                                                                             }} className="form-control" value={addressFormValues.permanent.currentCity} name="currentCity" onChange={(e) => handleAddressInputChange(e, "permanent")} id="currentCity" placeholder="City" />
-                                                                            {paddressErrors.currentCity && <span className='error' style={{ color: "red" }}>{paddressErrors.currentCity}</span>}
+                                                                            {combinedErrors.currentCity && <span className='error' style={{ color: "red" }}>{combinedErrors.currentCity}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-3">
@@ -2055,14 +2151,14 @@ const AddEmployeeBasicDetails = () => {
                                                                                     e.preventDefault();
                                                                                 }
                                                                             }} className="form-control" value={addressFormValues.permanent.currentState} name="currentState" onChange={(e) => handleAddressInputChange(e, "permanent")} id="currentState" placeholder="State" />
-                                                                            {paddressErrors.currentState && <span className='error' style={{ color: "red" }}>{paddressErrors.currentState}</span>}
+                                                                            {combinedErrors.currentState && <span className='error' style={{ color: "red" }}>{combinedErrors.currentState}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-3">
                                                                         <div className="form_box mb-3">
                                                                             <label htmlFor="exampleFormControlInput1" className="form-label" >Postal Code<span className='req_text'>*</span>: </label>
                                                                             <input type="text" className="form-control" value={addressFormValues.permanent.currentPostalCode} name="currentPostalCode" onChange={(e) => handleAddressInputChange(e, "permanent")} id="currentPostalCode" placeholder="Pincode" />
-                                                                            {paddressErrors.currentPostalCode && <span className='error' style={{ color: "red" }}>{paddressErrors.currentPostalCode}</span>}
+                                                                            {combinedErrors.currentPostalCode && <span className='error' style={{ color: "red" }}>{combinedErrors.currentPostalCode}</span>}
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-md-3">
@@ -2073,7 +2169,7 @@ const AddEmployeeBasicDetails = () => {
                                                                                     e.preventDefault();
                                                                                 }
                                                                             }} className="form-control" value={addressFormValues.permanent.currentCountry} name="currentCountry" onChange={(e) => handleAddressInputChange(e, "permanent")} id="currentCountry" placeholder="Country" />
-                                                                            {paddressErrors.currentCountry && <span className='error' style={{ color: "red" }}>{paddressErrors.currentCountry}</span>}
+                                                                            {combinedErrors.currentCountry && <span className='error' style={{ color: "red" }}>{combinedErrors.currentCountry}</span>}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2131,7 +2227,7 @@ const AddEmployeeBasicDetails = () => {
                                                                     }
                                                                 }}
                                                                 value={ContactData.emergencyContactName} name="emergencyContactName" onChange={(e) => handleEmergencyContactChange(e, index)} id="emergencyContactName" placeholder="Name" />
-                                                            {emergencyContactError.emergencyContactName && <span className='error' style={{ color: "red" }}>{emergencyContactError.emergencyContactName}</span>}
+                                                            {combinedErrors.emergencyContactName && <span className='error' style={{ color: "red" }}>{combinedErrors.emergencyContactName}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
@@ -2142,7 +2238,7 @@ const AddEmployeeBasicDetails = () => {
                                                                     e.preventDefault();
                                                                 }
                                                             }} value={ContactData.emergencyContactNumber} name="emergencyContactNumber" onChange={(e) => handleEmergencyContactChange(e, index)} id="emergencyContactNumber" placeholder="Mobile Number" maxLength={12} />
-                                                            {emergencyContactError.emergencyContactNumber && <span className='error' style={{ color: "red" }}>{emergencyContactError.emergencyContactNumber}</span>}
+                                                            {combinedErrors.emergencyContactNumber && <span className='error' style={{ color: "red" }}>{combinedErrors.emergencyContactNumber}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
@@ -2154,7 +2250,7 @@ const AddEmployeeBasicDetails = () => {
                                                                     <option value={sal.id} key={sal.id}>{sal.relation_type}</option>
                                                                 ))}
                                                             </select>
-                                                            {emergencyContactError.emergencyContactRelationID && <span className='error' style={{ color: "red" }}>{emergencyContactError.emergencyContactRelationID}</span>}
+                                                            {combinedErrors.emergencyContactRelationID && <span className='error' style={{ color: "red" }}>{combinedErrors.emergencyContactRelationID}</span>}
                                                         </div>
                                                     </div>
                                                 </div>

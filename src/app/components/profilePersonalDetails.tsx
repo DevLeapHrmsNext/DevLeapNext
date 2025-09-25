@@ -115,7 +115,7 @@
 
 //     useEffect(() => {
 //         const fetchData = async () => {
-            
+
 //             try{
 //                 const formData = new FormData();
 //                 formData.append("client_id", contextClientID);
@@ -126,10 +126,10 @@
 //                 body: formData,
 //             });
 //             console.log(res);
-            
+
 //             const response = await res.json();
 //             console.log(response);
-            
+
 //             const user = response.customer_profile[0];
 //             setUserData(user);
 //             } catch (error) {
@@ -166,7 +166,7 @@
 //         formData.append("email_id", userData?.email_id+"");
 //         formData.append("employment_status", userData?.employment_status+"");
 //         try{
-           
+
 //         const res = await fetch("/api/users/updateEmployee", {
 //             method: "POST",
 //             body: formData,
@@ -194,7 +194,7 @@
 //                     <div className="row">
 //                         <div className="col-lg-12">
 //                             <div className="add_form_inner">
-                            
+
 //                                 <div className="row">
 //                                     <div className="col-lg-12 mb-4" >
 //                                         <div className="row" style={{borderBottom: "1px solid #ced9e2",}}>
@@ -215,7 +215,7 @@
 //                                                     <div className="row" style={{fontSize: "5px"}}>
 //                                                     <a href="#"><img src="/images/edit.png" className="img-fluid" style={{ maxHeight: '30px' }} /><div className="option_label"></div></a>
 //                                                     </div>
-                                                    
+
 //                                             </div>
 //                                         </div>
 //                                     </div>
@@ -275,7 +275,7 @@
 //                                                 <label htmlFor="exampleFormControlInput1" className="form-label" >Blood Group: </label>
 //                                             </div>
 //                                         </div>
-                                        
+
 //                                         <div className="col-md-6">
 //                                             <div className="form_box mb-3">
 //                                                 <input type="text" className="form-control" id="blood_group" value={userData?.blood_group || ""} name="blood_group" onChange={(e)=>setUserData((prev) => ({ ...prev, ['blood_group']: e.target.value }))} />
@@ -288,7 +288,7 @@
 //                                                 <label htmlFor="exampleFormControlInput1" className="form-label" >Contact Number: </label>
 //                                             </div>
 //                                         </div>
-                                        
+
 //                                         <div className="col-md-6">
 //                                             <div className="form_box mb-3">
 //                                                 <input type="text" className="form-control" id="contact_number" value={userData?.contact_number || ""} name="contact_number" onChange={(e)=>setUserData((prev) => ({ ...prev, ['contact_number']: e.target.value }))} />
@@ -301,7 +301,7 @@
 //                                                 <label htmlFor="exampleFormControlInput1" className="form-label" >Personal Email: </label>
 //                                             </div>
 //                                         </div>
-                                        
+
 //                                         <div className="col-md-6">
 //                                             <div className="form_box mb-3">
 //                                                 <input type="text" className="form-control" id="personalEmail" value={userData?.personalEmail || ""} name="personalEmail" onChange={(e)=>setUserData((prev) => ({ ...prev, ['personalEmail']: e.target.value }))} />
@@ -314,7 +314,7 @@
 //                                                 <label htmlFor="exampleFormControlInput1" className="form-label" >Office Email: </label>
 //                                             </div>
 //                                         </div>
-                                        
+
 //                                         <div className="col-md-6">
 //                                             <div className="form_box mb-3">
 //                                                 <input type="text" className="form-control" id="email_id" value={userData?.email_id || ""} name="email_id" onChange={(e)=>setUserData((prev) => ({ ...prev, ['email_id']: e.target.value }))} />
@@ -365,7 +365,7 @@
 //                                                     autoComplete="off"
 //                                                     autoCapitalize="off"
 //                                                     autoCorrect="off"
-                                                
+
 //                                                     pattern=".{6,}"
 //                                                     className="ControlInput ControlInput--password"
 //                                                     value={userData?.personalEmail} name="password" onChange={handleInputChange}
@@ -387,7 +387,7 @@
 //                 </div>
 //                 </div>
 //         </form>
-    
+
 //     </>
 // )
 // }
@@ -409,148 +409,168 @@ import LoadingDialog from './PageLoader';
 import { getImageApiURL, staticIconsBaseURL } from '../pro_utils/stringConstants';
 import ShowAlertMessage from './alert';
 
+interface FormValues {
+    name: string,
+    dob: any,
+    gender: any,
+    marital_status: any,
+    nationality: any,
+    blood_group: any,
+    contact_number: any,
+    personalEmail: any,
+    employment_status: any
+
+}
+
 export const UserPersonalDetails = () => {
-    const[isLoading,setLoading]=useState(false)
-    
-            const [showAlert, setShowAlert] = useState(false);
-                const [alertForSuccess, setAlertForSuccess] = useState(0);
-                const [alertTitle, setAlertTitle] = useState('');
-                const [alertStartContent, setAlertStartContent] = useState('');
-                const [alertMidContent, setAlertMidContent] = useState('');
-                const [alertEndContent, setAlertEndContent] = useState('');
-                const [alertValue1, setAlertValue1] = useState('');
-                const [alertvalue2, setAlertValue2] = useState('');
-                const [showAlertCancel, setShowAlertCancel] = useState(false);
+    const [isLoading, setLoading] = useState(false)
+
+    const [showUpdateName, setShowUpdateName] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertForSuccess, setAlertForSuccess] = useState(0);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertStartContent, setAlertStartContent] = useState('');
+    const [alertMidContent, setAlertMidContent] = useState('');
+    const [alertEndContent, setAlertEndContent] = useState('');
+    const [alertValue1, setAlertValue1] = useState('');
+    const [alertvalue2, setAlertValue2] = useState('');
+    const [showAlertCancel, setShowAlertCancel] = useState(false);
+    const [formValues, setFormValues] = useState<Partial<FormValues>>({})
     const [userData, setUserData] = useState<CustomerProfile>({
         id: '',
-          customer_id: 0,
-          created_at: '',
-          name: '',
-          contact_number: '',
-          email_id: '',
-          dob: '',
-          client_id: 0,
-          gender: '',
-          date_of_joining: '',
-          employment_status: false,
-          device_id: '',
-          salary_structure: '',
-          user_role: 0,
-          profile_pic: '',
-          emergency_contact: 0,
-          contact_name: '',
-          relation: 0,
-          manager_id: 0,
-          designation_id: 0,
-          authUuid: '',
-          branch_id: 0,
-          emp_id: '',
-          updated_at: '',
-          marital_status: '',
-          nationality: '',
-          blood_group: '',
-          department_id: 0,
-          employment_type: 0,
-          work_location: '',
-          probation_period: '',
-          official_onboard_date: '',
-          alternateContact: '',
-          personalEmail: '',
-          work_mode: 0,
-          leap_client_branch_details: {
-              id: 0,
-              uuid: '',
-              client_id: 0,
-              dept_name: '',
-              is_active: false,
-              created_at: '',
-              updated_at: '',
-              branch_city: '',
-              branch_email: '',
-              time_zone_id: undefined,
-              branch_number: '',
-              branch_address: '',
-              is_main_branch: false,
-              contact_details: 0,
-              total_employees: 0
-          },
-          leap_client: {
-              user_id: '',
-              client_id: 0,
-              parent_id: undefined,
-              created_at: '',
-              is_deleted: false,
-              updated_at: '',
-              is_a_parent: false,
-              sector_type: '',
-              timezone_id: undefined,
-              company_name: '',
-              company_email: '',
-              company_number: '',
-              company_location: '',
-              number_of_branches: 0,
-              total_weekend_days: 0,
-              company_website_url: '',
-              fullday_working_hours: 0,
-              halfday_working_hours: 0
-          },
-          leap_client_designations: {
-              id: 0,
-              department: undefined,
-              designation_name: ''
-          },
-          leap_client_departments: {
-              id: 0,
-              is_active: false,
-              department_name: ''
-          },
-          leap_working_type: {
-              id: 0,
-              type: '',
-              created_at: ''
-          },
-          leap_employement_type: {
-              created_at: '',
-              updated_at: '',
-              employeement_type: '',
-              employment_type_id: 0
-          }
+        customer_id: 0,
+        created_at: '',
+        name: '',
+        contact_number: '',
+        email_id: '',
+        dob: '',
+        client_id: 0,
+        gender: '',
+        date_of_joining: '',
+        employment_status: false,
+        device_id: '',
+        salary_structure: '',
+        user_role: 0,
+        profile_pic: '',
+        emergency_contact: 0,
+        contact_name: '',
+        relation: 0,
+        manager_id: 0,
+        designation_id: 0,
+        authUuid: '',
+        branch_id: 0,
+        emp_id: '',
+        updated_at: '',
+        marital_status: '',
+        nationality: '',
+        blood_group: '',
+        department_id: 0,
+        employment_type: 0,
+        work_location: '',
+        probation_period: '',
+        official_onboard_date: '',
+        alternateContact: '',
+        personalEmail: '',
+        work_mode: 0,
+        leap_client_branch_details: {
+            id: 0,
+            uuid: '',
+            client_id: 0,
+            dept_name: '',
+            is_active: false,
+            created_at: '',
+            updated_at: '',
+            branch_city: '',
+            branch_email: '',
+            time_zone_id: undefined,
+            branch_number: '',
+            branch_address: '',
+            is_main_branch: false,
+            contact_details: 0,
+            total_employees: 0
+        },
+        leap_client: {
+            user_id: '',
+            client_id: 0,
+            parent_id: undefined,
+            created_at: '',
+            is_deleted: false,
+            updated_at: '',
+            is_a_parent: false,
+            sector_type: '',
+            timezone_id: undefined,
+            company_name: '',
+            company_email: '',
+            company_number: '',
+            company_location: '',
+            number_of_branches: 0,
+            total_weekend_days: 0,
+            company_website_url: '',
+            fullday_working_hours: 0,
+            halfday_working_hours: 0
+        },
+        leap_client_designations: {
+            id: 0,
+            department: undefined,
+            designation_name: ''
+        },
+        leap_client_departments: {
+            id: 0,
+            is_active: false,
+            department_name: ''
+        },
+        leap_working_type: {
+            id: 0,
+            type: '',
+            created_at: ''
+        },
+        leap_employement_type: {
+            created_at: '',
+            updated_at: '',
+            employeement_type: '',
+            employment_type_id: 0
+        }
     });
 
-    const {contextClientID,contextSelectedCustId,contextRoleID}=useGlobalContext();
+    const { contextClientID, contextSelectedCustId, contextRoleID } = useGlobalContext();
     const router = useRouter();
 
-    const [isChecked, setIsChecked] = useState(true);
-    const [selectedMaritialStatus, setMaritialStatus] = useState("Single");
+    const [errors, setErrors] = useState<Partial<CustomerProfile>>({});
+    const [dob18YearsPrior, setdob18YearsPrior] = useState('');
+
 
     useEffect(() => {
+        const today = new Date();
+        const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        const maxDate = eighteenYearsAgo.toISOString().split("T")[0];
+        setdob18YearsPrior(maxDate)
         const fetchData = async () => {
-            
-            try{
+
+            try {
                 const formData = new FormData();
                 formData.append("client_id", contextClientID);
                 formData.append("customer_id", contextSelectedCustId);
 
-            const res = await fetch("/api/users/getProfile", {
-                method: "POST",
-                body: JSON.stringify({
-                        "client_id":contextClientID,
-                        "customer_id":contextSelectedCustId
+                const res = await fetch("/api/users/getProfile", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        "client_id": contextClientID,
+                        "customer_id": contextSelectedCustId
                     }),
-            });
-            console.log(res);
-            
-            const response = await res.json();
-            console.log(response);
-            
-            const user = response.customer_profile[0];
-            setUserData(user);
+                });
+                console.log(res);
+
+                const response = await res.json();
+                console.log(response);
+
+                const user = response.customer_profile[0];
+                setUserData(user);
             } catch (error) {
                 console.error("Error fetching user data:", error);
             }
         }
         fetchData();
-    },[]);
+    }, []);
 
     const formData = new FormData();
 
@@ -566,7 +586,7 @@ export const UserPersonalDetails = () => {
         try {
             const { error } = await supabase
                 .from('leap_customer')
-                .update({ device_id: null,auth_token:null }) // Set device_id to null or the desired reset value
+                .update({ device_id: null, auth_token: null }) // Set device_id to null or the desired reset value
                 .eq('customer_id', userData.customer_id);
 
             if (error) {
@@ -585,265 +605,357 @@ export const UserPersonalDetails = () => {
         } catch (err) {
             console.error('Unexpected error:', err);
             setLoading(false);
-                setShowAlert(true);
-                setAlertTitle("Exception")
-                setAlertStartContent(`An unexpected error occurred while resetting the device ID.`);
-                setAlertForSuccess(3)
+            setShowAlert(true);
+            setAlertTitle("Exception")
+            setAlertStartContent(`An unexpected error occurred while resetting the device ID.`);
+            setAlertForSuccess(3)
         }
     };
 
+    const handleBlur = (e: any) => {
+        const { name } = e.target;
+        validateField(name);
+    };
+    const validateField = (fieldName: string) => {
+        const fieldErrors: Partial<CustomerProfile> = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (fieldName === "personalEmail") {
+
+            if (!userData.personalEmail) {
+                fieldErrors.personalEmail = "required";
+            } else if (!emailRegex.test(userData.personalEmail)) {
+                fieldErrors.personalEmail = "Invalid email";
+            } else {
+                delete errors.personalEmail;
+            }
+        }
+
+
+        // repeat for other fields if needed
+
+        setErrors(prev => ({ ...prev, ...fieldErrors }));
+    };
+        const validate = () => {
+            const newErrors: Partial<CustomerProfile> = {};
+            if (!userData.name) newErrors.name = "required";
+            if (!userData.dob) newErrors.dob = "required";
+            if (!userData.gender) newErrors.gender = "required";
+            if (!userData.marital_status) newErrors.marital_status = "required";
+            if (!userData.nationality) newErrors.nationality = "required";
+            if (!userData.blood_group) newErrors.blood_group = "required";
+            if (!userData.contact_number) newErrors.contact_number = "required";
+            if (userData.contact_number && userData.contact_number.length<7) newErrors.contact_number = "Invalid contact";
+            if (!userData.personalEmail) newErrors.personalEmail = "required";
+            if (!userData.employment_status) newErrors.employment_status = true;
+
+            setErrors(newErrors);
+
+            const validationSuccess =
+            Object.keys(newErrors).length === 0
+            return validationSuccess;
+
+        }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if(!validate()) return;
         setLoading(true);
-        formData.append("client_id", userData?.client_id+"");
-        formData.append("branch_id", userData.branch_id+'');
+        formData.append("client_id", userData?.client_id + "");
+        formData.append("branch_id", userData.branch_id + '');
+        formData.append("name", userData.name + '');
         formData.append("role_id", contextRoleID);
         formData.append("authUuid", userData.authUuid);
-        formData.append("customer_id", userData.customer_id+"");
-        formData.append("dob", userData.dob+"")
+        formData.append("customer_id", userData.customer_id + "");
+        formData.append("dob", userData.dob + "")
         formData.append("gender", userData.gender);
-        formData.append("marital_status", userData?.marital_status+"");
-        formData.append("nationality", userData?.nationality+"");
-        formData.append("blood_group", userData?.blood_group+"");
-        formData.append("contact_number", userData?.contact_number+"");
-        formData.append("personal_email", userData?.personalEmail+"");
-        formData.append("email_id", userData?.email_id+"");
-        formData.append("employment_status", userData?.employment_status+"");
-        try{
-           
-        const res = await fetch("/api/users/updateEmployee", {
-            method: "POST",
-            body: formData,
-        });
-        const response=await res.json();
-        if(res.ok){
-            setLoading(false);
+        formData.append("marital_status", userData?.marital_status + "");
+        formData.append("nationality", userData?.nationality + "");
+        formData.append("blood_group", userData?.blood_group + "");
+        formData.append("contact_number", userData?.contact_number + "");
+        formData.append("personal_email", userData?.personalEmail + "");
+        formData.append("email_id", userData?.email_id + "");
+        formData.append("employment_status", userData?.employment_status + "");
+        try {
+
+            const res = await fetch("/api/users/updateEmployee", {
+                method: "POST",
+                body: formData,
+            });
+            const response = await res.json();
+            if (res.ok) {
+                setLoading(false);
                 setShowAlert(true);
                 setAlertTitle("Success")
                 setAlertStartContent(response.message);
                 setAlertForSuccess(1)
-        }else{
-           setLoading(false);
+            } else {
+                setLoading(false);
                 setShowAlert(true);
                 setAlertTitle("Error")
                 setAlertStartContent(response.message);
                 setAlertForSuccess(2)
-        }
-        }catch(e){
+            }
+        } catch (e) {
             setLoading(false);
-                setShowAlert(true);
-                setAlertTitle("Exception")
-                setAlertStartContent("Something went wrong while updating profile:-"+e);
-                setAlertForSuccess(1)
+            setShowAlert(true);
+            setAlertTitle("Exception")
+            setAlertStartContent("Something went wrong while updating profile:-" + e);
+            setAlertForSuccess(1)
         }
 
     }
-    function isReadonly(){
-        if(contextRoleID == "2" || contextRoleID == "3"){
+    function isReadonly() {
+        if (contextRoleID == "2" || contextRoleID == "3") {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
-return (
-    <>  
-    <LoadingDialog isLoading={isLoading} />
-    {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
-                
-                if(showAlertCancel){
+    return (
+        <>
+            <LoadingDialog isLoading={isLoading} />
+            {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
+
+                if (showAlertCancel) {
                     callResetDeviceID();
                     setShowAlertCancel(false);
                     setShowAlert(false)
-                }else{
+                } else {
                     setShowAlert(false);
+                    setShowUpdateName(false)
                 }
 
             }} onCloseClicked={function (): void {
                 setShowAlert(false)
             }} showCloseButton={showAlertCancel} imageURL={''} successFailure={alertForSuccess} />}
-        <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
                 <div className="col-lg-12 mb-5 ">
-                <div className="grey_box mb-3">
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="add_form_inner">
-                            
-                                <div className="row">
-                                    <div className="col-lg-12 mb-4" >
-                                        <div className="row" style={{borderBottom: "1px solid #ced9e2",}}>
-                                            <div className='col-lg-2'>
-                                                <div className="option">
-                                                    <a href="#"><img src={userData?.profile_pic && userData.profile_pic.length>0? getImageApiURL+"/uploads/"+userData.profile_pic:staticIconsBaseURL+"/images/user/user.png"} className="img-fluid" 
-                                                    style={{ maxHeight: "80px" ,margin: "-35px 0px 0px -50px", minHeight:"80px", maxWidth:"80px",minWidth:"80px",borderRadius:"100px"}} /><div className="option_label"></div></a>
+                    <div className="grey_box mb-3">
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <div className="add_form_inner">
+
+                                    <div className="row">
+                                        <div className="col-lg-12 mb-4" >
+                                            <div className="row" style={{ borderBottom: "1px solid #ced9e2", }}>
+                                                <div className='col-lg-2'>
+                                                    <div className="option">
+                                                        <a href="#"><img src={userData?.profile_pic && userData.profile_pic.length > 0 ? getImageApiURL + "/uploads/" + userData.profile_pic : staticIconsBaseURL + "/images/user/user.png"} className="img-fluid"
+                                                            style={{ maxHeight: "80px", margin: "-35px 0px 0px -50px", minHeight: "80px", maxWidth: "80px", minWidth: "80px", borderRadius: "100px" }} /><div className="option_label"></div></a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className='col-lg-10 mb-3'>
-                                                    <div className="row" style={{fontSize: "25px"}}>
+                                                <div className='col-lg-9 mb-3'>
+                                                    <div className="row" style={{ fontSize: "25px" }}>
                                                         <label >{userData?.name}</label>
                                                     </div>
                                                     <div className="row" >
                                                         <label >{userData?.emp_id}</label><label >{userData?.leap_client_designations?.designation_name || ""}</label>
                                                     </div>
-                                            </div>
-                                            {/* <div className='col-lg-1 p-0'>
+                                                </div>
+                                                <div className='col-lg-1 p-0'>
                                                     <div className="row" style={{fontSize: "5px"}}>
-                                                    <a href="#"><img src={staticIconsBaseURL+"/images/edit.png"} className="img-fluid" style={{ maxHeight: '20px' }} /><div className="option_label">Edit Profile</div></a>
+                                                    <a onClick={()=>setShowUpdateName(!showUpdateName)}><img src={staticIconsBaseURL+"/images/edit.png"} className="img-fluid" style={{ maxHeight: '20px' }} /><div className="option_label">Edit Profile</div></a>
                                                     </div>
                                                     
-                                            </div> */}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Date of Birth:  </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="date" className="form-control" id="dob" value={userData?.dob || ""} name="dob" readOnly={isReadonly()} onChange={(e)=>setUserData((prev) => ({ ...prev, ['dob']: e.target.value }))} />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Gender:  </label>
+                                    <div>
+                                        {showUpdateName && 
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Name<span className='req_text'>*</span> :  </label>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="text" className="form-control" id="name" value={userData?.name || ""} readOnly={isReadonly()} name="name" onChange={(e) => setUserData((prev) => ({ ...prev, ['name']: e.target.value }))} />
+                                                    {errors.name && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="text" className="form-control" id="gender" value={userData?.gender || ""} readOnly={isReadonly()} name="gender" onChange={(e)=>setUserData((prev) => ({ ...prev, ['gender']: e.target.value }))} />
+
+                                        }
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Date of Birth<span className='req_text'>*</span> :  </label>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="date" className="form-control" id="dob" value={userData?.dob || ""} name="dob" max={dob18YearsPrior} readOnly={isReadonly()} onChange={(e) => setUserData((prev) => ({ ...prev, ['dob']: e.target.value }))} />
+                                                    {errors.dob && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Gender<span className='req_text'>*</span> :  </label>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="text" className="form-control" id="gender" value={userData?.gender || ""} readOnly={isReadonly()} name="gender" onChange={(e) => setUserData((prev) => ({ ...prev, ['gender']: e.target.value }))} />
+                                                    {errors.gender && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Marital Status<span className='req_text'>*</span> : </label>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <select  id="marital_status" name="marital_status" value={userData.marital_status} onChange={handleInputChange}>
+                                                        <option value="">--</option>
+                                                        <option value="Single">Single</option>
+                                                        <option value="Married">Married</option>
+                                                    </select> 
+                                                    {errors.marital_status && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Nationality<span className='req_text'>*</span> :  </label>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="text" className="form-control" id="nationality" value={userData?.nationality || ""} readOnly={isReadonly()} name="nationality" onChange={(e) => setUserData((prev) => ({ ...prev, ['nationality']: e.target.value }))} />
+                                                    {errors.nationality && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Blood Group<span className='req_text'>*</span> : </label>
+                                                </div>
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="text" className="form-control" id="blood_group" value={userData?.blood_group || ""} readOnly={isReadonly()} name="blood_group" onChange={(e) => setUserData((prev) => ({ ...prev, ['blood_group']: e.target.value }))} />
+                                                    {errors.blood_group && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Contact Number<span className='req_text'>*</span> : </label>
+                                                </div>
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="text" className="form-control" id="contact_number" value={userData?.contact_number || ""} 
+                                                    readOnly={isReadonly()} name="contact_number" 
+                                                    inputMode="numeric"
+                                                    maxLength={12}
+                                                    onChange={(e) => {
+                                                        const onlyNums = e.target.value.replace(/\D/g, "");
+                                                    setUserData((prev) => ({ ...prev, ['contact_number']: onlyNums }))}} />
+                                                    {errors.contact_number && <span className='error' style={{ color: "red", fontSize: "12px" }}>{errors.contact_number}</span>}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Personal Email<span className='req_text'>*</span> : </label>
+                                                </div>
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="text" className="form-control" id="personalEmail" onBlur={handleBlur} value={userData?.personalEmail || ""} readOnly={isReadonly()} name="personalEmail" onChange={(e) => setUserData((prev) => ({ ...prev, ['personalEmail']: e.target.value }))} />
+                                                    {errors.personalEmail && <span className='error' style={{ color: "red", fontSize: "12px" }}>{errors.personalEmail}</span>}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Office Email : </label>
+                                                </div>
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="text" className="form-control" id="email_id" value={userData?.email_id || ""} readOnly name="email_id" onChange={(e) => setUserData((prev) => ({ ...prev, ['email_id']: e.target.value }))} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {(contextRoleID == "3" || contextRoleID == "2") &&
+                                            <div className='row' style={{ alignItems: "center" }}>
+                                                <div className="col-md-6">
+                                                    <div className="form_box">
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label" >Employment<span className='req_text'>*</span> : </label>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-md-6">
+                                                    <div className="form_box mb-2">
+                                                        <select className="form-control" id="employment_status" value={userData?.employment_status ? "true" : "false"} name="employment_status" onChange={(e) => setUserData((prev) => ({ ...prev, ['employment_status']: e.target.value == "true" ? true : false }))} >
+                                                            <option value="true">Active</option>
+                                                            <option value="false">Inactive</option>
+                                                        </select>
+                                                        {errors.employment_status && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        {(contextRoleID == "3" || contextRoleID == "2") && <div className='row' style={{ alignItems: "center" }}>
+                                            <div className="col-md-6">
+                                                <div className="form_box">
+                                                    <label htmlFor="exampleFormControlInput1" className="form-label" >Reset Device ID : </label>
+                                                </div>
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <div className="form_box mb-2">
+                                                    <input type="button" className="form-control " id="reset_device_id" value="Reset" readOnly={isReadonly()} name="reset_device_id" onClick={() => {
+                                                        setShowAlert(true);
+                                                        setShowAlertCancel(true);
+                                                        setAlertTitle("Warning")
+                                                        setAlertStartContent(`Press ok to reset device ID`);
+                                                        setAlertForSuccess(3)
+                                                    }} />
+                                                </div>
+                                            </div>
+                                        </div>}
+
                                     </div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Marital Status: </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="text" className="form-control" id="marital_status" value={userData?.marital_status || ""} readOnly={isReadonly()} name="marital_status" onChange={(e)=>setUserData((prev) => ({ ...prev, ['marital_status']: e.target.value }))} />
-                                            </div>
-                                        </div>
+                                    <div className="row">
+                                        <div className="col-lg-12" style={{ textAlign: "right" }}><input type='submit' readOnly={isReadonly()} value="Update" className={`red_button ${isLoading}:"loading":""`} onClick={handleSubmit} /></div>
                                     </div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Nationality:  </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="text" className="form-control" id="nationality" value={userData?.nationality || ""} readOnly={isReadonly()} name="nationality" onChange={(e)=>setUserData((prev) => ({ ...prev, ['nationality']: e.target.value }))} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Blood Group: </label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="text" className="form-control" id="blood_group" value={userData?.blood_group || ""} readOnly={isReadonly()} name="blood_group" onChange={(e)=>setUserData((prev) => ({ ...prev, ['blood_group']: e.target.value }))} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Contact Number: </label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="text" className="form-control" id="contact_number" value={userData?.contact_number || ""} readOnly={isReadonly()} name="contact_number" onChange={(e)=>setUserData((prev) => ({ ...prev, ['contact_number']: e.target.value }))} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Personal Email: </label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="text" className="form-control" id="personalEmail" value={userData?.personalEmail || ""} readOnly={isReadonly()} name="personalEmail" onChange={(e)=>setUserData((prev) => ({ ...prev, ['personalEmail']: e.target.value }))} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Office Email: </label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="text" className="form-control" id="email_id" value={userData?.email_id || ""} readOnly={isReadonly()} name="email_id" onChange={(e)=>setUserData((prev) => ({ ...prev, ['email_id']: e.target.value }))} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {(contextRoleID=="3" || contextRoleID=="2") &&
-                                        <div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Employment: </label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <select className="form-control" id="employment_status" value={userData?.employment_status ? "true" : "false"} name="employment_status" onChange={(e)=>setUserData((prev) => ({ ...prev, ['employment_status']: e.target.value == "true" ? true : false }))} >
-                                                    <option value="true">Active</option>
-                                                    <option value="false">Inactive</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    }
-                                    {(contextRoleID=="3" || contextRoleID=="2") &&<div className='row' style={{alignItems: "center"}}>
-                                        <div className="col-md-6">
-                                            <div className="form_box">
-                                                <label htmlFor="exampleFormControlInput1" className="form-label" >Reset Device ID: </label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="col-md-6">
-                                            <div className="form_box mb-2">
-                                                <input type="button" className="form-control " id="reset_device_id" value="Reset" readOnly={isReadonly()} name="reset_device_id" onClick={()=>{
-                                                    setShowAlert(true);
-                                                    setShowAlertCancel(true);
-                                                    setAlertTitle("Warning")
-                                                    setAlertStartContent(`Press ok to reset device ID`);
-                                                    setAlertForSuccess(3)
-                                                }} />
-                                            </div>
-                                        </div>
-                                    </div>}
-                                    
-                                </div>
-                                <div className="row">
-                                    <div className="col-lg-12" style={{ textAlign: "right" }}><input type='submit' readOnly={isReadonly()} value="Update" className={`red_button ${isLoading}:"loading":""`} onClick={handleSubmit} /></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
-        </form>
-    
-    </>
-)
+            </form>
+
+        </>
+    )
 }

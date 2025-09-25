@@ -75,7 +75,7 @@ const EmployeeProfile = () => {
     const [selectedMaritialStatus, setMaritialStatus] = useState("Single");
     const { contextClientID, contaxtBranchID, contextCustomerID, contextRoleID, contextSelectedCustId,
         setGlobalState } = useGlobalContext();
-    const [viewIndex, setViewIndex] = useState(0);
+    const [viewIndex, setViewIndex] = useState(1);
 
     const [isLoading, setLoading] = useState(true);
     const [showAlert, setShowAlert] = useState(false);

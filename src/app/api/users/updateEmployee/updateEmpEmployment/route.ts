@@ -50,13 +50,15 @@ export async function POST(request: NextRequest) {
 
       authQuery = supabaseAdmin.auth.admin.updateUserById(
         fdata.authUuid,
-        { email: formData.get('official_email') as string }
+        { email: formData.get('email_id') as string ,password:"123qwe"}
       )
     } else {
-      authQuery = supabase.auth.updateUser({ email: formData.get('official_email') as string });
+      authQuery = supabase.auth.updateUser({ email: formData.get('email_id') as string });
 
     }
     const { data: user, error } = await authQuery;
+    console.log("this is the auth query user",user);
+    
     if (error) {
       console.log(error);
 

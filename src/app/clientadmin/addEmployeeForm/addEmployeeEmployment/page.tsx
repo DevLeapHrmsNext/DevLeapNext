@@ -66,7 +66,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
     useEffect(() => {
         if(contextAddFormEmpID.length==0 || contextAddFormCustID.length==0 ){
-                router.push(pageURL_userList);
+                // router.push(pageURL_userList);
             }
         const fetchData = async () => {
             setIsLoading(true);
@@ -473,7 +473,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
 
                                                 </div>
-                                                <div className="row">
+                                                {salaryComponentsArray && salaryComponentsArray.length>0 && <div className="row">
 
 
                                                     <div className="col-md-4">
@@ -515,7 +515,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div>}
 
 
 

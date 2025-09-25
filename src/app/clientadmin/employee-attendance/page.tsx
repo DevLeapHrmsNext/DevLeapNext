@@ -485,7 +485,7 @@ import dynamic from 'next/dynamic'
 import { leftMenuAttendancePageNumbers, pageURL_attendanceDetails } from '@/app/pro_utils/stringRoutes'
 import Select from "react-select";
 import { useRouter } from 'next/navigation'
-import { staticIconsBaseURL } from '@/app/pro_utils/stringConstants'
+import { getImageApiURL, staticIconsBaseURL } from '@/app/pro_utils/stringConstants'
 import ShowAlertMessage from '@/app/components/alert'
 import { el } from 'date-fns/locale'
 
@@ -781,7 +781,10 @@ const EmpAttendancePage = () => {
                                         {empAttendanceData.map((emp) => (
                                             <div className='attendance_listbox' key={emp.emp_id}>
                                                 <div className="row"  style={{ cursor: "pointer" }} onClick={() => { go_to_details_Page(emp.customer_id) }}>
-                                                    <div className="col-lg-3 attendance_memberimg" style={{ paddingLeft: "60px" }}><img src={emp.profile_pic != null && emp.profile_pic.length > 0 ? process.env.NEXT_PUBLIC_BASE_URL + emp.profile_pic : "/images/user.png"} className="img-fluid" />{emp.name}</div>
+                                                    <div className="col-lg-3 attendance_memberimg" style={{ paddingLeft: "60px" }}>
+                                                        <img src={emp.profile_pic != null && emp.profile_pic.length > 0 ? getImageApiURL + emp.profile_pic : staticIconsBaseURL+"/images/user.png"} className="img-fluid" 
+                                                            onError={(e) => { const target = e.target as HTMLImageElement; target.onerror = null; target.src = staticIconsBaseURL + "/images/user.png"; }}
+                                                        />{emp.name}</div>
                                                     <div className="col-lg-1 text-center">{emp.emp_id}</div>
                                                     <div className="col-lg-3 text-center">{emp.leap_client_designations?.designation_name || "--"}</div>
                                                     <div className="col-lg-2 text-center">{emp.leap_client_departments?.department_name || "--"}</div>

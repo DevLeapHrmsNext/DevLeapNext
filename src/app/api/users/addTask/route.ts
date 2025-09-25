@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       let projectType = "";
       try {
         projectType = await funGetSubProjectType(sub_project_id);
-        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", projectType, TaskData[0].id, false);
+        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", "Task added for "+ projectType, TaskData[0].id, false);
         // console.log("throww error: ", addActivity);
         throw addActivity;
       } catch (err) {

@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
         let query= supabase.from("leap_customer")
             .select(`*,leap_client_designations(*),leap_client_departments(*)`)
             .eq('client_id', fdata.clientID)
+            
             // .not("department_id", "is", null)      // department_id must NOT be NULL
             // .not("designation_id", "is", null) 
             .or("user_role.is.null,user_role.neq.2");//,user_role.neq.2

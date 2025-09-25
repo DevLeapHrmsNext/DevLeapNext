@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
     let updateFields: any = {
       task_details: task_details || null,
       task_status: task_status || null,
-      total_hours: total_hours.padStart(2, '0') || null,
-      total_minutes: total_minutes.padStart(2, '0') || null,
+      total_hours: total_hours || null,
+      total_minutes: total_minutes || null,
       updated_at: new Date(),
     };
 
@@ -55,12 +55,12 @@ if (previousTaskStatus !== 2 && newTaskStatus !== 2) {
         const totalMinutes = Math.floor(elapsedMs / (1000 * 60));
         const totalHours = Math.floor(totalMinutes / 60);
 
-        updateFields.total_hours = (taskData.total_hours || 0) + totalHours.toString().padStart(2, '0');
-        updateFields.total_minutes = (taskData.total_minutes || 0) + (totalMinutes % 60).toString().padStart(2, '0');
+        updateFields.total_hours = (taskData.total_hours || 0) + totalHours
+        updateFields.total_minutes = (taskData.total_minutes || 0) + (totalMinutes % 60)
         updateFields.task_start_time = null; // Reset task_start_time after calculation
       }
     }
-
+// 
     // Update the task
     const { data, error } = await supabase
       .from('leap_customer_project_task')

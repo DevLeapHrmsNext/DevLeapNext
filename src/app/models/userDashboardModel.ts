@@ -106,7 +106,7 @@ export interface Root {
   my_tasks: MyTask[]
   my_name: MyName
   birthdays: Birthday[]
-  notification: UserNotification[]
+  notification: UserDashboardNotification[]
 }
 export interface WorkingHour {
   workData: WorkDaum[]
@@ -289,7 +289,7 @@ export interface LeapCustomer2 {
   name: string
 }
 
-export interface UserNotification {
+export interface UserDashboardNotification {
   id: number
   client_id: number
   branch_id: any
@@ -318,5 +318,23 @@ export interface LeapUserActivityType {
   created_at: string
   is_deleted: boolean
   updated_at: string
+  activity_type: string
+}
+
+export interface UserNotification {
+  date: string
+  listing: Listing[]
+}
+export interface Listing {
+  created_at: string
+  customer_name: string
+  activity_details: string
+  activity_related_id: number
+  activity_type_id: ActivityTypeId
+  type: string
+}
+
+export interface ActivityTypeId {
+  id: number
   activity_type: string
 }

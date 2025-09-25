@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
 
 
       customerId: formData.get('customer_id'),
+      client_id: formData.get('client_id'),
       role_id: formData.get('role_id') as string,
       current_id: formData.get('current_id'),
       c_address_line1: formData.get('c_address_line1'),
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
 
 
     }
-    if (fdata.current_id && fdata.current_id.toString().length > 0) {
+    if (fdata.current_id && fdata.current_id.toString().length > 0 && parseInt(String(fdata.current_id))>0) {
       let query = supabase
         .from("leap_customer_address")
         .update({
@@ -69,8 +70,33 @@ export async function POST(request: NextRequest) {
 
       }
 
+    }else{
+      let query = supabase
+        .from("leap_customer_address")
+        .insert({
+          customer_id:fdata.customerId,
+          client_id:fdata.client_id,
+          address_line1: fdata.c_address_line1,
+          address_line2: fdata.c_address_line2,
+          city: fdata.c_city,
+          state: fdata.c_state,
+          postal_code: fdata.c_postal_code,
+          country: fdata.c_country,
+          created_at:new Date()
+        });
+
+
+
+      const { error: clientError } = await query;
+      if (clientError) {
+        console.log(clientError);
+
+        return NextResponse.json({ message: updateAdrressFailure, error: clientError },
+          { status: apiStatusFailureCode });
+
+      }
     }
-    if (fdata.permenant_id && fdata.permenant_id.toString().length > 0) {
+    if (fdata.permenant_id && fdata.permenant_id.toString().length > 0 && parseInt(String(fdata.permenant_id))>0) {
       let query = supabase
         .from("leap_customer_address")
         .update({
@@ -95,6 +121,32 @@ export async function POST(request: NextRequest) {
       }
 
 
+    }else{
+      let query = supabase
+        .from("leap_customer_address")
+        .insert({
+          customer_id:fdata.customerId,
+          client_id:fdata.client_id,
+          address_line1: fdata.p_address_line1,
+          address_line2: fdata.p_address_line2,
+          city: fdata.p_city,
+          state: fdata.p_state,
+          postal_code: fdata.p_postal_code,
+          country: fdata.p_country,
+          created_at:new Date()
+
+        })
+
+
+
+      const { error: clientError } = await query;
+      if (clientError) {
+        console.log(clientError);
+
+        return NextResponse.json({ message: updateAdrressFailure, error: clientError },
+          { status: apiStatusFailureCode });
+
+      }
     }
     let eContactUpQuery = supabase
         .from("leap_customer")

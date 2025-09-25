@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       let leaveType = "";
       try {
         const leaveType = await funGetLeaveType(fields.leave_type[0]);
-        const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", leaveType, data[0].id, false);
+        const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", leaveType + " has been applied.", data[0].id, false);
         // console.log("throww error: ", addActivity);
         throw addActivity;
       } catch (err) {
@@ -105,4 +105,3 @@ export async function POST(request: NextRequest) {
     return funSendApiException(error);
   }
 }
-

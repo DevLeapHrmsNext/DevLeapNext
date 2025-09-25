@@ -37,6 +37,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
     const [alertEndContent, setAlertEndContent] = useState('');
     const [alertValue1, setAlertValue1] = useState('');
     const [alertvalue2, setAlertValue2] = useState('');
+    const [errors, setErrors] = useState<Partial<NewUpdates>>({});
 
     const router =useRouter();
 
@@ -84,11 +85,24 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
             console.error("Error fetching user data:", error);
         }
     }
+    const validate = () => {
+            const newErrors: Partial<NewUpdates> = {};
+            if (!formValues.statusUpdate || formValues.statusUpdate==0) newErrors.statusUpdate = "required";
+        if (!formValues.comment) newErrors.comment = "required";
 
+        setErrors(newErrors)
+
+        return Object.keys(newErrors).length === 0;
+        
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         console.log("handle submit is called");
+        if(!validate()){
+            return;
+        }
         e.preventDefault();
+        setLoading(true);
         try {
             // const formData = new FormData();
 
@@ -128,7 +142,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
             setShowAlert(true);
             setAlertTitle("Failed")
             setAlertStartContent("Exception occured: Something went wrong.");
-            setAlertForSuccess(3)
+            setAlertForSuccess(2)
             console.error("Error fetching user data:", error);
         }
     }
@@ -188,8 +202,8 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
                     Update Help Request
                 </div>
             </div>
-            {isLoading ?
-                <div className="loader-spinner"></div> :
+            {/* {isLoading ?
+                <div className="loader-spinner"></div> : */}
                 <div className="row">
                     <div className="col-lg-3"><div className="label">Name:</div></div>
                     <div className="col-lg-9 mb-3">{ssupportRequestData?.leap_customer.name}</div>
@@ -247,7 +261,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
 
                     </div>
 
-                    <div className="col-lg-3"><div className="label">Status<span className='req_text'>*</span>:</div></div>
+                    <div className="col-lg-3"><div className="label">Status<span className='req_text' style={{color:'red'}}>*</span>:</div></div>
                     <div className="col-lg-9 mb-3">
                         <div className="form_box">
                             <select id="statusUpdate" style={{ width: "250px" }} name="statusUpdate" value={formValues.statusUpdate} onChange={(e) => { setformValues((prev) => ({ ...prev, ['statusUpdate']: e.target.value })) }}>
@@ -256,12 +270,17 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
                                     <option value={status.id} key={status.id}>{status.status}</option>
                                 ))}
                             </select>
+
                         </div>
+                        {errors.statusUpdate && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+
                     </div>
-                    <div className="col-lg-3 mb-3">Comments{ssupportRequestData?.type_id}<span className='req_text'>*</span>:</div>
+                    <div className="col-lg-3 mb-3">Comments<span className='req_text' style={{color:'red'}}>*</span>:</div>
                     <div className="col-lg-9 mb-3">
                         <div className="form_box">
                             <textarea id="comment" name="comment" className='form-control' onChange={(e) => { setformValues((prev) => ({ ...prev, ['comment']: e.target.value })) }} />
+                            {errors.comment && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
+                                
                         </div>
                     </div>
 
@@ -277,7 +296,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
                     <div className={showAssignDialog ? "rightpoup rightpoupopen" : "rightpoup"}>
                         {showAssignDialog && <AssignEmployeeAttendance customer_id={ssupportRequestData?.customer_id} date={ssupportRequestData?.description} onClose={() => { setShowAttendanceAssignDialog(false) }} />}
                     </div>
-                </div>}
+                </div>
 
         </div>
     )

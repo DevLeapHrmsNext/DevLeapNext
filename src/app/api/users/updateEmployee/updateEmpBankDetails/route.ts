@@ -42,18 +42,20 @@ export async function POST(request: NextRequest) {
     const bankdet = JSON.parse(fdata.bankdetails);
     console.log("bankdet------=-=-=------", bankdet);
     let eContactUpQuery ;
+    if(fdata.bankdetails.length>0){
     for (let i = 0; i < bankdet.length; i++) {
-    if(bankdet.bank_account_count_id && bankdet.bank_account_count_id != null){
+    if(bankdet[i].bank_account_count_id && bankdet[i].bank_account_count_id != null){
 
 
       console.log("2======================");
       for(let j=0;j<bankdet[i].details.length;j++){
+        console.log("2============ssssssss==========");
        eContactUpQuery = supabase
       .from("leap_customer_bank_details")
       .update({
-         component_value: bankdet.row_value,
+         component_value: bankdet[i].details[j].row_value,
         
-      }).eq("id",bankdet.pk_row_id);
+      }).eq("id",bankdet[i].details[j].pk_row_id);
       const { error } = await eContactUpQuery;
       if (error) {
         console.log(error);
@@ -91,7 +93,6 @@ export async function POST(request: NextRequest) {
             created_at:new Date()
           })
           const { error } = await eContactUpQuery;
-          console.log("1======================",eContactUpQuery);
           if (error) {
             console.log(error);
 
@@ -103,8 +104,9 @@ export async function POST(request: NextRequest) {
       
     
     }
+    }
   }
-
+    if(fdata.salaryAmountsArray && salaryAmounts.length>0){
     for (let i = 0; i < salaryAmounts.length; i++) {
       console.log("4======================");
       console.log(salaryAmounts[i]);
@@ -142,7 +144,7 @@ export async function POST(request: NextRequest) {
       }
     }
     let totalSalaryqwery
-    if(fdata.total_salary_table_id!="0"){
+    if(fdata.total_salary_table_id && fdata.total_salary_table_id! && fdata.total_salary_table_id!="0"){
       console.log("6======================");
     totalSalaryqwery = supabase.from('leap_employee_total_salary').update([
       {
@@ -164,15 +166,12 @@ export async function POST(request: NextRequest) {
       }
     ])
   }
-
-
-
     const { error: insertTotalSalaryError } = await totalSalaryqwery;
 
     if (insertTotalSalaryError) {
       return funSendApiErrorMessage(updateGrossSalaryFailure, "Insert Total Salary Details Issue")
     }
-
+  }
     (async () => {
 
       try {

@@ -559,7 +559,7 @@ const EmpAttendancePage = () => {
                                                         <div className="col-lg-12 mb-3"><img src={
                                                             dateRangeAttendanceData[selectedAttendenceIndex].employeeAttendance != null &&
                                                                 dateRangeAttendanceData[selectedAttendenceIndex].employeeAttendance.img_attachment && dateRangeAttendanceData[selectedAttendenceIndex].employeeAttendance.img_attachment.length > 0 ?
-                                                                `${getImageApiURL}/uploads/${dateRangeAttendanceData[selectedAttendenceIndex].employeeAttendance.img_attachment}` :
+                                                                `${getImageApiURL}${dateRangeAttendanceData[selectedAttendenceIndex].employeeAttendance.img_attachment}` :
                                                                 `${process.env.NEXT_PUBLIC_BASE_URL}/images/attendance_profile_img.png`} className="img-fluid" alt="User Pic" style={{ width: "200px", margin: "-40px 0 0 0", borderRadius: "15px" }} /></div>
 
                                                     </div>

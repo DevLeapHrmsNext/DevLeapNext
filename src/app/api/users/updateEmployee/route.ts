@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
           .from("leap_customer")
           .update({
             dob:formData.get('dob'),
+            name:formData.get('name'),
             email_id:formData.get('email_id'),
             gender:formData.get('gender'),
             marital_status:formData.get('marital_status'),

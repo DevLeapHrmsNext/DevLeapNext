@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       if (role_id == "2") {
         let salaryDataQuery = supabase
           .from("leap_client_employee_salary")
-          .select('*,leap_client_salary_components(salary_component_id,leap_salary_components(id,salary_component_name))').eq('client_id', client_id);
+          .select('*,leap_client_salary_components(salary_component_id,leap_salary_components(id,salary_component_name,salary_add))').eq('client_id', client_id);
 
         if (customer_id) {
           salaryDataQuery = salaryDataQuery.eq('customer_id', customer_id)

@@ -1,15 +1,13 @@
 
 'use client'
 import React, { useRef } from 'react'
-import LeapHeader from '@/app/components/header'
-import Footer from '@/app/components/footer'
 import LoadingDialog from '@/app/components/PageLoader'
 import { useEffect, useState } from 'react'
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
 import { UserNotification } from '../models/userDashboardModel'
 import { ALERTMSG_exceptionString, staticIconsBaseURL } from '../pro_utils/stringConstants'
 import { pageURL_userAttendance, pageURL_userLeave, pageURL_userSupport, pageURL_userTaskListingPage, pageURL_userTeamAttendanceList, pageURL_userTeamLeave } from '../pro_utils/stringRoutes'
-import { point } from 'leaflet'
+import moment from 'moment'
 
 const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
     const { contextClientID, contextCustomerID, contextRoleID } = useGlobalContext();
@@ -83,105 +81,63 @@ const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
                                                     5 - support */}
                             {notificationData && notificationData.length > 0 ?
                                 notificationData.map((noti, index) => (
-                                    noti.type == "user" ?
-                                        <ul className="nw_notification_table_listing" key={index}>
-                                            {/* <li> */}
-                                                {noti.activity_type_id.id === 1 ? ( //attendance
-                                                    // <a href={pageURL_userAttendance}>
-                                                    <div style={{cursor: "pointer"}} onClick={() => window.location.href = pageURL_userAttendance}>
-                                                        {/* <div className="row">
-                                                            <div className="col-lg-3">{noti.activity_type_id.activity_type} :</div>
-                                                            <div className="col-lg-9">{noti.activity_details}</div>
-                                                         
-                                                        </div> */}
-                                                        {noti.activity_type_id.activity_type} : {noti.activity_details}
+                                    <React.Fragment key={index}>
+                                    {noti.date && <div className='nw_notification_date_listing'>{moment(noti.date, "DD/MM/YYYY").format("Do MMMM")}</div>}
+                                    {noti.listing.map((notiList, i) => (
+                                        notiList.type == "user" ?
+                                            <ul className="nw_notification_table_listing" key={i}>
+                                                {/* <li> */}
+                                                {notiList.activity_type_id.id === 1 ? ( //attendance
+                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userAttendance}>
+                                                        {notiList.activity_type_id.activity_type} : {notiList.activity_details}
                                                         <span className='notification_detail_icon'>
-                                                            {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
                                                         </span>
                                                     </div>
-                                                    // </a>
-                                                ) : noti.activity_type_id.id === 2 ? ( //task
-                                                    // <a href={pageURL_userTaskListingPage}>
-                                                    <div style={{cursor: "pointer"}} onClick={() => window.location.href = pageURL_userTaskListingPage}>
-                                                        {noti.activity_type_id.activity_type} : {noti.activity_details}
-                                                        <span className='notification_detail_icon'>
-                                                            {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                        </span>
-                                                        </div>
-                                                    // </a>
-                                                ) : noti.activity_type_id.id === 3 ? ( //leave
-                                                    // <a href={pageURL_userLeave}>
-                                                     <div style={{cursor: "pointer"}} onClick={() => window.location.href = pageURL_userLeave}>
-                                                        {noti.activity_type_id.activity_type} : {noti.activity_details}
-                                                        <span className='notification_detail_icon'>
-                                                            {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                        </span>
-                                                        </div>
-                                                    // </a>
-                                                ) : noti.activity_type_id.id === 5 ? ( //support
-                                                    // <a href={pageURL_userSupport}>
-                                                     <div style={{cursor: "pointer"}} onClick={() => window.location.href = pageURL_userSupport}>
-                                                        {noti.activity_type_id.activity_type} : {noti.activity_details}
-                                                        <span className='notification_detail_icon'>
-                                                            {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                        </span>
-                                                        </div>
-                                                    // </a>
+                                                ) : notiList.activity_type_id.id === 2 ? ( //task
+                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userTaskListingPage}>
+                                                        {notiList.activity_type_id.activity_type} : {notiList.activity_details}
+                                                    </div>
+                                                ) : notiList.activity_type_id.id === 3 ? ( //leave
+                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userLeave}>
+                                                        {notiList.activity_type_id.activity_type} : {notiList.activity_details}
+                                                    </div>
+                                                ) : notiList.activity_type_id.id === 5 ? ( //support
+                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userSupport}>
+                                                        {notiList.activity_type_id.activity_type} : {notiList.activity_details}
+                                                    </div>
                                                 ) : (
-                                                    // <a href="">
-                                                     <div >
-                                                        {noti.activity_type_id.activity_type} : {noti.activity_details}
-                                                        <span className='notification_detail_icon'>
-                                                            {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                        </span>
-                                                        </div>
-                                                    // </a>
+                                                    <div >
+                                                        {notiList.activity_type_id.activity_type} : {notiList.activity_details}
+                                                        
+                                                    </div>
                                                 )}
-                                            {/* </li> */}
-                                        </ul> : noti.type == "team" ?
-                                            <ul className="nw_notification_table_listing" key={index}>
-                                                {/* <li><a href="">{noti.customer_name} : {noti.activity_details}<span className='notification_detail_icon'><img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /></span></a></li> */}
-                                                {/* <li> */}
-                                                    {noti.activity_type_id.id === 1 ? (
-                                                        // <a href={pageURL_userTeamAttendanceList}>
-                                                        <div style={{cursor: "pointer"}} onClick={() => window.location.href = pageURL_userTeamAttendanceList}>
-                                                            {noti.customer_name} : {noti.activity_type_id.activity_type} - {noti.activity_details}
-                                                            <span className='notification_detail_icon'>
-                                                                {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                            </span>
-                                                            </div>
-                                                        // </a>
-                                                    ) : noti.activity_type_id.id === 2 ? (
-                                                        // <a href={pageURL_userTaskListingPage}>
-                                                        <div style={{cursor: "pointer"}} onClick={() => window.location.href = pageURL_userTaskListingPage}>
-                                                            {noti.customer_name} : {noti.activity_type_id.activity_type} - {noti.activity_details}
-                                                            <span className='notification_detail_icon'>
-                                                                {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                            </span>
-                                                            </div>
-                                                        // </a>
-                                                    ) : noti.activity_type_id.id === 3 ? (
-                                                        // <a href={pageURL_userTeamLeave}>
-                                                        <div style={{cursor: "pointer"}} onClick={() => window.location.href = pageURL_userTeamLeave}>
-                                                            {noti.customer_name} : {noti.activity_type_id.activity_type} - {noti.activity_details}
-                                                            <span className='notification_detail_icon'>
-                                                                {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                            </span>
-                                                            </div>
-                                                        // </a>
+                                            </ul> : notiList.type == "team" ?
+                                                <ul className="nw_notification_table_listing" key={index}>
+                                                    {notiList.activity_type_id.id === 1 ? (
+                                                        <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userTeamAttendanceList}>
+                                                            {notiList.customer_name} : {notiList.activity_type_id.activity_type} - {notiList.activity_details}
+                                                            
+                                                        </div>
+                                                    ) : notiList.activity_type_id.id === 2 ? (
+                                                        <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userTaskListingPage}>
+                                                            {notiList.customer_name} : {notiList.activity_type_id.activity_type} - {notiList.activity_details}
+                                                            
+                                                        </div>
+                                                    ) : notiList.activity_type_id.id === 3 ? (
+                                                        <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userTeamLeave}>
+                                                            {notiList.customer_name} : {notiList.activity_type_id.activity_type} - {notiList.activity_details}
+                                                           
+                                                        </div>
                                                     ) : (
-                                                        // <a href="">
                                                         <div>
-                                                            {noti.customer_name} : {noti.activity_type_id.activity_type} - {noti.activity_details}
-                                                            <span className='notification_detail_icon'>
-                                                                {/* <img src={staticIconsBaseURL + "/images/user/notification-detail-icon.svg"} alt="Notification detail" className="img-fluid" /> */}
-                                                            </span>
-                                                            </div>
-                                                        // </a>
+                                                            {notiList.customer_name} : {notiList.activity_type_id.activity_type} - {notiList.activity_details}
+                                                            
+                                                        </div>
                                                     )}
-                                                {/* </li> */}
-                                            </ul>
-                                            : <></>
+                                                </ul>
+                                                : <></>
+                                    ))}
+                                    </React.Fragment>
                                 )) : (
                                     <div className="user_notification_list">No Notifications!</div>
                                 )}

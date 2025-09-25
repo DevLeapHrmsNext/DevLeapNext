@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         if(customer_id){
             const {data,error} = await supabase
             .from("leap_customer")
-            .select("leap_client(leap_client_basic_info(*))")
+            .select("auth_token, leap_client(leap_client_basic_info(*))")
             .eq("customer_id", customer_id);
 
             if (error) {
@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
                 force_update: appVersions[0]?.force_update,
                 live_app_url: appVersions[0]?.app_url,
                 client_id: companyDetails[0]?.leap_client?.leap_client_basic_info[0]?.client_id,
+                auth_token: companyDetails[0]?.auth_token,
                 company_logo: companyDetails[0]?.leap_client?.leap_client_basic_info[0]?.company_logo,
                 company_name: companyDetails[0]?.leap_client?.leap_client_basic_info[0]?.company_name,
                 compnay_websit: companyDetails[0]?.leap_client?.leap_client_basic_info[0]?.compnay_websit,
