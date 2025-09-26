@@ -3,7 +3,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import supabase from '@/app/api/supabaseConfig/supabase'
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
 import { SubProject } from '@/app/models/TaskModel'
 import { ALERTMSG_exceptionString } from '@/app/pro_utils/stringConstants'
@@ -19,14 +19,16 @@ interface AddTaskForm {
 const ApplyTaskApp: React.FC = () => {
     const [taskArray, setTask] = useState<TaskType[]>([]);
     const [statusArray, setStatus] = useState<TaskStatus[]>([]);
-    const { contextClientID } = useGlobalContext();
+    // const { contextClientID } = useGlobalContext();
     const [subProjectarray, setSubProject] = useState<SubProject[]>([]);
     const [loadingCursor, setLoadingCursor] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [alertForSuccess, setAlertForSuccess] = useState(0);
     const [alertTitle, setAlertTitle] = useState('');
     const [alertStartContent, setAlertStartContent] = useState('');
-
+    const searchParams = useSearchParams();
+    const contactNumber = searchParams.get("contact_number");
+    const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
     const router = useRouter()
 
     const [formValues, setFormValues] = useState<AddTaskForm>({
@@ -42,7 +44,9 @@ const ApplyTaskApp: React.FC = () => {
     useEffect(() => {
         setLoadingCursor(true);
         const fetchData = async () => {
-            const project = await getSubProject(contextClientID);
+            const custData = await getCustomerClientIds(contactNumber!);
+            setuserData(custData);
+            const project = await getSubProject(userData[0].client_id);
             setSubProject(project);
             const task = await getTaskTypes();
             setTask(task);
@@ -51,7 +55,7 @@ const ApplyTaskApp: React.FC = () => {
             setLoadingCursor(false);
         };
         fetchData();
-    }, [contextClientID])
+    }, [userData[0].client_id])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -77,11 +81,19 @@ const ApplyTaskApp: React.FC = () => {
             const response = await fetch("/api/users/addTask", {
                 method: "POST",
                 body: JSON.stringify({
+                    client_id: userData[0].client_id,
+                    branch_id: userData[0].branch_id,
+                    customer_id: userData[0].customer_id,
                     sub_project_id: formValues.sub_project_id,
                     task_type_id: formValues.task_type_id,
                     task_details: formValues.task_details,
                     task_date: formValues.task_date,
                     task_status: formValues.task_status
+
+
+                    // total_hours: total_hours || 0,
+                    // total_minutes: total_minutes || 0,
+
                 }),
             });
             setLoadingCursor(false);
@@ -109,8 +121,6 @@ const ApplyTaskApp: React.FC = () => {
     return (
         <div className='apply-task-container'>
             <h2>Add Task</h2>
-
-
 
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -173,7 +183,16 @@ const ApplyTaskApp: React.FC = () => {
 
 export default ApplyTaskApp
 
-// ----------------- Supabase Fetch Functions -----------------
+async function getCustomerClientIds(contact_number: string) {
+    const { data, error } = await supabase
+        .from('leap_customer')
+        .select('customer_id, client_id, branch_id')
+        .eq('contact_number', contact_number);
+
+    if (error) throw error;
+    return data;
+}
+
 async function getSubProject(client: any) {
     const { data, error } = await supabase.from('leap_client_sub_projects').select().eq("client_id", client);
     if (error) return [];

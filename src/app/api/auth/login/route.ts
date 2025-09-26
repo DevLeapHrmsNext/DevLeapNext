@@ -1,3 +1,7 @@
+// auth token: if it is null in the backend then we generate a new one and update the db
+// if it is not null then we check if the passed auth token matches the db auth token
+// if it matches then we proceed else we send a response that user is logged in another device
+
 import { NextResponse } from 'next/server';
 import { createClient } from '../../../../../utils/supabase/server';
 import { funloggedInAnotherDevice, funSendApiErrorMessage } from '@/app/pro_utils/constant';
@@ -9,7 +13,7 @@ export async function POST(request: Request) {
   try {
     const supabase =await createClient();
     // console.log( await request.json());
-    const {semail, spassword, loginType, social_login, platform,fcm_token } = await request.json();
+    const {semail, spassword, loginType, social_login, platform,fcm_token, auth_token } = await request.json();
     // const requestEmail = String(formData.get('email'));
     // const reqPassword = String(formData.get('password'));
     // const loginType = String(formData.get('loginType'));
@@ -51,7 +55,7 @@ export async function POST(request: Request) {
     // console.log("this is the session in the api------------------    ",await supabase.auth.getSession());
     // return Response.json({"data":data});
     const authID = data.user.id;
-    return authUserDetails(authID,platform,fcm_token);
+    return authUserDetails(authID,platform,fcm_token, auth_token);
 
   }
   catch (error) {
@@ -61,7 +65,7 @@ export async function POST(request: Request) {
   }
 }
 
-async function authUserDetails(authUUID: any, platform: any, fcm_token: any) {
+async function authUserDetails(authUUID: any, platform: any, fcm_token: any, auth_token: any) {
   const supabase = await createClient();
 
 
@@ -115,7 +119,7 @@ async function authUserDetails(authUUID: any, platform: any, fcm_token: any) {
       }
     } else {
   
-      const isValid = await isAuthTokenValid(platform, customer.customer_id, customer.auth_token);
+      const isValid = await isAuthTokenValid(platform, customer.customer_id, auth_token);
       if (!isValid) {
         return funloggedInAnotherDevice(); 
       }

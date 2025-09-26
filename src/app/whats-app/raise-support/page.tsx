@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import LeapHeader from '@/app/components/header'
 import Footer from '@/app/components/footer'
 import supabase from '@/app/api/supabaseConfig/supabase'
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { pageURL_userSupport } from '@/app/pro_utils/stringRoutes'
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
 import { LeapRequestMaster, SupportForm } from '@/app/models/supportModel'
@@ -17,7 +17,7 @@ import ShowAlertMessage from '@/app/components/alert'
 
 const SupportRequestForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
-  const { contextClientID, contaxtBranchID, contextCustomerID } = useGlobalContext();
+  // const { contextClientID, contaxtBranchID, contextCustomerID } = useGlobalContext();
   const [priorityArray, setPriority] = useState<SupportPriority[]>([]);
   const [masterArray, setMaster] = useState<LeapRequestMaster[]>([]);
   const [loadingCursor, setLoadingCursor] = useState(false);
@@ -26,14 +26,16 @@ const SupportRequestForm: React.FC = () => {
   const [alertForSuccess, setAlertForSuccess] = useState(0);
   const [alertTitle, setAlertTitle] = useState('');
   const [alertStartContent, setAlertStartContent] = useState('');
-  const [alertMidContent, setAlertMidContent] = useState('');
-  const [alertEndContent, setAlertEndContent] = useState('');
-  const [alertValue1, setAlertValue1] = useState('');
-  const [alertvalue2, setAlertValue2] = useState('');
+
+  const searchParams = useSearchParams();
+  const contactNumber = searchParams.get("contact_number");
+  const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
   const router = useRouter()
   useEffect(() => {
     setLoadingCursor(true);
     const fetchData = async () => {
+      const custData = await getCustomerClientIds(contactNumber!);
+      setuserData(custData);
       const priority = await getPriority();
       setPriority(priority);
       const master = await getMaster();
@@ -93,9 +95,9 @@ const SupportRequestForm: React.FC = () => {
       const response = await fetch("/api/users/support/raiseSupport", {
         method: "POST",
         body: JSON.stringify({
-          "client_id": contextClientID,
-          "customer_id": contextCustomerID,
-          "branch_id": contaxtBranchID,
+          "client_id": userData[0].client_id,
+          "customer_id": userData[0].customer_id,
+          "branch_id": userData[0].branch_id,
           "type_id": formValues.type_id,
           "description": formValues.description,
           "priority_level": formValues.priority_level
@@ -128,49 +130,58 @@ const SupportRequestForm: React.FC = () => {
 
   return (
     <div className='apply-task-container'>
-            <h2>Raise Support</h2>
+      <h2>Raise Support</h2>
 
 
 
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Request Type  <span className='req_text'>*</span></label>
-                    <select name="type_id" value={formValues.type_id} onChange={handleInputChange}>
-                        <option value="">Select</option>
-                        {masterArray.map((type, index) => (
-                            <option value={type.id} key={index}>{type.type_name}</option>
-                          ))}
-                    </select>
-                    {errors.type_id && <span className="error">{errors.type_id}</span>}
-                </div>
-
-                <div className="form-group">
-                    <label>Priority <span className='req_text'>*</span></label>
-                    <select name="priority_level" value={formValues.priority_level} onChange={handleInputChange}>
-                        <option value="">Select</option>
-                        {priorityArray.map((type, index) => (
-                            <option value={type.id} key={index}>{type.priority_name}</option>
-                          ))}
-                    </select>
-                    {errors.priority_level && <span className="error">{errors.priority_level}</span>}
-                </div>
-
-                <div className="form-group">
-                    <label>Description <span className='req_text'>*</span></label>
-                    <textarea name="description" rows={2} value={formValues.description} onChange={handleInputChange} />
-                    {errors.description && <span className="error">{errors.description}</span>}
-                </div>
-
-                <div className="form-group">
-                    <button type="submit" className="submit-btn">Submit</button>
-                </div>
-            </form>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Request Type  <span className='req_text'>*</span></label>
+          <select name="type_id" value={formValues.type_id} onChange={handleInputChange}>
+            <option value="">Select</option>
+            {masterArray.map((type, index) => (
+              <option value={type.id} key={index}>{type.type_name}</option>
+            ))}
+          </select>
+          {errors.type_id && <span className="error">{errors.type_id}</span>}
         </div>
+
+        <div className="form-group">
+          <label>Priority <span className='req_text'>*</span></label>
+          <select name="priority_level" value={formValues.priority_level} onChange={handleInputChange}>
+            <option value="">Select</option>
+            {priorityArray.map((type, index) => (
+              <option value={type.id} key={index}>{type.priority_name}</option>
+            ))}
+          </select>
+          {errors.priority_level && <span className="error">{errors.priority_level}</span>}
+        </div>
+
+        <div className="form-group">
+          <label>Description <span className='req_text'>*</span></label>
+          <textarea name="description" rows={2} value={formValues.description} onChange={handleInputChange} />
+          {errors.description && <span className="error">{errors.description}</span>}
+        </div>
+
+        <div className="form-group">
+          <button type="submit" className="submit-btn">Submit</button>
+        </div>
+      </form>
+    </div>
   )
 }
 
 export default SupportRequestForm
 
+async function getCustomerClientIds(contact_number: string) {
+  const { data, error } = await supabase
+    .from('leap_customer')
+    .select('customer_id, client_id, branch_id')
+    .eq('contact_number', contact_number);
+
+  if (error) throw error;
+  return data;
+}
 
 async function getPriority() {
 
