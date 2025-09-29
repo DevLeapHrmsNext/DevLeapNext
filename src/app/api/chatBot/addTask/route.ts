@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { funDataAddedSuccessMessage, funDataMissingError, funISDataKeyPresent, funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
-import { getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
+import {  funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
 import supabase from "../../supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
 import { addUserActivities } from "@/app/pro_utils/constantFunAddData";

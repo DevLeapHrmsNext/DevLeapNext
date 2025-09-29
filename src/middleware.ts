@@ -30,7 +30,13 @@ export async function middleware(request: NextRequest) {
     || pathname.toLowerCase().includes("/clientadmin/addEmployeeForm")
     || pathname.toLowerCase().includes("/terms-and-conditions")
     || pathname.toLowerCase().includes("/privacy-policy") 
-    || pathname.toLowerCase().includes("/clientadmin/addEmployeeForm/addEmployeeBankDetailsForm")) {
+    || pathname.toLowerCase().includes("/clientadmin/addEmployeeForm/addEmployeeBankDetailsForm")
+    || pathname.toLowerCase().includes("/whats-app/add-task")  
+    || pathname.toLowerCase().includes("/whats-app/raise-support")
+    || pathname.toLowerCase().includes("/whats-app/upload-documents")
+    || pathname.toLowerCase().includes("/whats-app/apply-leave")
+    || pathname.toLowerCase().includes("/whats-app")
+  ){
       console.log("Middel waare is getting called ---------123------------------------- ----- -- ",pathname);
 
     return NextResponse.next(); // Let the request pass
