@@ -188,6 +188,13 @@ const ClientAdminSettings = () => {
             holiday_per_week: workingHours[0].holiday_per_week,
         })
         }else{
+            setWorkingDayFormValues({
+            id:'',
+            full_day: '',
+            half_day: '',
+            lunch_time: '',
+            holiday_per_week: '',
+        })
             setWorkingHoursAdd(true)
         }
         const employees = await getEmployees(contextClientID, contaxtBranchID);
@@ -302,6 +309,13 @@ const ClientAdminSettings = () => {
                     holiday_per_week: workingHours[0].holiday_per_week,
                 })
             }else{
+                setWorkingDayFormValues({
+                    id:'',
+                    full_day: '',
+                    half_day: '',
+                    lunch_time: '',
+                    holiday_per_week: '',
+                })
                 setWorkingHoursAdd(true)
             }
               
@@ -359,12 +373,13 @@ const ClientAdminSettings = () => {
             console.log(response);
             
             if (apiCall.ok && response.status==1) {
+                setWorkingHoursAdd(false);
                 setLoading(false);
                 setShowAlert(true);
                 setAlertTitle("Success")
-                setAlertStartContent("Working hour uopdated Successfully");
+                setAlertStartContent(response.message);
                 setAlertForSuccess(1)
-                fetchData();
+                
 
             } else {
                 setLoading(false);
@@ -439,7 +454,9 @@ const ClientAdminSettings = () => {
                     <LoadingDialog isLoading={isLoading} />
                     {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
                             setShowAlert(false)
-                            
+                            if(alertForSuccess==1){
+                                fetchData();
+                            }
 
                         }} onCloseClicked={function (): void {
                             setShowAlert(false)
@@ -459,7 +476,7 @@ const ClientAdminSettings = () => {
 
                                             <div className="col-lg-10 settings_title">Branches</div>
                                             <div className="col-lg-2">
-                                                <div onClick={() => { setShowAddBranchDialog(true) }} className='red_button filter_submit_btn ' style={{ float: "right" }}>Add Branches</div>
+                                                <div onClick={() => { setShowAddBranchDialog(true) }} className='red_button filter_submit_btn ' style={{ float: "right" }}>Add Branch</div>
                                             </div>
 
 
@@ -505,7 +522,7 @@ const ClientAdminSettings = () => {
                                                             <input type="text" className="form-control" value={searchText.departmentSearchText} name="departmentSearchText" onChange={(e) => setSearchText((prev) => ({ ...prev, ['departmentSearchText']: e.target.value }))} id="departmentSearchText" placeholder='Search Department' />
                                                         </div>
                                                         <div className="col-lg-2">
-                                                            <img src={staticIconsBaseURL+"/images/search_icon.png"} className="img-fluid" style={{ maxHeight: '25px', maxWidth: "25px" }} onClick={() => callSearchData()} />
+                                                            <img src={staticIconsBaseURL+"/images/search_icon.png"} className="img-fluid" style={{ maxHeight: '25px', maxWidth: "25px",marginTop:"5px" }} onClick={() => callSearchData()} />
                                                         </div></div>
                                                     {/* {errors.leave_count && <span className="error" style={{color: "red"}}>{errors.leave_count}</span>} */}
                                                 </div>
@@ -556,7 +573,7 @@ const ClientAdminSettings = () => {
                                                             <input type="text" className="form-control" value={searchText.designationSearchText} name="designationSearchText" onChange={(e) => setSearchText((prev) => ({ ...prev, ['designationSearchText']: e.target.value }))} id="designationSearchText" placeholder='Search Designation' />
                                                         </div>
                                                         <div className="col-lg-2">
-                                                            <img src={staticIconsBaseURL+"/images/search_icon.png"} className="img-fluid" style={{ maxHeight: '25px', maxWidth: "25px" }} onClick={() => callSearchData()} />
+                                                            <img src={staticIconsBaseURL+"/images/search_icon.png"} className="img-fluid" style={{ maxHeight: '25px', maxWidth: "25px",marginTop:"5px", color:"red"}} onClick={() => callSearchData()} />
                                                         </div></div>
                                                     {/* {errors.leave_count && <span className="error" style={{color: "red"}}>{errors.leave_count}</span>} */}
                                                 </div>
@@ -839,9 +856,9 @@ const ClientAdminSettings = () => {
                                                     {errors.holiday_per_week && <span className='error' style={{ color: "red" }}>{errors.holiday_per_week}</span>}
                                                 </div>
                                             </div>
-                                            {workingHoursDataChanged && <div className="col-lg-4 " >
+                                            {(workingHoursDataChanged || addWorkingHours)  && <div className="col-lg-4 " >
                                             
-                                                <input type='submit' value={addWorkingHours?"Insert":"Update"}  className="red_button" onClick={handleWorkingHourUpdate} />
+                                                <input type='submit' value={addWorkingHours?"Add":"Update"}  className="red_button" onClick={handleWorkingHourUpdate} />
                                             </div>}
                                         </div>
                                     </div>
@@ -893,15 +910,15 @@ const ClientAdminSettings = () => {
                     </div>
                     
                     <div className={showAddBranchDialog ? "rightpoup rightpoupopen" : "rightpoup"}>
-                        {showAddBranchDialog && <AddBranchDetails onClose={() => { setShowAddBranchDialog(false) }} />}
+                        {showAddBranchDialog && <AddBranchDetails onClose={(callUpdate) => { setShowAddBranchDialog(false);if(callUpdate){fetchData()} }} />}
                     </div>
 
                     <div className={showAddDepartment ? "rightpoup rightpoupopen" : "rightpoup"}>
-                        {showAddDepartment && <DialogClientAddDesignationDepartment onClose={() => { setShowAddDepartment(false) }} isDesignationAdd={false} editDataType={''} editID={-1} dataToEdit={''} />}
+                        {showAddDepartment && <DialogClientAddDesignationDepartment onClose={(callUpdate) => { setShowAddDepartment(false);if(callUpdate){fetchData()} }} isDesignationAdd={false} editDataType={''} editID={-1} dataToEdit={''} />}
                     </div>
 
                     <div className={showAddDesignation ? "rightpoup rightpoupopen" : "rightpoup"}>
-                        {showAddDesignation && <DialogClientAddDesignationDepartment onClose={() => { setShowAddDesignation(false)}} isDesignationAdd={true} editDataType={''} editID={-1} dataToEdit={''} />}
+                        {showAddDesignation && <DialogClientAddDesignationDepartment onClose={(callUpdate) => { setShowAddDesignation(false);if(callUpdate){fetchData()}}} isDesignationAdd={true} editDataType={''} editID={-1} dataToEdit={''} />}
                     </div>
 
                     <div className={showEditHolidayYear ? "rightpoup rightpoupopen" : "rightpoup"}>
@@ -938,23 +955,23 @@ const ClientAdminSettings = () => {
                     }
 
                     <div className={showEditDepartment ? "rightpoup rightpoupopen" : "rightpoup"}>
-                        {showEditDepartment && <DialogClientAddDesignationDepartment onClose={() => { setShowEditDepartment(false), fetchData() }} isDesignationAdd={false} editDataType={"Department"} editID={dataEditID} dataToEdit={dataEditDetail} />}
+                        {showEditDepartment && <DialogClientAddDesignationDepartment onClose={(callUpdate) => { setShowEditDepartment(false) ;if(callUpdate){fetchData()}}} isDesignationAdd={false} editDataType={"Department"} editID={dataEditID} dataToEdit={dataEditDetail} />}
                     </div>
 
                     <div className={showEditDesignation ? "rightpoup rightpoupopen" : "rightpoup"}>
-                        {showEditDesignation && <DialogClientAddDesignationDepartment onClose={() => { setShowEditDesignation(false), fetchData() }} isDesignationAdd={false} editDataType={"Designation"} editID={dataEditID} dataToEdit={dataEditDetail} />}
+                        {showEditDesignation && <DialogClientAddDesignationDepartment onClose={(callUpdate) => { setShowEditDesignation(false);if(callUpdate){fetchData()} }} isDesignationAdd={false} editDataType={"Designation"} editID={dataEditID} dataToEdit={dataEditDetail} />}
                     </div>
                     
                     <div className={showAddBankComponent ? "rightpoup rightpoupopen" : "rightpoup"}>
-                        {showAddBankComponent && <DialogAddEditBankComponents onClose={() => { setShowAddBankComponent(false), fetchData() }} isComponentAdd={true} componentValue={editBankDetail} />}
+                        {showAddBankComponent && <DialogAddEditBankComponents onClose={(callUpdate) => { setShowAddBankComponent(false); if(callUpdate){fetchData()} }} isComponentAdd={true} componentValue={editBankDetail} />}
                     </div>
                     <div className={showEditBankComponents ? "rightpoup rightpoupopen" : "rightpoup"}>
-                        {showEditBankComponents && <DialogAddEditBankComponents onClose={() => { setShowEditBankComponents(false), fetchData() }} isComponentAdd={false} componentValue={editBankDetail} />}
+                        {showEditBankComponents && <DialogAddEditBankComponents onClose={(callUpdate) => { setShowEditBankComponents(false); if(callUpdate){fetchData()} }} isComponentAdd={false} componentValue={editBankDetail} />}
                     </div>
 
                     <div className={showEditLeaveType ? "rightpoup rightpoupopen" : "rightpoup"}>                                  
                     
-                        {showEditLeaveType && <LeaveTypeUpdate id={editLeaveTypeId} onClose={() => { setshowEditLeaveType(false), fetchData() }} />}
+                        {showEditLeaveType && <LeaveTypeUpdate id={editLeaveTypeId} onClose={(callUpdate) => { setshowEditLeaveType(false);if(callUpdate){fetchData()} }} />}
                     </div>
                 </div>
 

@@ -30,15 +30,7 @@ function generateTicketId(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { client_id, customer_id, branch_id, type_id, description, priority_level } = await request.json();
-    // const fdata = {
-    //   client_id: formData.get('client_id'),
-    //   customer_id: formData.get('customer_id'),
-    //   branch_id: formData.get('branch_id'),
-    //   type_id: formData.get('type_id'),
-    //   description: formData.get('description'),
-    //   priority_level: formData.get('priority_level'),
-    // }
+    const { client_id, customer_id, branch_id, type_id, description, priority_level, contact_number } = await request.json();
 
     const ticketId = generateTicketId();
 
@@ -58,21 +50,48 @@ export async function POST(request: NextRequest) {
     if (supportError) {
       return funSendApiErrorMessage(supportError, "Failed to raise support ticket");
     }
-    // const s/upportType = await funGetSupportType(type_id);
-    // const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", fields.leave_type[0], data[0].id, false);
 
-    // const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", supportType + "-" + ticketId, supportData[0].id, false);
+
+      (async () => {
+        try {
+          if (contact_number) {
+            const payload = { 
+              apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+              campaignName: "raise_ticket_id",
+              destination: contact_number,
+              userName: "Evonix Technologies Private Limited",
+              templateParams: [ticketId],
+              source: "new-landing-page form",
+              media: {},
+              buttons: [],
+              carouselCards: [],
+              location: {},
+              attributes: {},
+              paramsFallbackValue: { FirstName: "user" }
+            };
+
+            await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+          }
+        } catch (err: any) {
+          console.log("AiSensy WhatsApp error:", err);
+          await addErrorExceptionLog(client_id, customer_id, "AiSensy WhatsApp error", { exception: err.toString(), ticketId, contact_number });
+        }
+      })();
+  
+
     (async () => {
       let supportType = "";
       try {
         const supportType = await funGetSupportType(type_id);
         const addActivity = await addUserActivities(client_id, customer_id, branch_id, "Support", supportType + "-" + ticketId, supportData[0].id, false);
-        // console.log("throww error: ", addActivity);
         throw addActivity;
       } catch (err) {
 
         if (err === "1") {
-          // console.log(err);
           const dataPassed = { client_id: client_id, customer_id: customer_id, branch_id: branch_id, activity_type: "Support", activity_details: supportType + "-" + ticketId, activity_related_id: supportData[0].id, user_notify: false };
           await addErrorExceptionLog(client_id, customer_id, "Raise support activity log error", `failed to raise support activity log with data :${dataPassed}`);
         }
@@ -80,7 +99,6 @@ export async function POST(request: NextRequest) {
       }
       if (customer_id) {
         const custName = await funGetSingleColumnValueCustomer(customer_id, "name");
-        // const manager_id = await funGetSingleColumnValueCustomer(customer_id, "manager_id");
         const admin_id = await await funGetAdminID(client_id);
         try {
           const { data: shouldNotify, error } = await supabase.from("leap_client_notification_selected_types").select("*").eq("selected_notify_type_id", 5);
@@ -103,11 +121,9 @@ export async function POST(request: NextRequest) {
         }
       }
     })();
-    // if (addActivity == "1") {
-    //   return funSendApiErrorMessage(addActivity, "Customer Support Activity Insert Issue");
-    // } else {
+
     return funDataAddedSuccessMessage("Support ticket raised successfully");
-    // }
+
   } catch (error) {
     return funSendApiException(error);
   }

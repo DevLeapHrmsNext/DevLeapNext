@@ -1129,8 +1129,16 @@ export async function getMyPresentTeam(client_id: any, customer_id: any) {
 
 export async function isAuthTokenValid(platform: any, customer_id: any, auth_token: any) {
   if (platform == "ios" || platform == "android") {
-    const { data: cust, error: custFetchError } = await supabase
-      .from("leap_customer").select("auth_token").eq("customer_id", customer_id)
+    let authquery =  supabase
+      .from("leap_customer").select("auth_token");
+      if(auth_token){
+        authquery=authquery.eq("auth_token", auth_token)
+      }
+      if(customer_id){
+        authquery=authquery.eq("customer_id", customer_id)
+      }
+
+      const { data: cust, error: custFetchError }=await authquery;
     if (custFetchError) {
       return funSendApiErrorMessage(custFetchError, "Unable to fetch customer");
     }

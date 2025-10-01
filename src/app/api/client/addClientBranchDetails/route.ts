@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
             
           }
         
-          const { data:branchDetails,error:branchError } = await supabase.from('leap_client_branch_details').insert([
+          const { error:branchError } = await supabase.from('leap_client_branch_details').insert([
             { client_id: fdata.clientId,
                 branch_address: fdata.branchAddress,
                 branch_city:fdata.branchCity,
@@ -43,20 +43,14 @@ export async function POST(request: NextRequest) {
                 // id:fdata.id,
 
                 created_at: new Date(),
-            }]).select();
+            }]);
             
           if(branchError){
             return funSendApiErrorMessage(branchError,"Branch Insert Error");
           }
-          const {data:clientData,error:clientError} =await supabase
-          .from("leap_client")
-          .select(`
-            *,
-            leap_client_branch_details(*)
-          `)
-          .eq("client_id", fdata.clientId);
-           if(branchDetails && clientData){
-            return NextResponse.json({ message: clientAddedSuccess ,clientDetails:clientData[0]}, { status: apiStatusSuccessCode });
+          
+           else{
+            return NextResponse.json({ message: clientAddedSuccess ,status:1}, { status: apiStatusSuccessCode });
           }
 
   

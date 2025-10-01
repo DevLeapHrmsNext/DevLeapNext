@@ -37,6 +37,7 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
             const user = await getUserPermission(contextClientID);
             setPermissionData(user);
         }
+        
         const setsubIndex = () => {
             if (subMenuIndex == leftMenuDocumentsSub1PageNumbers || subMenuIndex == leftMenuDocumentsSub2PageNumbers) {
                 setShowDocSubMenu(true);
@@ -60,7 +61,13 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
             prevClass === "middle_box" ? "middle_box middle_box_extra" : "middle_box"
         );
     }
-    const handleMenuClick = (index: any) => {
+    const handleMenuClick = (index: any,pageURL:any) => {
+         setLoadingCursor(true);
+         console.log("this is the page url --=-=-=-=-=-=-=-=-=--=-=-=-=",pageURL);
+         
+         if(pageURL && pageURL.length>0){
+            router.push(pageURL)
+         }
         if (index == leftMenuDocumentsPageNumbers) {
             setShowDocSubMenu(!showDocSubMenu);
             setShowProjectSuMenus(false)
@@ -101,9 +108,11 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
             });
         }
         setSelectedLeftMenuItemIndex(index); // Update the state correctly
-        // setLoadingCursor(true);
+        setLoadingCursor(false);
     };
     const handleSubMenuClick = (index: any, pageURL: string) => {
+        
+        router.push(pageURL)
         setLoadingCursor(true);
         if (index == leftMenuDocumentsSub1PageNumbers || index == leftMenuDocumentsSub2PageNumbers) {
             setShowDocSubMenu(true);
@@ -120,7 +129,7 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
             setShowPayrollSubMenus(false)
         }
         setSelectedSubMenuItemIndex(index); // Update the state correctly
-        router.push(pageURL)
+        
         setLoadingCursor(false);
     };
 
@@ -142,11 +151,11 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                             <div className="left_sticky">
                                 {contextRoleID == "2" && isAdmin=="1" ? <div className="left_menubox">
 
-                                    <Link href={pageURL_dashboard} className={selectedLeftMenuItemIndex == leftMenuDashboardPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuDashboardPageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuDashboardPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuDashboardPageNumbers,pageURL_dashboard) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/home_icon.png)" }}></div>
                                         <div className="left_menutext">Dashboard</div>
-                                    </Link>
-                                    <a href={pageURL_assetListing} className={selectedLeftMenuItemIndex == leftMenuAssetsPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAssetsPageNumbers) }}>
+                                    </a>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuAssetsPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAssetsPageNumbers,pageURL_assetListing) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/attendance_icon.png)" }}></div>
                                         <div className="left_menutext">Assets</div>
                                     </a>
@@ -154,7 +163,7 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                                     <a>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/document_icon.png)" }}></div>
                                         <div className={selectedLeftMenuItemIndex == leftMenuDocumentsPageNumbers && showDocSubMenu ||
-                                            ((selectedSubMenuItemIndex == leftMenuDocumentsSub1PageNumbers || selectedSubMenuItemIndex == leftMenuDocumentsSub2PageNumbers) && showDocSubMenu) ? "left_menutext active" : "left_menutext"} onClick={() => { setShowDocSubMenu(!showDocSubMenu), handleMenuClick(leftMenuDocumentsPageNumbers) }}>
+                                            ((selectedSubMenuItemIndex == leftMenuDocumentsSub1PageNumbers || selectedSubMenuItemIndex == leftMenuDocumentsSub2PageNumbers) && showDocSubMenu) ? "left_menutext active" : "left_menutext"} onClick={() => { setShowDocSubMenu(!showDocSubMenu), handleMenuClick(leftMenuDocumentsPageNumbers,"") }}>
                                             <div className='submenu_innerbox'>
                                                 <div>Documents</div>
                                             </div>
@@ -164,34 +173,34 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                                             </div>
                                         </div>
                                     </a>
-                                    <a href={pageURL_announcementListingPage} className={selectedLeftMenuItemIndex == leftMenuAnnouncementPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAnnouncementPageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuAnnouncementPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAnnouncementPageNumbers,pageURL_announcementListingPage) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/announcement_icon.png)" }}></div>
                                         <div className="left_menutext">Announcement/ News</div>
                                     </a>
-                                    <a href={pageURL_leaveListingPage} className={selectedLeftMenuItemIndex == leftMenuLeavePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuLeavePageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuLeavePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuLeavePageNumbers,pageURL_leaveListingPage) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/leave_icon.png)" }}></div>
                                         <div className="left_menutext">Leave</div>
                                     </a>
-                                    <a href={pageURL_userList} className={selectedLeftMenuItemIndex == leftMenuEmployeeListPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuEmployeeListPageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuEmployeeListPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuEmployeeListPageNumbers,pageURL_userList) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/allemployee_icon.png)" }}></div>
                                         <div className="left_menutext">All Employees</div>
                                     </a>
-                                    <a href={pageURL_addUserBasicDetailForm} className={selectedLeftMenuItemIndex == leftMenuAddEmployeePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAddEmployeePageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuAddEmployeePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAddEmployeePageNumbers,pageURL_addUserBasicDetailForm) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/addemployee_icon.png)" }}></div>
                                         <div className="left_menutext">Add Employee</div>
                                     </a>
-                                    <a href={pageURL_attendanceList} className={selectedLeftMenuItemIndex == leftMenuAttendancePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAttendancePageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuAttendancePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAttendancePageNumbers,pageURL_attendanceList) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/attendance_icon.png)" }}></div>
                                         <div className="left_menutext">Attendance</div>
                                     </a>
-                                    <a href={pageURL_clientProfilePage} className={selectedLeftMenuItemIndex == leftMenuProfilePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuProfilePageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuProfilePageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuProfilePageNumbers,pageURL_clientProfilePage) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/human_icon.png)" }}></div>
                                         <div className="left_menutext">Profile</div>
                                     </a>
                                     <a>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/payroll_icon.png)" }}></div>
                                         <div className={selectedLeftMenuItemIndex == leftMenuCompanyPayrollPageNumbers && showPayrollSubMenus ||
-                                            ((selectedSubMenuItemIndex == leftMenuPayrollSub1PageNumbers || selectedSubMenuItemIndex == leftMenuPayrollSub2PageNumbers) && showPayrollSubMenus) ? "left_menutext active" : "left_menutext"} onClick={() => { handleMenuClick(leftMenuCompanyPayrollPageNumbers) }}>
+                                            ((selectedSubMenuItemIndex == leftMenuPayrollSub1PageNumbers || selectedSubMenuItemIndex == leftMenuPayrollSub2PageNumbers) && showPayrollSubMenus) ? "left_menutext active" : "left_menutext"} onClick={() => { handleMenuClick(leftMenuCompanyPayrollPageNumbers,"") }}>
                                             <div className='submenu_innerbox'>
                                                 <div>Payroll</div>
                                             </div>
@@ -205,7 +214,7 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                                     <a>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/work_icon.png)" }}></div>
                                         <div className={selectedLeftMenuItemIndex == leftMenuProjectMGMTPageNumbers && showProjectSuMenus ||
-                                            ((selectedSubMenuItemIndex == leftMenuProjectsSub1PageNumbers || selectedSubMenuItemIndex == leftMenuProjectsSub2PageNumbers) && showProjectSuMenus) ? "left_menutext active" : "left_menutext"} onClick={() => { handleMenuClick(leftMenuProjectMGMTPageNumbers) }}>
+                                            ((selectedSubMenuItemIndex == leftMenuProjectsSub1PageNumbers || selectedSubMenuItemIndex == leftMenuProjectsSub2PageNumbers) && showProjectSuMenus) ? "left_menutext active" : "left_menutext"} onClick={() => { handleMenuClick(leftMenuProjectMGMTPageNumbers,"") }}>
                                             <div className='submenu_innerbox'>
                                                 <div>Project Management</div>
                                             </div>
@@ -215,58 +224,58 @@ const LeftPannel = ({ menuIndex, subMenuIndex, showLeftPanel, rightBoxUI }: Left
                                             </div>
                                         </div>
                                     </a>
-                                    <a href={pageURL_clientAdminSupport} className={selectedLeftMenuItemIndex == leftMenuUserSupport ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserSupport) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuUserSupport ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserSupport,pageURL_clientAdminSupport) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/help_icon.png)` }}></div>
                                         <div className="left_menutext">Help</div>
                                     </a>
-                                    <a href={pageURL_orgHierarchy} className={selectedLeftMenuItemIndex == leftMenuOrgHierarchy ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuOrgHierarchy) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuOrgHierarchy ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuOrgHierarchy,pageURL_orgHierarchy) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/organization_icon.png)` }}></div>
                                         <div className="left_menutext">Organization Hierarchy</div>
                                     </a>
-                                    <a href={pageURL_customerListPage} className={selectedLeftMenuItemIndex == leftMenuCustomerListPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuCustomerListPageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuCustomerListPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuCustomerListPageNumbers,pageURL_customerListPage) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/setting_icon.png)", }}></div>
                                         <div className="left_menutext">Our Customers</div>
                                     </a>
-                                    <a href={pageURL_clientAdminSettingsPage} className={selectedLeftMenuItemIndex == leftMenuAdminSettingsPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAdminSettingsPageNumbers) }}>
+                                    <a  className={selectedLeftMenuItemIndex == leftMenuAdminSettingsPageNumbers ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuAdminSettingsPageNumbers,pageURL_clientAdminSettingsPage) }}>
                                         <div className="left_menuicon" style={{ backgroundImage: "url(/images/left-menu/setting_icon.png)", }}></div>
                                         <div className="left_menutext">Admin Settings</div>
                                     </a>
                                 </div> :
                                     contextRoleID == "5" || contextRoleID == "4" || contextRoleID == "9"|| isAdmin=="0" ?
                                         <div className="left_menubox">
-                                            <a href={pageURL_userEmpDashboard} className={selectedLeftMenuItemIndex == leftMenuUserDashboard ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserDashboard) }}>
+                                            <a  className={selectedLeftMenuItemIndex == leftMenuUserDashboard ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserDashboard,pageURL_userEmpDashboard) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/home_icon.png)` }}></div>
                                                 <div className="left_menutext">Dashboard</div>
                                             </a>
-                                            <a href={pageURL_userAttendance} className={selectedLeftMenuItemIndex == leftMenuUserAttendance ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserAttendance) }}>
+                                            <a  className={selectedLeftMenuItemIndex == leftMenuUserAttendance ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserAttendance,pageURL_userAttendance) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/attendance_icon.png)` }}></div>
                                                 <div className="left_menutext">Attendance</div>
                                             </a>
-                                            <a href={pageURL_userTaskListingPage} className={selectedLeftMenuItemIndex == leftMenuUserTask ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserTask) }}>
+                                            <a  className={selectedLeftMenuItemIndex == leftMenuUserTask ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserTask,pageURL_userTaskListingPage) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/attendance_icon.png)` }}></div>
                                                 <div className="left_menutext">Task</div>
                                             </a>
-                                            <a href={pageURL_userLeave} className={selectedLeftMenuItemIndex == leftMenuUserLeave ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserLeave) }}>
+                                            <a  className={selectedLeftMenuItemIndex == leftMenuUserLeave ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserLeave,pageURL_userLeave) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/leave_icon.png)` }}></div>
                                                 <div className="left_menutext">Leave</div>
                                             </a>
-                                            <a href={pageURL_userAsset} className={selectedLeftMenuItemIndex == leftMenuUserAsset ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserAsset) }}>
+                                            <a  className={selectedLeftMenuItemIndex == leftMenuUserAsset ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserAsset,pageURL_userAsset) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/attendance_icon.png)` }}></div>
                                                 <div className="left_menutext">Asset</div>
                                             </a>
-                                            <a href={pageURL_userDoc} className={selectedLeftMenuItemIndex == leftMenuUserDocuments ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserDocuments) }}>
+                                            <a  className={selectedLeftMenuItemIndex == leftMenuUserDocuments ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserDocuments,pageURL_userDoc) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(/images/left-menu/document_icon.png)` }}></div>
                                                 <div className="left_menutext">Documents</div>
                                             </a>
-                                            {contextRoleID!="2" &&  <a href={pageURL_userOrganisation} className={selectedLeftMenuItemIndex == leftMenuUserOrg ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserOrg) }}>
+                                            {contextRoleID!="2" &&  <a  className={selectedLeftMenuItemIndex == leftMenuUserOrg ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserOrg,pageURL_userOrganisation) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/allemployee_icon.png)` }}></div>
                                                 <div className="left_menutext">About Organization</div>
                                             </a>}
-                                            {contextRoleID!="2" &&<a href={pageURL_userAnnouncement} className={selectedLeftMenuItemIndex == leftMenuUserAnnouncement ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserAnnouncement) }}>
+                                            {contextRoleID!="2" &&<a  className={selectedLeftMenuItemIndex == leftMenuUserAnnouncement ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserAnnouncement,pageURL_userAnnouncement) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/announcement_icon.png)` }}></div>
                                                 <div className="left_menutext">Announcement</div>
                                             </a>}
-                                            {contextRoleID!="2" &&<a href={pageURL_userSupport} className={selectedLeftMenuItemIndex == leftMenuUserSupport ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserSupport) }}>
+                                            {contextRoleID!="2" &&<a  className={selectedLeftMenuItemIndex == leftMenuUserSupport ? "left_selected" : ""} onClick={() => { setLoadingCursor(true), handleMenuClick(leftMenuUserSupport,pageURL_userSupport) }}>
                                                 <div className="left_menuicon" style={{ backgroundImage: `url(${staticIconsBaseURL}/images/left-menu/help_icon.png)` }}></div>
                                                 <div className="left_menutext">Help</div>
                                             </a>}

@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
                 half_day:fdata.half_day,
                 lunch_time:fdata.lunch_time,
                 holiday_per_week:fdata.holiday_per_week,
+                created_at:new Date()
             });
             
         }else{
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
         if (getPermissionsError) {
             return funSendApiErrorMessage(getPermissionsError, "Permissions not fetched")
         }else{
-            return NextResponse.json({ message:"Working hour for branch updated successfully", status: 1 }, { status: apiStatusSuccessCode });
+            return NextResponse.json({ message:fdata.isInsert=="true"?"Working hour for branch added successfully":"Working hour for branch updated successfully", status: 1 }, { status: apiStatusSuccessCode });
         }
         
 

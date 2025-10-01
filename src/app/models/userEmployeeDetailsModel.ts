@@ -31,8 +31,8 @@ export interface CustomerAddress {
 export interface EmergencyContact {
   emergency_contact: string
   contact_name: string
-  relation: string
-  leap_relations: LeapRelations
+  relation: LeapRelations
+  // leap_relations: LeapRelations
 }
 
 export interface LeapRelations {

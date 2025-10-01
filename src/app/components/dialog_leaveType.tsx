@@ -23,7 +23,7 @@ interface leave_name {
     if_unused: string,
     validPeriod: string
 }
-const LeaveTypeUpdate = ({ onClose, id }: { onClose: () => void, id: any }) => {
+const LeaveTypeUpdate = ({ onClose, id }: { onClose: (callUpdate:any) => void, id: any }) => {
     const [showResponseMessage, setResponseMessage] = useState(false);
     const { contextClientID, contaxtBranchID } = useGlobalContext();
     const [formValues, setFormValues] = useState<leave_name>({
@@ -144,7 +144,7 @@ const LeaveTypeUpdate = ({ onClose, id }: { onClose: () => void, id: any }) => {
             console.log(response);
 
             if (response.ok) {
-                onClose();
+                
             } else {
                 alert("Failed to submit form.");
             }
@@ -162,13 +162,13 @@ const LeaveTypeUpdate = ({ onClose, id }: { onClose: () => void, id: any }) => {
             {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent.length > 0 ? alertEndContent : ""} value1={""} value2={""} onOkClicked={function (): void {
                 setShowAlert(false)
                 if (alertForSuccess == 1) {
-                    onClose();
+                    onClose(true);
                 }
 
             }} onCloseClicked={function (): void {
                 setShowAlert(false)
             }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
-            <div className='rightpoup_close' onClick={onClose}>
+            <div className='rightpoup_close' onClick={()=>onClose(false)}>
                 <img src={staticIconsBaseURL + "/images/close_white.png"} alt="Search Icon" title='Close' />
             </div>
             <div className="row">

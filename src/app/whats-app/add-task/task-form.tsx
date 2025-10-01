@@ -91,6 +91,7 @@ const ApplyTaskApp: React.FC = () => {
             const response = await fetch("/api/users/addTask", {
                 method: "POST",
                 body: JSON.stringify({
+                    "contact_number": contactNumber,
                     client_id: userData[0].client_id,
                     branch_id: userData[0].branch_id,
                     customer_id: userData[0].customer_id,

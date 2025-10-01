@@ -35,6 +35,7 @@ export interface EmergencyContact {
   leap_relations: LeapRelations
 }
 export interface EmergencyContactNew {
+  id:any,
   emergency_contact: string
   contact_name: string
   relation: LeapRelations

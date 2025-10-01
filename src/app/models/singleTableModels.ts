@@ -332,10 +332,9 @@ interface SupportStatus {
   status: string
   created_at: string
 }
-interface whatsappCustomerInfoModel {
 
+interface whatsappCustomerInfoModel {
   customer_id: string
   client_id: string
   branch_id: string
- 
 }

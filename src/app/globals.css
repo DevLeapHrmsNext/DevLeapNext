@@ -1328,6 +1328,18 @@ flex-wrap: nowrap;
   display: flex !important;
 }
 
+.client_admin_profile_branches{
+  overflow: scroll hidden;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1px;
+    white-space: nowrap;
+    padding-bottom: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #d4aa70 #e4e4e4 ;
+
+}
+
 /*----------------------Nikhil Declared CSS END------------------------------------ */
 
 /*------------------------------- client admin css start--------------------------------------------- */

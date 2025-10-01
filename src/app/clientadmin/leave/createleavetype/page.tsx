@@ -27,7 +27,7 @@ interface LeaveType {
   applicableRole: string,
   leaveDesc: string,
   ifUnused: string,
-  icon:string,
+  icon: string,
 
 }
 
@@ -35,7 +35,7 @@ const CreateLeave: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [selectedIconID, setSelectedIconID] = useState(-1);
   const router = useRouter()
-  const { contextClientID,contaxtBranchID } = useGlobalContext()
+  const { contextClientID, contaxtBranchID } = useGlobalContext()
   const [branchArray, setBranchArray] = useState<ClientBranchTableModel[]>([]);
   const [iconUrlArray, setIconUrls] = useState<LeaveTypeIconAndColor[]>([]);
 
@@ -50,21 +50,21 @@ const CreateLeave: React.FC = () => {
   const [alertvalue2, setAlertValue2] = useState('');
 
   useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = async () => {
 
-          const branches = await getBranches(contextClientID);
-          const icon = await getLeaveTypeIcons();
-          if(branches.length==0 || icon.length==0){
-            setLoading(false);
-              setShowAlert(true);
-                  setAlertTitle("Error")
-                  setAlertStartContent("Failed to get some data");
-                  setAlertForSuccess(2)
-          }else{
-            setLoading(false);
-            setBranchArray(branches);
-            setIconUrls(icon);
-          }
+      const branches = await getBranches(contextClientID);
+      const icon = await getLeaveTypeIcons();
+      if (branches.length == 0 || icon.length == 0) {
+        setLoading(false);
+        setShowAlert(true);
+        setAlertTitle("Error")
+        setAlertStartContent("Failed to get some data");
+        setAlertForSuccess(2)
+      } else {
+        setLoading(false);
+        setBranchArray(branches);
+        setIconUrls(icon);
+      }
 
     };
     fetchData();
@@ -96,14 +96,21 @@ const CreateLeave: React.FC = () => {
     applicableRole: "",
     leaveDesc: "",
     ifUnused: "",
-    icon:''
+    icon: ''
 
   });
 
   const handleInputChange = async (e: any) => {
     const { name, value, type, files } = e.target;
+    // if(name=="leaveType"){
+    //     const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    // setFormValues((prev) => ({ ...prev, [name]: formattedValue }));
+
+    // }else{
+    console.log("handle in put change value passed", value);
 
     setFormValues((prev) => ({ ...prev, [name]: value }));
+    // }
 
   }
 
@@ -121,8 +128,8 @@ const CreateLeave: React.FC = () => {
     if (!formValues.applicableRole) newErrors.applicableRole = "required";
     if (!formValues.leaveDesc) newErrors.leaveDesc = "required";
     if (!formValues.ifUnused) newErrors.ifUnused = "required";
-    if (selectedIconID<0) newErrors.icon = "required";
-    
+    if (selectedIconID < 0) newErrors.icon = "required";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -133,7 +140,7 @@ const CreateLeave: React.FC = () => {
     console.log("handle submit called");
     setLoading(true);
     formData.append("client_id", contextClientID);
-    formData.append("branch_id",formValues.branchID);
+    formData.append("branch_id", formValues.branchID);
     formData.append("leave_name", formValues.leaveType);
     formData.append("category", formValues.categoryID);
     formData.append("count", formValues.dayCount);
@@ -142,7 +149,7 @@ const CreateLeave: React.FC = () => {
     formData.append("applicable", formValues.applicableRole);
     formData.append("leave_discription", formValues.leaveDesc);
     formData.append("if_unused", formValues.ifUnused);
-    formData.append("icon_url_id", selectedIconID+'');
+    formData.append("icon_url_id", selectedIconID + '');
 
 
     try {
@@ -206,27 +213,33 @@ const CreateLeave: React.FC = () => {
                         <div className="row">
                           <div className="col-md-3">
                             <div className="form_box mb-3">
-                                  <label htmlFor="exampleFormControlInput1" className="form-label" >Branch<span className='req_text'>*</span> :</label>
-                                  <select id="branchID" name="branchID" onChange={handleInputChange}>
-                                  <option value="">Select</option>
-                                  {branchArray.map((branch, index) => (
-                                      <option value={branch.id} key={branch.id}>{branch.branch_number}</option>
-                                  ))}
+                              <label htmlFor="exampleFormControlInput1" className="form-label" >Branch<span className='req_text'>*</span> :</label>
+                              <select id="branchID" name="branchID" onChange={handleInputChange}>
+                                <option value="">Select</option>
+                                {branchArray.map((branch, index) => (
+                                  <option value={branch.id} key={branch.id}>{branch.branch_number}</option>
+                                ))}
                               </select>
-                              {errors.branchID && <span className="error" style={{color: "red"}}>{errors.branchID}</span>}
+                              {errors.branchID && <span className="error" style={{ color: "red" }}>{errors.branchID}</span>}
 
-                              </div>
+                            </div>
                           </div>
                           <div className="col-md-3">
                             <div className="form_box mb-3">
                               <label htmlFor="exampleFormControlInput1" className="form-label" >Leave Type Name<span className='req_text'>*</span> :  </label>
-                              <input type="text" className="form-control" value={formValues.leaveType} name="leaveType" onChange={handleInputChange} id="leaveType" placeholder="Enter leave type name" />
+                              <input type="text" className="form-control" value={formValues.leaveType}
+                                onInput={(e) => {
+                                  const input = e.target as HTMLInputElement;
+                                  input.value =
+                                    input.value.charAt(0).toUpperCase() + input.value.slice(1);
+                                }}
+                                name="leaveType" onChange={handleInputChange} id="leaveType" placeholder="Enter leave type name" />
                               {errors.leaveType && <span className="error" style={{ color: "red" }}>{errors.leaveType}</span>}
                             </div>
                           </div>
                           <div className="col-md-3">
                             <div className="form_box mb-3">
-                              <label htmlFor="exampleFormControlInput1" className="form-label" >Category:  </label>
+                              <label htmlFor="exampleFormControlInput1" className="form-label" >Category<span className='req_text'>*</span> :  </label>
                               <select id="categoryID" name="categoryID" value={formValues.categoryID} onChange={handleInputChange}>
                                 <option value="">--</option>
                                 <option value="Paid">Paid</option>
@@ -234,8 +247,8 @@ const CreateLeave: React.FC = () => {
                               </select>
                               {errors.categoryID && <span className="error" style={{ color: "red" }}>{errors.categoryID}</span>}
                             </div>
-                          </div>                         
-                        
+                          </div>
+
                           <div className="col-md-3">
                             <div className="form_box mb-3">
                               <label htmlFor="exampleFormControlInput1" className="form-label" >Day Count<span className='req_text'>*</span> :  </label>
@@ -266,8 +279,8 @@ const CreateLeave: React.FC = () => {
                               </select>
                               {errors.gender && <span className="error" style={{ color: "red" }}>{errors.gender}</span>}
                             </div>
-                          </div>                          
-                        
+                          </div>
+
                           <div className="col-md-3">
                             <div className="form_box mb-3">
                               <label htmlFor="exampleFormControlInput1" className="form-label" >Applicable for<span className='req_text'>*</span> :  </label>
@@ -292,34 +305,41 @@ const CreateLeave: React.FC = () => {
                               {errors.ifUnused && <span className="error" style={{ color: "red" }}>{errors.ifUnused}</span>}
                             </div>
                           </div>
-                          
+
                         </div>
                         <div className="col-md-12">
-                            <div className="form_box mb-3">
-                              <label htmlFor="exampleFormControlInput1" className="form-label" >Leave Description<span className='req_text'>*</span> :  </label>
-                              <input type="text" className="form-control" value={formValues.leaveDesc} name="leaveDesc" onChange={handleInputChange} id="leaveDesc" placeholder="Rules & Regulations about this leave" />
-                              {errors.leaveDesc && <span className="error" style={{ color: "red" }}>{errors.leaveDesc}</span>}
-                            </div>
+                          <div className="form_box mb-3">
+                            <label htmlFor="exampleFormControlInput1" className="form-label" >Leave Description<span className='req_text'>*</span> :  </label>
+                            <input type="text" className="form-control" value={formValues.leaveDesc}
+                              onInput={(e) => {
+                                const input = e.target as HTMLInputElement;
+                                input.value =
+                                  input.value.charAt(0).toUpperCase() + input.value.slice(1);
+                              }}
+                              name="leaveDesc" onChange={handleInputChange} id="leaveDesc" placeholder="Rules & Regulations about this leave" />
+                            {errors.leaveDesc && <span className="error" style={{ color: "red" }}>{errors.leaveDesc}</span>}
+                          </div>
                         </div>
 
                         <div className="col-md-12">
-                        <div className="form_box mb-3">
-                        <label htmlFor="exampleFormControlInput1" className="form-label mb-3" >Leave Type Icon<span className='req_text'>*</span> :  </label>
-                                {iconUrlArray.map((icon)=>
-                                    <div className="leave_type_icon" key={icon.leave_type_icon_id} onClick={()=>setSelectedIconID(icon.leave_type_icon_id)}><img src={staticIconsBaseURL+icon.icon_url} className={selectedIconID==icon.leave_type_icon_id?"leave_type_icon_selected img-fluid":"img-fluid" }/></div>
-                                )}
-                                <div className="row">
-                                  {errors.icon && <span className="error" style={{ color: "red" }}>{errors.icon}</span>}
-                                </div>
-                        </div>
+                          <div className="form_box mb-3">
+                            <label htmlFor="exampleFormControlInput1" className="form-label mb-3" >Leave Type Icon<span className='req_text'>*</span> :  </label>
+                            {iconUrlArray.map((icon) =>
+                              <div className="leave_type_icon" key={icon.leave_type_icon_id} onClick={() => setSelectedIconID(icon.leave_type_icon_id)}><img src={staticIconsBaseURL + icon.icon_url} className={selectedIconID == icon.leave_type_icon_id ? "leave_type_icon_selected img-fluid" : "img-fluid"} /></div>
+                            )}
+
+                          </div>
+                          <div className="row">
+                            {errors.icon && <span className="error" style={{ color: "red", fontSize: "12px" }}>{errors.icon}</span>}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-lg-12 ">
-                    <input type='submit' value="Submit" className="red_button" onClick={handleSubmit} style={{float: "left",marginTop: "18px",marginRight: "10px"}}/>&nbsp;&nbsp;
+                  <div className="col-lg-12 mt-4">
+                    <input type='submit' value="Submit" className="red_button mr-3" onClick={handleSubmit} style={{ float: "right", marginLeft: "10px" }} />
                     <BackButton isCancelText={true} />
                   </div>
                 </div>
@@ -344,17 +364,17 @@ export default CreateLeave
 async function getBranches(clientID: any) {
 
   let query = supabase
-      .from('leap_client_branch_details')
-      .select()
-      .eq("client_id", clientID);
+    .from('leap_client_branch_details')
+    .select()
+    .eq("client_id", clientID).eq("is_active", true);
 
   const { data, error } = await query;
   if (error) {
-      console.log(error);
+    console.log(error);
 
-      return [];
+    return [];
   } else {
-      return data;
+    return data;
   }
 
 }
@@ -362,17 +382,17 @@ async function getBranches(clientID: any) {
 async function getLeaveTypeIcons() {
 
   let query = supabase
-      .from('leap_leave_type_icon_and_color')
-      .select('leave_type_icon_id,icon_url,bg_color');
-      
+    .from('leap_leave_type_icon_and_color')
+    .select('leave_type_icon_id,icon_url,bg_color').eq("is_deleted", false);
+
 
   const { data, error } = await query;
   if (error) {
-      console.log(error);
+    console.log(error);
 
-      return [];
+    return [];
   } else {
-      return data;
+    return data;
   }
 
 }

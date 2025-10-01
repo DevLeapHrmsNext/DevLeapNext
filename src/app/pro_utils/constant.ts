@@ -199,7 +199,7 @@ export function funSendApiErrorMessage(error: any,message:any) {
 }
 export function funloggedInAnotherDevice() {
   return NextResponse.json({
-    message: "You have already logged in another device! Please contact admin.",
+    message: "You have already logged in another device",
     error:"",
     status:2
   }, { status: apiStatusSuccessCode })

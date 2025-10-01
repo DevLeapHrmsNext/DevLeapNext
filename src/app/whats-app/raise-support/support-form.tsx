@@ -107,6 +107,7 @@ const SupportRequestForm: React.FC = () => {
       const response = await fetch("/api/users/support/raiseSupport", {
         method: "POST",
         body: JSON.stringify({
+          "contact_number": contactNumber,
           "client_id": userData[0].client_id,
           "customer_id": userData[0].customer_id,
           "branch_id": userData[0].branch_id,

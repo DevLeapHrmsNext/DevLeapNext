@@ -9,16 +9,7 @@ import { error, log } from "console";
 export async function POST(request: NextRequest) {
 
   try {
-    // const { data: user, error: userError } = await supabase.auth.getUser();
-
-    // // Handle case where the user is not authenticated
-    // if (userError || !user) {
-    //   return NextResponse.json(
-    //     { error: 'User not authenticated' },
-    //     { status: 401 }
-    //   );
-    // }
-    const { client_id, customer_id, task_status, branch_id, sub_project_id, task_type_id, total_hours, total_minutes, task_details, task_date } = await request.json();
+    const { client_id, customer_id, task_status, branch_id, sub_project_id, task_type_id, total_hours, total_minutes, task_details, task_date, contact_number } = await request.json();
 
     const { data: TaskData, error: taskError } = await supabase.from('leap_customer_project_task')
       .insert({
@@ -39,11 +30,43 @@ export async function POST(request: NextRequest) {
       return funSendApiErrorMessage(taskError, "Failed to add task");
     }
 
+
+      (async () => {
+        try {
+          if (contact_number) {
+            const payload = { //process.env.AISENSY_API_KEY ||
+              apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTNmZmZkZjJlYjNmMGMxZmY1YjYxZSIsIm5hbWUiOiJFdm9uaXggVGVjaG5vbG9naWVzIFByaXZhdGUgTGltaXRlZCIsImFwcE5hbWUiOiJBaVNlbnN5IiwiY2xpZW50SWQiOiI2NzUzZmZmZGYyZWIzZjBjMWZmNWI2MTYiLCJhY3RpdmVQbGFuIjoiQkFTSUNfTU9OVEhMWSIsImlhdCI6MTczMzU1ODI2OX0.MQFrljNxs3lhKqFK0d3-S2EW160fYbshifoDCO4ma_4",
+              campaignName: "raise_ticket_id",
+              destination: contact_number,
+              userName: "Evonix Technologies Private Limited",
+              templateParams: [sub_project_id],
+              source: "new-landing-page form",
+              media: {},
+              buttons: [],
+              carouselCards: [],
+              location: {},
+              attributes: {},
+              paramsFallbackValue: { FirstName: "user" }
+            };
+
+            await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+          }
+        } catch (err: any) {
+          console.log("AiSensy WhatsApp error:", err);
+          await addErrorExceptionLog(client_id, customer_id, "AiSensy WhatsApp error", { exception: err.toString(), sub_project_id, contact_number });
+        }
+      })();
+
+
     (async () => {
       let projectType = "";
       try {
         projectType = await funGetSubProjectType(sub_project_id);
-        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", "Task added for "+ projectType, TaskData[0].id, false);
+        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", "Task added for " + projectType, TaskData[0].id, false);
         // console.log("throww error: ", addActivity);
         throw addActivity;
       } catch (err) {
@@ -90,12 +113,7 @@ export async function POST(request: NextRequest) {
         }
       }
     })();
-    // if (addActivity == "1") {
-    //     return funSendApiErrorMessage(addActivity, "Customer Task Activity Insert Issue");
-    // }else {
     return funDataAddedSuccessMessage("Task Added Successfully");
-    // }
-    // return NextResponse.json({ status: 1, message: "Task Added Successfully", data: TaskData }, { status: apiStatusSuccessCode })
   } catch (error) {
     return funSendApiException(error);
   }

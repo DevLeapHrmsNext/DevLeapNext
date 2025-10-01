@@ -456,6 +456,8 @@ import { error } from 'console';
 import { Address, AddressModel, CustomerAddress, EmergencyContact, EmergencyContactNew, LeapRelations } from '../models/employeeDetailsModel';
 import LoadingDialog from '@/app/components/PageLoader';
 import { useGlobalContext } from '../contextProviders/loggedInGlobalContext';
+import { apifailedWithException } from '../pro_utils/stringConstants';
+import ShowAlertMessage from './alert';
 
 export const UserAddress = () => {
     // const [userData, setUserData] = useState<Address>();
@@ -464,6 +466,14 @@ export const UserAddress = () => {
     
     
     const[isLoading,setLoading]=useState(false)
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertForSuccess, setAlertForSuccess] = useState(0);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertStartContent, setAlertStartContent] = useState('');
+    const [alertMidContent, setAlertMidContent] = useState('');
+    const [alertEndContent, setAlertEndContent] = useState('');
+    const [alertValue1, setAlertValue1] = useState('');
+    const [alertvalue2, setAlertValue2] = useState('');
     const [emergencyContactRelation, setEmergencyRelation] = useState<LeapRelations[]>([]);
     const [currentAdd, setcurrent] = useState<CustomerAddress>({
         id: 0,
@@ -501,7 +511,8 @@ export const UserAddress = () => {
         updated_at: '',
         address_type: '',
     });
-    const [emergencyContact, setEmergencyContact] = useState<EmergencyContactNew>({
+    const [emergencyContact, setEmergencyContact] = useState<EmergencyContactNew[]>([{
+        id:0,
         emergency_contact: '',
         contact_name: '',
         
@@ -509,14 +520,18 @@ export const UserAddress = () => {
             id: 0,
             relation_type: '',
         }
-    })
+    }])
     const [addressformErrors, setAddressFormErrors] = useState<Partial<CustomerAddress>>({});
     const [peraddressFormErrors, setPerAddressFormErrors] = useState<Partial<CustomerAddress>>({});
     const [emergencyFieldErrors, setEmergencyFieldErrors] = useState<Partial<EmergencyContactNew>>({});
     
 
     useEffect(() => {
-        const fetchData = async () => {
+       
+        fetchData();
+    }, []);
+
+     const fetchData = async () => {
             const formData = new FormData();
             const relationsType = await getRelations();
             setEmergencyRelation(relationsType);
@@ -554,17 +569,28 @@ export const UserAddress = () => {
                     }
                 }
                 // setUserData(user);
-                setEmergencyContact(user.emergencyContact[0])
+                if(user.emergencyContact.length>0){
+                    
+                setEmergencyContact(user.emergencyContact)
+                }else{
+                    const emer:EmergencyContactNew[]=[{
+                            id:0,
+                            emergency_contact: '',
+                            contact_name: '',
+                            
+                            relation: {
+                                id: 0,
+                                relation_type: '',
+                            }
+                        }]
+                   setEmergencyContact(emer)     
+                }
 
 
             } catch (error) {
                 console.error("Error fetching user data:", error);
             }
         }
-        fetchData();
-    }, []);
-
-    
 
  const sameAddress = (setSame: boolean) => {
 
@@ -604,9 +630,9 @@ export const UserAddress = () => {
         if (!permenantAdd.postal_code) perAddErrors.postal_code = "required";
         if (!permenantAdd.country) perAddErrors.country = "required";
 
-        if (!emergencyContact.contact_name) emerFieldErrors.contact_name = "required";
-        if (!emergencyContact.emergency_contact) emerFieldErrors.emergency_contact = "required";
-        if (!emergencyContact.relation) emerFieldErrors.relation = { id: 0, relation_type: "required" };
+        if (!emergencyContact[0].contact_name) emerFieldErrors.contact_name = "required";
+        if (!emergencyContact[0].emergency_contact) emerFieldErrors.emergency_contact = "required";
+        if (!emergencyContact[0].relation || emergencyContact[0].relation.id==0) emerFieldErrors.relation = { id: 0, relation_type: "required" };
 
         setAddressFormErrors(currAddErrors);
         setPerAddressFormErrors(perAddErrors);
@@ -627,7 +653,6 @@ export const UserAddress = () => {
         setLoading(true);
         {/* AddressDetails details 1 */ }
 
-        console.log("Emeekhbhdhfsdhaba ada-d---------",emergencyContact.emergency_contact);
         const formData = new FormData();
         formData.append("customer_id", currentAdd.customer_id+'');
         formData.append("role_id", contextRoleID);
@@ -648,9 +673,9 @@ export const UserAddress = () => {
         formData.append("p_postal_code", permenantAdd.postal_code);
         formData.append("p_country", permenantAdd.country);
 
-        formData.append("emergency_contact", emergencyContact.emergency_contact+'');
-        formData.append("contact_name", emergencyContact.contact_name);
-        formData.append("relation", emergencyContact.relation.id+"");
+        formData.append("emergency_contact_array", JSON.stringify(emergencyContact));
+        // formData.append("contact_name", emergencyContact.contact_name);
+        // formData.append("relation", emergencyContact.relation.id+"");
         try{
            
             const res = await fetch("/api/users/updateEmployee/updateEmpAddress", {
@@ -658,16 +683,27 @@ export const UserAddress = () => {
                 body: formData,
             });
             const response=await res.json();
-            if(res.ok){
+            if(res.ok && response.status==1){
                 setLoading(false);
-                alert(response.message);
+                
+                setShowAlert(true);
+                setAlertTitle("Success")
+                setAlertStartContent("Data updated successfully");
+                setAlertForSuccess(1)
             }else{
                 setLoading(false)
-                alert(response.message);
+                
+                setShowAlert(true);
+                setAlertTitle("Error")
+                setAlertStartContent(response.message);
+                setAlertForSuccess(2)
             }
             }catch(e){
                 setLoading(false)
-                alert(e);
+                setShowAlert(true);
+                setAlertTitle("Exception")
+                setAlertStartContent(apifailedWithException);
+                setAlertForSuccess(2)
             }
 
     }
@@ -680,6 +716,15 @@ export const UserAddress = () => {
     }
     return (
         <>
+        <LoadingDialog isLoading={isLoading} />
+            {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
+                setShowAlert(false)
+                if (alertForSuccess == 1) {
+                    fetchData();
+                }
+            }} onCloseClicked={function (): void {
+                setShowAlert(false)
+            }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
             <form onSubmit={handleSubmit}>
                 <div>
                     <div className="row">
@@ -993,7 +1038,8 @@ export const UserAddress = () => {
                                                     Emergency Contact details:
                                                 </div>
                                             </div>
-
+                                            {emergencyContact  && emergencyContact.map((emergencyContactItem,index) => 
+                                            <div className='mt-3' key={index}>                 
                                             <div className="row" style={{ alignItems: "center" }}>
                                                 <div className="col-md-3">
                                                     <div className="form_box mb-3">
@@ -1013,7 +1059,15 @@ export const UserAddress = () => {
                                                                     e.preventDefault();
                                                                 }
                                                             }}
-                                                        readOnly={isReadonly()} value={emergencyContact?.emergency_contact|| ""} name="emergency_contact" onChange={(e) => setEmergencyContact((prev) => ({ ...prev, ["emergency_contact"]: e.target.value }))} />
+                                                        readOnly={isReadonly()} value={emergencyContactItem?.emergency_contact|| ""} name="emergency_contact" 
+                                                        onChange={(e) => setEmergencyContact((prev) => {
+                                                                    const updated = [...prev]; // copy array
+                                                                    updated[index] = {
+                                                                    ...updated[index],
+                                                                    emergency_contact: e.target.value, // update specific field
+                                                                    };
+                                                                    return updated;
+                                                                })} />
                                                         {emergencyFieldErrors.emergency_contact && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
 
                                                     </div>
@@ -1027,7 +1081,15 @@ export const UserAddress = () => {
 
                                                 <div className="col-md-3">
                                                     <div className="form_box mb-3">
-                                                        <input type="text" className="form-control" id="contact_name" readOnly={isReadonly()} value={emergencyContact?.contact_name|| ""} name="contact_name" onChange={(e) => setEmergencyContact((prev) => ({ ...prev, ["contact_name"]: e.target.value }))} />
+                                                        <input type="text" className="form-control" id="contact_name" readOnly={isReadonly()} value={emergencyContactItem?.contact_name|| ""} name="contact_name" 
+                                                        onChange={(e) => setEmergencyContact((prev) => {
+                                                                    const updated = [...prev];
+                                                                    updated[index] = {
+                                                                    ...updated[index],
+                                                                    contact_name: e.target.value,
+                                                                    };
+                                                                    return updated;
+                                                                })} />
                                                         {emergencyFieldErrors.contact_name && <span className='error' style={{ color: "red", fontSize: "12px" }}>required*</span>}
 
                                                     </div>
@@ -1042,17 +1104,21 @@ export const UserAddress = () => {
                                                 <div className="col-md-3">
                                                     <div className="form_box">
                                                         <select id="relation" name="relation" 
-                                                        value={emergencyContact?.relation?.id|| ""}
+                                                        value={emergencyContactItem?.relation?.id|| ""}
                                                         onChange={(e) =>
-                                                                setEmergencyContact((prev) => ({
-                                                                ...prev,
-                                                                relation: {
-                                                                    ...prev.relation,
-                                                                    id: parseInt(e.target.value)
-                                                                }
-                                                                }))
-                                                            }>
-                                                            {(!emergencyContact || !emergencyContact.relation) && <option value="">Select Relation</option>}
+                                                            setEmergencyContact((prev) => {
+                                                                const updated = [...prev];
+                                                                updated[index] = {
+                                                                    ...updated[index],
+                                                                    relation: {
+                                                                        ...updated[index].relation,
+                                                                        id: parseInt(e.target.value)
+                                                                    }
+                                                                };
+                                                                return updated;
+                                                            })
+                                                        }>
+                                                            {(!emergencyContactItem || !emergencyContactItem.relation || emergencyContactItem.relation.id==0) && <option value="">Select Relation</option>}
                                                             {emergencyContactRelation.map((relationsType, index) => (
                                                                 <option value={relationsType.id} key={relationsType.id} disabled={isReadonly()}>{relationsType.relation_type}</option>
                                                             ))}
@@ -1063,6 +1129,7 @@ export const UserAddress = () => {
                                                 </div>
 
                                             </div>
+                                           </div>) }
 
                                         </div>
                                     </div>

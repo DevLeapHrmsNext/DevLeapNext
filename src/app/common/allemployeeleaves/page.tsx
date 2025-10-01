@@ -26,13 +26,13 @@ import ShowAlertMessage from '@/app/components/alert'
 interface filterApply {
     approvedID: any,
     customerID: any,
-    start_date:any,
-    end_date:any
+    start_date: any,
+    end_date: any
 }
 
 const EmployeeLeaveList = () => {
     const [leavearray, setLeave] = useState<AppliedLeave[]>([]);
-    const [filters, setFilters] = useState<filterApply>({ approvedID: "", customerID: "",start_date:'',end_date:'' })
+    const [filters, setFilters] = useState<filterApply>({ approvedID: "", customerID: "", start_date: '', end_date: '' })
     const [custArray, setCustomer] = useState<CustomerProfile[]>([]);
     const [statusArray, setStatus] = useState<StatusModel[]>([]);
     const [editLeaveId, setEditLeaveId] = useState(0);
@@ -42,7 +42,7 @@ const EmployeeLeaveList = () => {
     const [hasMoreData, setHasMoreData] = useState(true);
     const { contextClientID, contaxtBranchID, contextUserName, contextCustomerID, contextRoleID,
         contextProfileImage, contextEmployeeID, contextCompanyName, contextLogoURL,
-        dashboard_notify_activity_related_id,isAdmin, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
+        dashboard_notify_activity_related_id, isAdmin, dashboard_notify_cust_id, setGlobalState } = useGlobalContext();
     const [employeeName, setEmployeeName] = useState([{ value: '', label: '' }]);
 
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -64,7 +64,7 @@ const EmployeeLeaveList = () => {
         if (dashboard_notify_cust_id) {
             setFilters((prev) => ({ ...prev, ['customerID']: dashboard_notify_cust_id }));
             setDetailAppliedID(parseInt(dashboard_notify_activity_related_id))
-            fetchUsers(2, dashboard_notify_cust_id, selectedPage,'','');
+            fetchUsers(2, dashboard_notify_cust_id, selectedPage, '', '');
             setGlobalState({
                 contextUserName: contextUserName,
                 contextClientID: contextClientID,
@@ -87,7 +87,7 @@ const EmployeeLeaveList = () => {
 
             });
         } else {
-            fetchUsers("", "", selectedPage,'','');
+            fetchUsers("", "", selectedPage, '', '');
         }
         const handleScroll = () => {
             setScrollPosition(window.scrollY); // Update scroll position
@@ -124,10 +124,8 @@ const EmployeeLeaveList = () => {
         const approval = await getStatus();
         setStatus(approval);
 
-
-
     }
-    const fetchUsers = async (filterID: any, value: any, pageNumber: number,startDate:any,endDate:any) => {
+    const fetchUsers = async (filterID: any, value: any, pageNumber: number, startDate: any, endDate: any) => {
         setLoading(true);
         try {
             // const formData = new FormData();
@@ -147,38 +145,38 @@ const EmployeeLeaveList = () => {
             // }
 
             const payload: { [key: string]: any } = {
-  client_id: contextClientID,
-  branch_id: contaxtBranchID,
-};
+                client_id: contextClientID,
+                branch_id: contaxtBranchID,
+            };
 
-// Dynamic conditions
-if (filterID == 1 || filters.approvedID.length > 0) {
-  payload.leave_status = (filters.approvedID.length > 0 && filters.approvedID == value) ? filters.approvedID : value;
-}
+            // Dynamic conditions
+            if (filterID == 1 || filters.approvedID.length > 0) {
+                payload.leave_status = (filters.approvedID.length > 0 && filters.approvedID == value) ? filters.approvedID : value;
+            }
 
-if (filterID == 2 || filters.customerID.length > 0) {
-  payload.customer_id = (filters.customerID.length > 0 && filters.customerID == value) ? filters.customerID : value;
-}
+            if (filterID == 2 || filters.customerID.length > 0) {
+                payload.customer_id = (filters.customerID.length > 0 && filters.customerID == value) ? filters.customerID : value;
+            }
 
-if (startDate || filters.start_date) {
-  payload.start_date = formatDateYYYYMMDD(startDate || filters.start_date);
-}
+            if (startDate || filters.start_date) {
+                payload.start_date = formatDateYYYYMMDD(startDate || filters.start_date);
+            }
 
-if (endDate || filters.end_date) {
-  payload.end_date = formatDateYYYYMMDD(endDate || filters.end_date);
-}
+            if (endDate || filters.end_date) {
+                payload.end_date = formatDateYYYYMMDD(endDate || filters.end_date);
+            }
 
-if (filterID == 3) {
-  if (filters.approvedID) {
-    payload.leave_status = filters.approvedID;
-  }
-  if (filters.customerID) {
-    payload.customer_id = filters.customerID;
-  }
-}
+            if (filterID == 3) {
+                if (filters.approvedID) {
+                    payload.leave_status = filters.approvedID;
+                }
+                if (filters.customerID) {
+                    payload.customer_id = filters.customerID;
+                }
+            }
 
 
-            
+
 
             const res = await fetch(`/api/users/getAppliedLeaves?page=${pageNumber}&limit=${10}`, {
                 method: "POST",
@@ -191,32 +189,32 @@ if (filterID == 3) {
             if (response.status == 1 && leaveListData.length > 0) {
                 setLoading(false);
                 setLeave(leaveListData);
-                if(leaveListData.length<10){
+                if (leaveListData.length < 10) {
                     setHasMoreData(false);
-                   
-                }else{
+
+                } else {
                     setHasMoreData(true);
                 }
-                
-            }else if(response.status == 1 && leaveListData.length ==0){
+
+            } else if (response.status == 1 && leaveListData.length == 0) {
                 setLoading(false);
                 setLeave([]);
                 setHasMoreData(false);
-            } else if (response.status == 0 ) {
+            } else if (response.status == 0) {
                 setLoading(false);
                 setSelectedPage(response.page);
                 setHasMoreData(false)
-                
+
                 setShowAlert(true);
                 setAlertTitle("Error")
                 setAlertStartContent("No Data Available");
                 setAlertForSuccess(2)
-                
+
             }
 
         } catch (error) {
             setLoading(false);
-            
+
             setShowAlert(true);
             setAlertTitle("Exception")
             setAlertStartContent(ALERTMSG_exceptionString);
@@ -227,7 +225,7 @@ if (filterID == 3) {
 
     const handleEmpSelectChange = async (values: any) => {
         setFilters((prev) => ({ ...prev, ['customerID']: values.value }))
-        fetchUsers(2, values.value, selectedPage,'','');
+        fetchUsers(2, values.value, selectedPage, '', '');
     };
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -237,7 +235,7 @@ if (filterID == 3) {
         // const updatedFilters = { ...filters, [name]: value };
         if (name == "approvedID") {
             setFilters((prev) => ({ ...prev, ['approvedID']: value }));
-            fetchUsers(1, value, selectedPage,'','');
+            fetchUsers(1, value, selectedPage, '', '');
         }
 
         // fetchUsers(0,0);
@@ -253,11 +251,11 @@ if (filterID == 3) {
     function changePage(page: any) {
         if (hasMoreData) {
             setSelectedPage(selectedPage + page);
-            fetchUsers(3, "", selectedPage + page,'','');
+            fetchUsers(3, "", selectedPage + page, '', '');
         }
-        else if(!hasMoreData && selectedPage>1){
+        else if (!hasMoreData && selectedPage > 1) {
             setSelectedPage(selectedPage + page);
-            fetchUsers(3, "", selectedPage + page,'','');
+            fetchUsers(3, "", selectedPage + page, '', '');
         }
     }
 
@@ -272,19 +270,19 @@ if (filterID == 3) {
     ]);
     const handleChange = (ranges: RangeKeyDict) => {
         console.log(ranges);
-        
+
         setState([ranges.selection]);
         setShowCalendar(false)
-        if(ranges.selection.startDate==ranges.selection.endDate){
+        if (ranges.selection.startDate == ranges.selection.endDate) {
             setFilters((prev) => ({ ...prev, ['start_date']: ranges.selection.startDate }));
-        }else{
+        } else {
             setFilters((prev) => ({ ...prev, ['start_date']: ranges.selection.startDate }));
             setFilters((prev) => ({ ...prev, ['end_date']: ranges.selection.endDate }));
 
         }
-        fetchUsers(3, '', selectedPage,ranges.selection.startDate,ranges.selection.endDate);
+        fetchUsers(3, '', selectedPage, ranges.selection.startDate, ranges.selection.endDate);
     };
-    const formattedRange = state[0].startDate! == state[0].endDate!?format(state[0].startDate!, 'yyyy-MM-dd'):`${format(state[0].startDate!, 'yyyy-MM-dd')} to ${format(state[0].endDate!, 'yyyy-MM-dd')}`;
+    const formattedRange = state[0].startDate! == state[0].endDate! ? format(state[0].startDate!, 'yyyy-MM-dd') : `${format(state[0].startDate!, 'yyyy-MM-dd')} to ${format(state[0].endDate!, 'yyyy-MM-dd')}`;
     const formatDateYYYYMMDD = (date: any, isTime = false) => {
         if (!date) return '';
         const parsedDate = moment(date);
@@ -299,92 +297,92 @@ if (filterID == 3) {
                 <LeapHeader title="Welcome!" />
             </header>
             <LeftPannel menuIndex={leftMenuLeavePageNumbers} subMenuIndex={0} showLeftPanel={true} rightBoxUI={
-                
 
-                    <div>
-                        <div className='container'>
+
+                <div>
+                    <div className='container'>
                         <LoadingDialog isLoading={isLoading} />
 
                         {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
-                        setShowAlert(false)
-                    }} onCloseClicked={function (): void {
-                        setShowAlert(false)
-                    }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
-                            <div className='inner_heading_sticky'>
-                                <div className="row heading25 pt-2" style={{ alignItems: "center" }}>
-                                    <div className="col-lg-6">
-                                        Employee <span>Leave</span>
-                                    </div>
-                                    <div className="col-lg-6 mt-1" style={{ textAlign: "right" }}>
-                                        <div className="filtermenu red_button" onClick={filter_whitebox}>Filter</div>&nbsp;
-                                        <a href={pageURL_assignLeaveForm} className="red_button">Assign Leave</a>&nbsp;
-                                        {/* <a href={pageURL_leaveTypeListing} className="red_button">Company Leaves</a> */}
-                                    </div>
+                            setShowAlert(false)
+                        }} onCloseClicked={function (): void {
+                            setShowAlert(false)
+                        }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
+                        <div className='inner_heading_sticky'>
+                            <div className="row heading25 pt-2" style={{ alignItems: "center" }}>
+                                <div className="col-lg-6">
+                                    Employee <span>Leave</span>
                                 </div>
-                                <div className="row">
-                                    <div className="col-lg-12">
-                                        <div className="filter_whitebox" id="filter_whitebox">
-                                            <div className="row">
-                                                <div className="col-lg-3">
-                                                    <div className="form_box mb-1 mt-1">
-                                                        {/* <select id="customerID" name="customerID" onChange={handleFilterChange}>
+                                <div className="col-lg-6 mt-1" style={{ textAlign: "right" }}>
+                                    <div className="filtermenu red_button" onClick={filter_whitebox}>Filter</div>&nbsp;
+                                    <a href={pageURL_assignLeaveForm} className="red_button">Assign Leave</a>&nbsp;
+                                    {/* <a href={pageURL_leaveTypeListing} className="red_button">Company Leaves</a> */}
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-12">
+                                    <div className="filter_whitebox" id="filter_whitebox">
+                                        <div className="row">
+                                            <div className="col-lg-3">
+                                                <div className="form_box mb-1 mt-1">
+                                                    {/* <select id="customerID" name="customerID" onChange={handleFilterChange}>
                                                             <option value="">Employee name:</option>
                                                             {custArray.map((emp, index) => (
                                                                 <option value={emp.customer_id} key={emp.customer_id}>{emp.name}</option>
                                                             ))}
                                                         </select> */}
 
-                                                        <Select
-                                                            className="custom-select"
-                                                            classNamePrefix="custom"
-                                                            options={employeeName}
-                                                            onChange={(selectedOption) =>
-                                                                handleEmpSelectChange(selectedOption)
-                                                            }
-                                                            placeholder="Search Employee"
-                                                            isSearchable={true}
+                                                    <Select
+                                                        className="custom-select"
+                                                        classNamePrefix="custom"
+                                                        options={employeeName}
+                                                        onChange={(selectedOption) =>
+                                                            handleEmpSelectChange(selectedOption)
+                                                        }
+                                                        placeholder="Search Employee"
+                                                        isSearchable={true}
 
 
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-3">
+                                                <div className="form_box mb-1 mt-1">
+                                                    <select id="approvedID" name="approvedID" onChange={handleFilterChange}>
+                                                        <option value="">Status:</option>
+                                                        {statusArray.map((dep, index) => (
+                                                            <option value={dep.id} key={dep.id}>{dep.approval_type}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-3">
+                                                <input
+                                                    type="text"
+                                                    className="form-control calender_icon"
+                                                    value={formattedRange}
+                                                    readOnly
+                                                    onClick={() => setShowCalendar(!showCalendar)}
+                                                />
+                                                {showCalendar && (
+                                                    <div style={{ position: 'absolute', zIndex: 1000 }}>
+                                                        <DateRange
+                                                            editableDateInputs={true}
+                                                            onChange={handleChange}
+                                                            moveRangeOnFirstSelection={false}
+                                                            ranges={state}
                                                         />
                                                     </div>
-                                                </div>
-                                                <div className="col-lg-3">
-                                                    <div className="form_box mb-1 mt-1">
-                                                        <select id="approvedID" name="approvedID" onChange={handleFilterChange}>
-                                                            <option value="">Status:</option>
-                                                            {statusArray.map((dep, index) => (
-                                                                <option value={dep.id} key={dep.id}>{dep.approval_type}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div className="col-lg-3">
-                                                    <input
-                                                        type="text"
-                                                        className="form-control calender_icon"
-                                                        value={formattedRange}
-                                                        readOnly
-                                                        onClick={() => setShowCalendar(!showCalendar)}
-                                                    />
-                                                    {showCalendar && (
-                                                        <div style={{ position: 'absolute', zIndex: 1000 }}>
-                                                            <DateRange
-                                                                editableDateInputs={true}
-                                                                onChange={handleChange}
-                                                                moveRangeOnFirstSelection={false}
-                                                                ranges={state}
-                                                            />
-                                                        </div>
-                                                    )}
-
-                                                </div>
+                                                )}
 
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            {leavearray! && leavearray.length > 0 ? 
+                        </div>
+                        {leavearray! && leavearray.length > 0 ?
                             <div className="row">
                                 <div className="col-lg-12">
                                     <div className="row mb-5">
@@ -410,8 +408,8 @@ if (filterID == 3) {
                                                             <div className="col-lg-2 text-center">{/^[0-9]+$/.test(applied.duration) ? "--" : applied.duration}</div>
 
                                                             <div className="col-lg-1 text-center">
-                                                                {applied.leap_approval_status.approval_type == "Pending" ? <img src={staticIconsBaseURL+"/images/edit.png"} className="img-fluid edit-icon" title='View/Edit' alt="Search Icon" style={{ width: "20px", cursor: "pointer", paddingBottom: "0px", alignItems: "center" }} onClick={() => { setEditLeaveId(applied.id); setShowDialog(true); setisToBeEdited(true) }} /> :
-                                                                    <img src={staticIconsBaseURL + "/images/view_icon.png"} style={{ width: "20px", cursor: "pointer"}} alt="Search Icon" onClick={() => { setEditLeaveId(applied.id); setShowDialog(true); setisToBeEdited(false) }} />
+                                                                {applied.leap_approval_status.approval_type == "Pending" ? <img src={staticIconsBaseURL + "/images/edit.png"} className="img-fluid edit-icon" title='View/Edit' alt="Search Icon" style={{ width: "20px", cursor: "pointer", paddingBottom: "0px", alignItems: "center" }} onClick={() => { setEditLeaveId(applied.id); setShowDialog(true); setisToBeEdited(true) }} /> :
+                                                                    <img src={staticIconsBaseURL + "/images/view_icon.png"} style={{ width: "20px", cursor: "pointer" }} alt="Search Icon" onClick={() => { setEditLeaveId(applied.id); setShowDialog(true); setisToBeEdited(false) }} />
                                                                 }
                                                             </div>
                                                         </div>
@@ -425,7 +423,7 @@ if (filterID == 3) {
                                                 ))}
 
                                                 <div className={showDialog ? "rightpoup rightpoupopen" : "rightpoup"}>
-                                                    {showDialog && <LeaveStatusUpdate id={editLeaveId} selectedShortCutID={false} onClose={(updateData) => { setShowDialog(false), updateData && fetchUsers(3, "", selectedPage,'','') }} isToBeEddited={isToBeEdited} />}
+                                                    {showDialog && <LeaveStatusUpdate id={editLeaveId} selectedShortCutID={false} onClose={(updateData) => { setShowDialog(false), updateData && fetchUsers(3, "", selectedPage, '', '') }} isToBeEddited={isToBeEdited} />}
                                                 </div>
                                             </div>
 
@@ -442,15 +440,15 @@ if (filterID == 3) {
                                         </div>
                                     </div>
                                 </div>
-                            </div>: <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
-                        {<h4 className="text-muted">No leaves for selected filter</h4>}
+                            </div> : <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
+                                {<h4 className="text-muted">No leaves for selected filter</h4>}
+                            </div>
+                        }
                     </div>
-            }
-                        </div>
-                    </div>
+                </div>
 
 
-                    
+
             } />
             {/* </div> */}
 

@@ -79,25 +79,15 @@ const DocUploadApp: React.FC = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const uploadDocument = async () => {
+    const uploadDocument = async (e: React.FormEvent) => {
+        //  e.preventDefault();
         if (!validate()) return;
         const formData = new FormData();
         formData.append("uploadType", employeeDocUpload);
-
-        // if (formFilledData.selectedFile == null) {
-        //     // return alert("Please select File to upload");
-        //     // setShowAlert(true);
-        //     setAlertTitle("Error")
-        //     setAlertStartContent("No documents uploaded yet!");
-        //     setAlertForSuccess(2)
-        // }
-        // if (formFilledData.docTypeID.length > 0) {
-        //     return alert("Please select type of document");
-        // }
         formData.append("client_id", userData[0].client_id);
         formData.append("customer_id", userData[0].customer_id);
-        formData.append("file", formFilledData.selectedFile!);
         formData.append("branch_id", userData[0].branch_id);
+        formData.append("file", formFilledData.selectedFile!);
         formData.append("doc_type_id", formFilledData.doc_type_id);
 
         try {
@@ -132,8 +122,8 @@ const DocUploadApp: React.FC = () => {
 
                 <form onSubmit={uploadDocument}>
                     <div className="form-group">
-                        <label>Document Type <span className='req_text'>*</span></label>
-                        <select name="doc_type_id" onChange={handleEmpInputChange}>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Document Type <span className='req_text'>*</span></label>
+                        <select id="doc_type_id" name="doc_type_id" onChange={handleEmpInputChange}>
                             <option value="">Select</option>
                             {docTypes.map((type) => (
                                 <option value={type.id} key={type.id}>{type.document_name}</option>

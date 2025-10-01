@@ -19,7 +19,7 @@ interface AssignEmpLeave {
     from_date: string,
     to_date: string,
     leave_reason: string,
-    duration: string,
+    duration: string
 }
 
 const AssignLeave: React.FC = () => {
@@ -83,7 +83,7 @@ const AssignLeave: React.FC = () => {
         from_date: "",
         to_date: "",
         leave_reason: "",
-        duration: "",
+        duration: ""
     });
 
     const handleInputChange = async (e: any) => {
@@ -110,7 +110,7 @@ const AssignLeave: React.FC = () => {
         if (!validate()) return;
         setLoadingCursor(true);
         // console.log("handle submit called");
-
+        formData.append("contact_number", contactNumber!);
         formData.append("client_id", userData[0].client_id);
         formData.append("branch_id", userData[0].branch_id);
         formData.append("customer_id", userData[0].customer_id);

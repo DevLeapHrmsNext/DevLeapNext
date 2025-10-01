@@ -226,7 +226,9 @@ import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../contextProviders/loggedInGlobalContext';
 import supabase from '../api/supabaseConfig/supabase';
 import Select from "react-select";
-import { staticIconsBaseURL } from '../pro_utils/stringConstants';
+import { ALERTMSG_FormExceptionString, staticIconsBaseURL } from '../pro_utils/stringConstants';
+import LoadingDialog from './PageLoader';
+import ShowAlertMessage from './alert';
 
 
 interface FormValues {
@@ -235,7 +237,7 @@ interface FormValues {
 }
 
 
-const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,editID,dataToEdit, onClose }: { onClose: () => void,editDataType:any,editID:any,dataToEdit:any, isDesignationAdd: boolean }) => {
+const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,editID,dataToEdit, onClose }: { onClose: (callUpdate:any) => void,editDataType:any,editID:any,dataToEdit:any, isDesignationAdd: boolean }) => {
     const { contextClientID, contaxtBranchID } = useGlobalContext();
     const [formValues, setFormValues] = useState<FormValues>({
         branch_id: '',
@@ -245,6 +247,15 @@ const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,ed
     const [branchArray, setBranchArray] = useState([{ value: '', label: '' }]);
     const [selectedBranch, setSelectedBranch] = useState({ value: '', label: '' });
     const [errors, setErrors] = useState<Partial<FormValues>>({});
+
+        const [showAlert, setShowAlert] = useState(false);
+        const [alertForSuccess, setAlertForSuccess] = useState(0);
+        const [alertTitle, setAlertTitle] = useState('');
+        const [alertStartContent, setAlertStartContent] = useState('');
+        const [alertMidContent, setAlertMidContent] = useState('');
+        const [alertEndContent, setAlertEndContent] = useState('');
+        const [alertValue1, setAlertValue1] = useState('');
+        const [alertvalue2, setAlertValue2] = useState('');
 
     useEffect(() => {
         setFormValues({
@@ -269,6 +280,7 @@ const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,ed
         }
 
         setBranchArray(extractBranch);
+        setLoading(false);
     }
 
     const onAddClicked = async () => {
@@ -309,11 +321,17 @@ const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,ed
         if (error) {
             setLoading(false)
             console.log(error);
-            alert("Unable to Insert Data ")
+            setShowAlert(true);
+            setAlertTitle("Error")
+            setAlertStartContent("An error occured while adding data");
+            setAlertForSuccess(2)
 
         } else {
            setLoading(false)
-           alert(isDesignationAdd?"Designation added successfully":"Department added successfully");
+           setShowAlert(true);
+            setAlertTitle("Success")
+            setAlertStartContent(isDesignationAdd?"Designation added successfully":"Department added successfully");
+            setAlertForSuccess(1)
         }
     }else{
         setLoading(true);
@@ -342,33 +360,48 @@ const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,ed
         if (error) {
             setLoading(false)
             console.log(error);
-            alert("Unable to Insert Data ")
+            setShowAlert(true);
+            setAlertTitle("Error")
+            setAlertStartContent("An error occured while updating data");
+            setAlertForSuccess(2)
         
         } else {
            setLoading(false)
-           alert({editDataType}+" added successfully");
+           setShowAlert(true);
+           setAlertTitle("Error")
+           setAlertStartContent({editDataType}+" added successfully");
+           setAlertForSuccess(1)
         }        
         
     }
-
-
 //////heere is the edit code
-
-
-
     
     }catch(e){
         console.log(e);
+        setShowAlert(true);
+        setAlertTitle("Error")
+        setAlertStartContent(ALERTMSG_FormExceptionString);
+        setAlertForSuccess(1)
         
-        alert("Failed with exception")
+        
     }
         }
     }
 
     return (
         <div className="">
+            <LoadingDialog isLoading={isLoading} />
+
+            {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
+                setShowAlert(false)
+                if (alertForSuccess == 1) { onClose(true) }
+
+
+            }} onCloseClicked={function (): void {
+                setShowAlert(false)
+            }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
             <div className="">
-                <div className='rightpoup_close' onClick={onClose}>
+                <div className='rightpoup_close' onClick={()=>onClose(false)}>
                     <img src={staticIconsBaseURL+"/images/close_white.png"} alt="Search Icon" title='Close'/>
                 </div>
                 <div className="row">
@@ -380,7 +413,7 @@ const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,ed
 
                     <div className="row">
 
-                        {/* <div className="col-md-6">
+                        <div className="col-md-12">
                             <div className="form_box mb-3">
                                 <label htmlFor="exampleFormControlInput1" className="form-label" >Branch:  </label>
                                 <Select
@@ -398,7 +431,7 @@ const DialogClientAddDesignationDepartment = ({ isDesignationAdd,editDataType,ed
                                     isSearchable
                                 />
                             </div>
-                        </div> */}
+                        </div>
                         <div className="col-md-12">
                             <div className="form_box mb-3">
                                 <label htmlFor="exampleFormControlInput1" className="form-label" >{editID>0?editDataType:  isDesignationAdd?"Designation Name":"Department Name"}:  </label>

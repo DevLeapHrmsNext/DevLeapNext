@@ -214,13 +214,15 @@ import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../contextProviders/loggedInGlobalContext';
 import supabase from '../api/supabaseConfig/supabase';
 import Select from "react-select";
-import { bankComponentDataType, staticIconsBaseURL } from '../pro_utils/stringConstants';
+import { ALERTMSG_FormExceptionString, bankComponentDataType, staticIconsBaseURL } from '../pro_utils/stringConstants';
+import LoadingDialog from './PageLoader';
+import ShowAlertMessage from './alert';
 
 
 
 
 
-const DialogAddEditBankComponents = ({ isComponentAdd,componentValue, onClose }: { onClose: () => void,isComponentAdd:boolean,componentValue:ClientBankComponentsDataModel }) => {
+const DialogAddEditBankComponents = ({ isComponentAdd,componentValue, onClose }: { onClose: (callUpdate:any) => void,isComponentAdd:boolean,componentValue:ClientBankComponentsDataModel }) => {
     const { contextClientID, contaxtBranchID } = useGlobalContext();
     const [formValues, setFormValues] = useState<BankComponentsAddEditForm>({
         branch_id:'',
@@ -229,6 +231,14 @@ const DialogAddEditBankComponents = ({ isComponentAdd,componentValue, onClose }:
         componentDataType: '',
     });
     const [isLoading, setLoading] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+        const [alertForSuccess, setAlertForSuccess] = useState(0);
+        const [alertTitle, setAlertTitle] = useState('');
+        const [alertStartContent, setAlertStartContent] = useState('');
+        const [alertMidContent, setAlertMidContent] = useState('');
+        const [alertEndContent, setAlertEndContent] = useState('');
+        const [alertValue1, setAlertValue1] = useState('');
+        const [alertvalue2, setAlertValue2] = useState('');
     const [branchArray, setBranchArray] = useState([{ value: '', label: '' }]);
     const [selectedBranch, setSelectedBranch] = useState({ value: '', label: '' });
     const [errors, setErrors] = useState<Partial<BankComponentsAddEditForm>>({});
@@ -265,14 +275,11 @@ const DialogAddEditBankComponents = ({ isComponentAdd,componentValue, onClose }:
         }
 
         setBranchArray(extractBranch);
+        setLoading(false);
         
     }
     const validate = () => {
         const newErrors: Partial<BankComponentsAddEditForm> = {};
-        
-
-        
-        
         if (!formValues.branch_id) newErrors.branch_id = "required";
         if (!formValues.componentName) newErrors.componentName = "required";
         if (!formValues.componentDataType) newErrors.componentDataType = "required";
@@ -309,27 +316,44 @@ const DialogAddEditBankComponents = ({ isComponentAdd,componentValue, onClose }:
             }
             const { error } = await query;
         if (error) {
-            setLoading(false)
-            console.log(error);
-            alert("Some error occured")
+            setLoading(false);
+            setShowAlert(true);
+            setAlertTitle("Error")
+            setAlertStartContent("An error has occured. Please try again");
+            setAlertForSuccess(2)
         
         } else {
-            onClose();
-           setLoading(false)
-           alert(isComponentAdd?"Component added successfully":"Component updated successfully");
+            setLoading(false);
+            setShowAlert(true);
+            setAlertTitle("Success");
+            setAlertStartContent(isComponentAdd?"Component added successfully":"Component updated successfully");
+            setAlertForSuccess(1);
+           
         }
         }catch(e){
             console.log(e);
+            setLoading(false);
+            setShowAlert(true);
+            setAlertTitle("Exception");
+            setAlertStartContent(ALERTMSG_FormExceptionString);
+            setAlertForSuccess(2);
         
-        alert("Failed with exception")
         }
        
     }
 
     return (
         <div className="">
+            <LoadingDialog isLoading={isLoading} />
+        
+            {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
+                setShowAlert(false)
+                if (alertForSuccess == 1) { onClose(true) }
+            }} onCloseClicked={function (): void {
+                setShowAlert(false)
+            }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
             <div className="">
-                <div className='rightpoup_close' onClick={onClose}>
+                <div className='rightpoup_close' onClick={()=>onClose(false)}>
                     <img src={staticIconsBaseURL+"/images/close_white.png"} alt="Search Icon" title='Close'/>
                 </div>
                 <div className="row">

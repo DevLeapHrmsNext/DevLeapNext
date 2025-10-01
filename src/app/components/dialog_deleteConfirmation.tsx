@@ -85,7 +85,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import supabase from '@/app/api/supabaseConfig/supabase';
-import { ALERTMSG_exceptionString, deleteDataTypeAnnouncement, deleteDataTypeAsset, deleteDataTypeDepartment, deleteDataTypeHolidayYear, deleteDataTypeProject, deleteDataTypeSalaryComponent, deleteDataTypeSubProject, staticIconsBaseURL } from '../pro_utils/stringConstants';
+import { ALERTMSG_exceptionString, deleteDataTypeAnnouncement, deleteDataTypeAsset, deleteDataTypeBankComponent, deleteDataTypeDepartment, deleteDataTypeHolidayYear, deleteDataTypeProject, deleteDataTypeSalaryComponent, deleteDataTypeSubProject, staticIconsBaseURL } from '../pro_utils/stringConstants';
 import ShowAlertMessage from './alert';
 import LoadingDialog from './PageLoader';
 
@@ -148,6 +148,14 @@ const DeleteConfirmation = ({ onClose, id,deletionType,deleteDetail }: { onClose
                 body: formData,
             });
             setAlertStartContent("Holiday year deleted successfully");
+
+        }
+        else if(deletionType==deleteDataTypeBankComponent){
+            response = await fetch("/api/clientAdmin/bankComponents/deleteBankComponent", {
+                method: "DELETE",
+                body: formData,
+            });
+            setAlertStartContent("Bank component deleted successfully");
 
         }
         else if(deletionType==deleteDataTypeSubProject ||deletionType==deleteDataTypeProject){

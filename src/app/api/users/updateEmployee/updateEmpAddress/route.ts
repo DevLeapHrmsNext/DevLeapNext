@@ -39,12 +39,7 @@ export async function POST(request: NextRequest) {
       p_postal_code: formData.get('p_postal_code'),
       p_country: formData.get('p_country'),
 
-      emergency_contact: formData.get('emergency_contact'),
-      contact_name: formData.get('contact_name'),
-      relation: formData.get('relation'),
-
-
-
+      emergency_contact: formData.get('emergency_contact_array') as string,
     }
     if (fdata.current_id && fdata.current_id.toString().length > 0 && parseInt(String(fdata.current_id))>0) {
       let query = supabase
@@ -65,7 +60,7 @@ export async function POST(request: NextRequest) {
       if (clientError) {
         console.log(clientError);
 
-        return NextResponse.json({ message: updateAdrressFailure, error: clientError },
+        return NextResponse.json({status:0, message: updateAdrressFailure, error: clientError },
           { status: apiStatusFailureCode });
 
       }
@@ -91,7 +86,7 @@ export async function POST(request: NextRequest) {
       if (clientError) {
         console.log(clientError);
 
-        return NextResponse.json({ message: updateAdrressFailure, error: clientError },
+        return NextResponse.json({status:0, message: updateAdrressFailure, error: clientError },
           { status: apiStatusFailureCode });
 
       }
@@ -115,7 +110,7 @@ export async function POST(request: NextRequest) {
       if (clientError) {
         console.log(clientError);
 
-        return NextResponse.json({ message: updateAdrressFailure, error: clientError },
+        return NextResponse.json({status:0, message: updateAdrressFailure, error: clientError },
           { status: apiStatusFailureCode });
 
       }
@@ -143,27 +138,50 @@ export async function POST(request: NextRequest) {
       if (clientError) {
         console.log(clientError);
 
-        return NextResponse.json({ message: updateAdrressFailure, error: clientError },
+        return NextResponse.json({status:0, message: updateAdrressFailure, error: clientError },
           { status: apiStatusFailureCode });
 
       }
     }
-    let eContactUpQuery = supabase
-        .from("leap_customer")
+
+    const emergencyContactArray = JSON.parse(fdata.emergency_contact);
+
+    if(emergencyContactArray && emergencyContactArray.length>0){
+
+      let eContactUpQuery;
+      for(let i=0;i<emergencyContactArray.length;i++){
+      if(emergencyContactArray[i].id && emergencyContactArray[i].id!=0){
+        eContactUpQuery = supabase
+        .from("leap_employee_emergency_contacts")
         .update({
           
-          emergency_contact:fdata.emergency_contact,
-          contact_name:fdata.contact_name,
-          relation:fdata.relation,
-        }).eq('customer_id', fdata.customerId);
+          emergency_contact:emergencyContactArray[i].emergency_contact,
+          contact_name:emergencyContactArray[i].contact_name,
+          relation:emergencyContactArray[i].relation.id,
+        }).eq('id', emergencyContactArray[i].id);
+      }else{
+        eContactUpQuery=supabase
+        .from("leap_employee_emergency_contacts")
+        .insert({
+          customer_id:fdata.customerId,
+          emergency_contact:emergencyContactArray[i].emergency_contact,
+          contact_name:emergencyContactArray[i].contact_name,
+          relation:emergencyContactArray[i].relation.id,
+          created_at:new Date(),
+        })
+      }
         const { error } = await eContactUpQuery;
         if (error) {
           console.log(error);
   
-          return NextResponse.json({ message: updateAdrressFailure, error: error },
+          return NextResponse.json({status:0, message: updateAdrressFailure, error: error },
             { status: apiStatusFailureCode });
   
         }
+      }
+    }
+    
+        
     return NextResponse.json({ message: updateAdrressSuccess, status: 1 }
     );
 

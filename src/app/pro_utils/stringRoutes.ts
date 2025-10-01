@@ -60,7 +60,7 @@ export const pageURL_userDoc=baseUrl+"/user/document";
 export const pageURL_userAnnouncement=baseUrl+"/user/announcement";
 export const pageURL_userTeamAttendanceList=baseUrl+"/user/attendance/team-attendance";
 export const pageURL_userTeamAttendanceDetails=baseUrl+"/user/attendance/team-attendance/attendance-details";
-export const pageURL_whatsappSuccessPage=baseUrl+"/whats-app";
+
 export const pageURL_clientAdminSupport=baseUrl+"/clientadmin/admin-support";
 export const pageURL_orgHierarchy=baseUrl+"/clientadmin/org-hierarchy";
 
@@ -75,6 +75,7 @@ export const pageURL_superAdmin_onBoardClient=baseUrl+"/superadmin/onboard-clien
 export const pageURL_superAdmin_branchDetails=baseUrl+"/superadmin/onboard-client/branch-details";
 export const pageURL_superAdmin_permission=baseUrl+"/superadmin/permission";
 export const pageURL_superAdmin_tableSettings=baseUrl+"/superadmin/table-settings";
+export const pageURL_whatsappSuccessPage=baseUrl+"/whats-app";
 
 
 export const leftMenuDashboardPageNumbers=1;

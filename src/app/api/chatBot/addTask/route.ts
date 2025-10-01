@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import {  funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
+import { funDataAddedSuccessMessage, funDataMissingError, funISDataKeyPresent, funSendApiErrorMessage, funSendApiException } from "@/app/pro_utils/constant";
+import { getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
 import supabase from "../../supabaseConfig/supabase";
 import { apiStatusSuccessCode } from "@/app/pro_utils/stringConstants";
 import { addUserActivities } from "@/app/pro_utils/constantFunAddData";
@@ -16,13 +17,13 @@ export async function POST(request: NextRequest) {
         //     { status: 401 }
         //   );
         // }
-        const {  client_id,branch_id, customer_id, task_status, sub_project_id, task_type_id, total_hours, total_minutes, task_details, task_date } = await request.json();
-        
+        const { whatsapp_number, client_id, customer_id, task_status, sub_project_id, task_type_id, total_hours, total_minutes, task_details, task_date } = await request.json();
+        const custID = await getCustomerClientIds(whatsapp_number);
         const { data: TaskData, error: taskError } = await supabase.from('leap_customer_project_task')
             .insert({
-                client_id: client_id,
-                branch_id: branch_id,
-                customer_id: customer_id,
+                client_id: custID[0].client_id,
+                branch_id: custID[0].branch_id,
+                customer_id: custID[0].customer_id,
                 // project_id: project_id,
                 sub_project_id: sub_project_id,
                 task_type_id: task_type_id,
@@ -44,4 +45,13 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         return funSendApiException(error);
     }
+}
+async function getCustomerClientIds(contact_number: number) {
+    const { data, error } = await supabase
+        .from('leap_customer')
+        .select('customer_id, client_id, branch_id')
+        .eq('contact_number', contact_number);
+
+    if (error) throw error;
+    return data;
 }
