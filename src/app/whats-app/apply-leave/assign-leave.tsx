@@ -7,7 +7,7 @@ import moment from 'moment'
 import { DateRange, RangeKeyDict } from 'react-date-range';
 import { format } from 'date-fns'
 import { Range } from 'react-date-range';
-import { ALERTMSG_FormExceptionString } from '@/app/pro_utils/stringConstants'
+import { ALERTMSG_FormExceptionString, whatsapp_number } from '@/app/pro_utils/stringConstants'
 import { useSearchParams } from "next/navigation";
 import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
@@ -19,7 +19,7 @@ interface AssignEmpLeave {
     from_date: string,
     to_date: string,
     leave_reason: string,
-    duration: string
+    duration: string,
 }
 
 const AssignLeave: React.FC = () => {
@@ -83,7 +83,7 @@ const AssignLeave: React.FC = () => {
         from_date: "",
         to_date: "",
         leave_reason: "",
-        duration: ""
+        duration: "",
     });
 
     const handleInputChange = async (e: any) => {
@@ -127,7 +127,7 @@ const AssignLeave: React.FC = () => {
             });
             if (response.ok) {
                 setLoadingCursor(false);
-                router.push(pageURL_whatsappSuccessPage)
+                router.push(`https://wa.me/` + whatsapp_number);
             } else {
                 setLoadingCursor(false);
                 e.preventDefault()

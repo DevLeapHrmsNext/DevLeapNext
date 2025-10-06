@@ -62,7 +62,7 @@ export const updateGrossSalaryFailure="Failed to update gross salary details";
 export const updateBankSuccess="Bank details updated";
 export const leaveUpdateSuccess="Leave type updated successfully";
 export const companyData="Company Profile fetched";
-export const companyUpdatedData="Branch Details Updated";
+export const companyUpdatedData="Basic Company Details Updated";
 export const companyUpdateFailed="Company Profile Failed";
 export const allEmployeeListData="All Clients Data";
 
@@ -291,3 +291,4 @@ export const table_LeapUserRole="29"
 export const table_LeapWebSidePanelMenu="30"
 export const table_LeapWorkingType="31"
 
+export const whatsapp_number="917888000375"

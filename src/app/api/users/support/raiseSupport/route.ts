@@ -52,36 +52,38 @@ export async function POST(request: NextRequest) {
     }
 
 
-      (async () => {
-        try {
-          if (contact_number) {
-            const payload = { 
-              apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
-              campaignName: "raise_ticket_id",
-              destination: contact_number,
-              userName: "Evonix Technologies Private Limited",
-              templateParams: [ticketId],
-              source: "new-landing-page form",
-              media: {},
-              buttons: [],
-              carouselCards: [],
-              location: {},
-              attributes: {},
-              paramsFallbackValue: { FirstName: "user" }
-            };
+    (async () => {
+      try {
+        if (contact_number) {
+          const payload = {
+            apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+            campaignName: "raise_ticket_id",
+            destination: contact_number,
+            userName: "Evonix Technologies Private Limited",
+            templateParams: [ticketId],
+            source: "new-landing-page form",
+            media: {},
+            buttons: [],
+            carouselCards: [],
+            location: {},
+            attributes: {},
+            paramsFallbackValue: { FirstName: "user" }
+          };
 
-            await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
-          }
-        } catch (err: any) {
-          console.log("AiSensy WhatsApp error:", err);
-          await addErrorExceptionLog(client_id, customer_id, "AiSensy WhatsApp error", { exception: err.toString(), ticketId, contact_number });
+          const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const body = await res.text();
+          console.log("AiSensy response:" ,contact_number, res.status, body);
         }
-      })();
-  
+      } catch (err: any) {
+        console.log("AiSensy WhatsApp error:", err);
+        await addErrorExceptionLog(client_id, customer_id, "AiSensy WhatsApp error", { exception: err.toString(), ticketId, contact_number });
+      }
+    })();
+
 
     (async () => {
       let supportType = "";
@@ -121,8 +123,8 @@ export async function POST(request: NextRequest) {
         }
       }
     })();
-
-    return funDataAddedSuccessMessage("Support ticket raised successfully");
+    return NextResponse.json({ status: 1, message: "Support ticket raised successfully", data: "" }, { status: apiStatusSuccessCode });
+    // return funDataAddedSuccessMessage("Support ticket raised successfully");
 
   } catch (error) {
     return funSendApiException(error);

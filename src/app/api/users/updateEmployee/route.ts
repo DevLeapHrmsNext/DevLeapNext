@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
         let authQuery;
         console.log(parseInt(formData.get('role_id') as string));
         console.log(formData.get('role_id'));
-        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-          const SERVICE_ROLE_KEY = process.env.NEXT_PUBLIC_SERVICE_ROLE_SUPABASE_KEY!;
+        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL! || "https://bbiamotvmxkondwnqgko.supabase.co";
+          const SERVICE_ROLE_KEY = process.env.NEXT_PUBLIC_SERVICE_ROLE_SUPABASE_KEY! || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiaWFtb3R2bXhrb25kd25xZ2tvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyMTgyNTY2OSwiZXhwIjoyMDM3NDAxNjY5fQ.HqKtV6PhUfbWe8a_Tjp3F3YZSlQZe4M_eqJNtgPk38E";
           const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
             auth: { autoRefreshToken: false, persistSession: false },
           });

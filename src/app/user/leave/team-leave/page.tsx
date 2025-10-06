@@ -361,8 +361,8 @@ const EmployeeLeaveList = () => {
                                                                                     <div className="nw_chip_iconbox">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24">
                                                                                             <g fill="#ff6600">
-                                                                                                <path fill-rule="evenodd" d="M12 1.846a10.154 10.154 0 1 0 0 20.308 10.154 10.154 0 0 0 0-20.308zM0 12C0 5.372 5.372 0 12 0s12 5.372 12 12-5.372 12-12 12S0 18.628 0 12z" clip-rule="evenodd" data-original="#000000" />
-                                                                                                <path fill-rule="evenodd" d="M12 6.77a.924.924 0 0 1 .924.923v4.923a.924.924 0 1 1-1.848 0V7.692A.924.924 0 0 1 12 6.769z" clip-rule="evenodd" data-original="#000000" />
+                                                                                                <path fillRule="evenodd" d="M12 1.846a10.154 10.154 0 1 0 0 20.308 10.154 10.154 0 0 0 0-20.308zM0 12C0 5.372 5.372 0 12 0s12 5.372 12 12-5.372 12-12 12S0 18.628 0 12z" clipRule="evenodd" data-original="#000000" />
+                                                                                                <path fillRule="evenodd" d="M12 6.77a.924.924 0 0 1 .924.923v4.923a.924.924 0 1 1-1.848 0V7.692A.924.924 0 0 1 12 6.769z" clipRule="evenodd" data-original="#000000" />
                                                                                                 <path d="M13.231 16.308a1.231 1.231 0 1 1-2.462 0 1.231 1.231 0 0 1 2.462 0z" data-original="#000000" />
                                                                                             </g>
                                                                                         </svg>

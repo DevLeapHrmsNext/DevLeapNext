@@ -330,6 +330,7 @@ export interface Listing {
   customer_name: string
   activity_details: string
   activity_related_id: number
+  customer_id:any
   activity_type_id: ActivityTypeId
   type: string
 }

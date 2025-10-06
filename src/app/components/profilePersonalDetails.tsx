@@ -754,7 +754,7 @@ export const UserPersonalDetails = () => {
                                                 </div>
                                                 <div className='col-lg-1 p-0'>
                                                     <div className="row" style={{fontSize: "5px"}}>
-                                                    <a onClick={()=>setShowUpdateName(!showUpdateName)}><img src={staticIconsBaseURL+"/images/edit.png"} className="img-fluid" style={{ maxHeight: '20px' }} /><div className="option_label">Edit Profile</div></a>
+                                                    <a onClick={()=>setShowUpdateName(!showUpdateName)}><img src={showUpdateName?staticIconsBaseURL+"/images/dont_edit.png":staticIconsBaseURL+"/images/edit.png"} className="img-fluid" style={{ maxHeight: '20px' }} /><div className="option_label">Edit Profile</div></a>
                                                     </div>
                                                     
                                                 </div>

@@ -1281,7 +1281,7 @@ console.log("All Errors", allErrors);
     const handleInputChange = (e: any) => {
         const { name, value, type, files } = e.target;
         // console.log("Form values updated:", formValues);
-        console.log("Form values updated:", ocrDocumentsDetails);
+        console.log("Form values updated:", value);
 
 
         if (type === "file") {

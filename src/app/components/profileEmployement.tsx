@@ -148,7 +148,7 @@ export const UserEmployement = () => {
         setDesignations(designationType);
         const departmentType = await getDepartments(contextClientID);
         setDepartment(departmentType);
-        const managerName = await getManagers();
+        const managerName = await getManagers(contextClientID);
         setManagerArray(managerName);
         const employmentsType = await getEmploymentType();
         setEmployementTypeArray(employmentsType);
@@ -269,7 +269,6 @@ export const UserEmployement = () => {
             
 
         }
-        if(newPassword.password || newPassword.confirmPassword) return;
 
         e.preventDefault();
         if (!validate()) return;
@@ -786,18 +785,13 @@ async function getEmploymentType() {
     }
 
 }
-async function getManagers() {
-    const clientID = 3;
+async function getManagers(client_id:any) {
     let query = supabase
         .from('leap_customer')
         .select("customer_id,emp_id,name,client_id,branch_id")
-        .eq("client_id", 3);
+        .eq("client_id", client_id).or("user_role.eq.4,user_role.eq.9");
 
-    if (clientID == 3) {
-        query = query.eq("user_role", 4);
-    } else {
-        query = query.eq("user_role", 6);
-    }
+    
 
     const { data, error } = await query;
     if (error) {

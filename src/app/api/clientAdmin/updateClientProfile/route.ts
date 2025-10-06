@@ -14,11 +14,8 @@ export async function POST(request: NextRequest) {
       company_email: fields.company_email[0],
       company_number: fields.company_number[0],
       company_location: fields.company_location[0],
-      number_of_branches: fields.number_of_branches[0],
       sector_type: fields.sector_type[0],
-      fullday_working_hours: fields.fullday_working_hours[0],
-      halfday_working_hours: fields.halfday_working_hours[0],
-      total_weekend_days: fields.total_weekend_days[0],
+      
     };
     if (!fdata.client_id) {
       return NextResponse.json({ error: "Company ID needed" },{ status: apiStatusInvalidDataCode }
@@ -32,11 +29,8 @@ export async function POST(request: NextRequest) {
         company_email: fdata.company_email || null,
         company_number: fdata.company_number || null,
         company_location: fdata.company_location || null,
-        number_of_branches: fdata.number_of_branches || null,
         sector_type: fdata.sector_type || null,
-        fullday_working_hours: fdata.fullday_working_hours || null,
-        halfday_working_hours: fdata.halfday_working_hours || null,
-        total_weekend_days: fdata.total_weekend_days || null,
+        
         updated_at: new Date(),  
       })
       .eq('client_id', fdata.client_id[0])
@@ -46,9 +40,9 @@ export async function POST(request: NextRequest) {
       return funSendApiErrorMessage(error, "Company Update Issue");
     }
     if (data) {
-      return NextResponse.json({ message: companyUpdatedData, data: data }, { status: apiStatusSuccessCode });
+      return NextResponse.json({ message: companyUpdatedData, data: data ,status:1 }, { status: apiStatusSuccessCode });
     }else 
-    return NextResponse.json({ message: companyUpdateFailed }, { status: apiStatusFailureCode });
+    return NextResponse.json({ message: companyUpdateFailed, status:0 }, { status: apiStatusFailureCode });
     
   } catch (error) {
     return funSendApiException(error);

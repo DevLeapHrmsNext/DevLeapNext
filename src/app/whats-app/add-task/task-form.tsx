@@ -6,7 +6,7 @@ import supabase from '@/app/api/supabaseConfig/supabase'
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
 import { SubProject } from '@/app/models/TaskModel'
-import { ALERTMSG_exceptionString } from '@/app/pro_utils/stringConstants'
+import { ALERTMSG_exceptionString, whatsapp_number } from '@/app/pro_utils/stringConstants'
 import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
 interface AddTaskForm {
@@ -91,7 +91,7 @@ const ApplyTaskApp: React.FC = () => {
             const response = await fetch("/api/users/addTask", {
                 method: "POST",
                 body: JSON.stringify({
-                    "contact_number": contactNumber,
+                    contact_number: contactNumber,
                     client_id: userData[0].client_id,
                     branch_id: userData[0].branch_id,
                     customer_id: userData[0].customer_id,
@@ -109,7 +109,7 @@ const ApplyTaskApp: React.FC = () => {
             if (response.ok) {
                 setLoadingCursor(false);
 
-                router.push(pageURL_whatsappSuccessPage)
+                router.push(`https://wa.me/` + whatsapp_number);
                 // setShowAlert(true);
                 // setAlertTitle("Success")
                 // setAlertStartContent("Task added Successfully");

@@ -715,7 +715,7 @@ const Asset = () => {
 
                                                         {assetList?.leap_asset_status?.status === "Assigned" ? (
                                                             <>
-                                                                <div className="col-lg-2 text-center">{assetList?.leap_customer_asset[0]?.leap_customer?.name +assetList.asset_status || "--"}</div>
+                                                                <div className="col-lg-2 text-center">{assetList?.leap_customer_asset[0]?.leap_customer?.name || "--"}</div>
                                                                 <div className="col-lg-2 text-center">{assetList?.leap_customer_asset[0]?.date_given || "--"}</div>
                                                             </>
                                                         ) : assetList?.leap_asset_status?.status === "Under maintenance" || assetList?.leap_asset_status?.status === "Not functional" ?<><div className="col-lg-2 text-center">--</div><div className="col-lg-2 text-center">--</div></>:(

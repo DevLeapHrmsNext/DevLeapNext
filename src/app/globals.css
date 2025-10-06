@@ -4856,6 +4856,7 @@ input.new_upload_btn_input {
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 130px;
+  
 }
 
 .new_user_notification_listing_scroll::-webkit-scrollbar-track {

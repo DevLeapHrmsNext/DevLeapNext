@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import supabase from "../../supabaseConfig/supabase";
-import { calculateNumDays, formatDateYYYYMMDD, funDataAddedSuccessMessage, funSendApiErrorMessage, funSendApiException, parseForm } from "@/app/pro_utils/constant";
-import { funGetAdminID, funGetLeaveType, funGetSingleColumnValueCustomer } from "@/app/pro_utils/constantFunGetData";
+import { calculateNumDays, formatDateYYYYMMDD, funCalculateTimeDifference, funDataAddedSuccessMessage, funSendApiErrorMessage, funSendApiException, parseForm } from "@/app/pro_utils/constant";
+import fs from "fs/promises";
+import { error } from "console";
+import { funGetActivityTypeId, funGetAdminID, funGetLeaveType, funGetSingleColumnValueCustomer } from "@/app/pro_utils/constantFunGetData";
 import { addErrorExceptionLog, addUserActivities, apiUploadDocs } from "@/app/pro_utils/constantFunAddData";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
+  // console.log(request);
+  // console.log(request);
   let fileUploadResponse;
   try {
     const { fields, files } = await parseForm(request);
@@ -38,41 +42,44 @@ export async function POST(request: NextRequest) {
       console.log(error);
       return funSendApiErrorMessage(error, "Customer Apply Leave Insert Issue");
     }
-
-      (async () => {
-        try {
-          if (fields.contact_number[0]) {
-            const payload = { //process.env.AISENSY_API_KEY ||
-              apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTNmZmZkZjJlYjNmMGMxZmY1YjYxZSIsIm5hbWUiOiJFdm9uaXggVGVjaG5vbG9naWVzIFByaXZhdGUgTGltaXRlZCIsImFwcE5hbWUiOiJBaVNlbnN5IiwiY2xpZW50SWQiOiI2NzUzZmZmZGYyZWIzZjBjMWZmNWI2MTYiLCJhY3RpdmVQbGFuIjoiQkFTSUNfTU9OVEhMWSIsImlhdCI6MTczMzU1ODI2OX0.MQFrljNxs3lhKqFK0d3-S2EW160fYbshifoDCO4ma_4",
-              campaignName: "raise_ticket_id",
-              destination: fields.contact_number[0],
-              userName: "Evonix Technologies Private Limited",
-              templateParams: [fields.leave_type[0]],
-              source: "new-landing-page form",
-              media: {},
-              buttons: [],
-              carouselCards: [],
-              location: {},
-              attributes: {},
-              paramsFallbackValue: { FirstName: "user" }
-            };
-
-            await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
-          }
-        } catch (err: any) {
-          console.log("AiSensy WhatsApp error:", err);
-          await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString()});
-        }
-      })();
-
+    
+    const leaveType = await funGetLeaveType(fields.leave_type[0]);
     (async () => {
-      let leaveType = "";
       try {
-        const leaveType = await funGetLeaveType(fields.leave_type[0]);
+        if (fields.contact_number[0]) {
+          const payload = {
+            apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+            campaignName: "apply_leave",
+            destination: fields.contact_number[0],
+            userName: "Evonix Technologies Private Limited",
+            templateParams: [leaveType],
+            source: "new-landing-page form",
+            media: {},
+            buttons: [],
+            carouselCards: [],
+            location: {},
+            attributes: {},
+            paramsFallbackValue: { FirstName: "user" }
+          };
+
+          const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const body = await res.text();
+          // console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+        }
+      } catch (err: any) {
+        console.log("AiSensy WhatsApp error:", err);
+        // await addErrorExceptionLog((fields.client_id[0]), (fields.customer_id[0]), "AiSensy WhatsApp error", { exception: err.toString(), ticketId, (fields.contact_number[0]) });
+      }
+    })();
+    
+    (async () => {
+      
+      try {
+        
         const addActivity = await addUserActivities(fields.client_id[0], fields.customer_id[0], fields.branch_id[0], "Leave", leaveType + " has been applied.", data[0].id, false);
         // console.log("throww error: ", addActivity);
         throw addActivity;

@@ -6,11 +6,16 @@ import { useEffect, useState } from 'react'
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
 import { UserNotification } from '../models/userDashboardModel'
 import { ALERTMSG_exceptionString, staticIconsBaseURL } from '../pro_utils/stringConstants'
-import { pageURL_userAttendance, pageURL_userLeave, pageURL_userSupport, pageURL_userTaskListingPage, pageURL_userTeamAttendanceList, pageURL_userTeamLeave } from '../pro_utils/stringRoutes'
+import { pageURL_attendanceDetails, pageURL_attendanceList, pageURL_clientAdminSupport, pageURL_leaveListingPage, pageURL_ProjectsTaskPage, pageURL_userAttendance, pageURL_userLeave, pageURL_userSupport, pageURL_userTaskListingPage, pageURL_userTeamAttendanceList, pageURL_userTeamLeave } from '../pro_utils/stringRoutes'
 import moment from 'moment'
+import { useRouter } from 'next/navigation'
 
 const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
-    const { contextClientID, contextCustomerID, contextRoleID } = useGlobalContext();
+     const { contextClientID, contaxtBranchID, contextCompanyName, contextCustomerID, contextEmployeeID,
+                contextLogoURL, contextRoleID,isAdmin, contextProfileImage, contextUserName,
+                setGlobalState } = useGlobalContext();
+    const router=useRouter();
+                
     const [showAlert, setShowAlert] = useState(false);
     const [alertForSuccess, setAlertForSuccess] = useState(0);
     const [alertTitle, setAlertTitle] = useState('');
@@ -21,6 +26,8 @@ const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
     const [alertvalue2, setAlertValue2] = useState('');
     const [isLoading, setLoading] = useState(true);
     const [notificationData, setNotifyData] = useState<UserNotification[]>([]);
+    const [showLeaveApprovalDialog,setShowLeaveApprovalDialog]=useState(false);        
+    const [leaveToBeEdited,setLeaveToBeEdited]=useState(false); 
 
     useEffect(() => {
         fetchData();
@@ -29,14 +36,25 @@ const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await fetch("/api/users/appNotification", {
-                method: "POST",
-                body: JSON.stringify({
-                    "client_id": contextClientID,
-                    "customer_id": contextCustomerID,
-                    "role_id": contextRoleID
-                }),
-            });
+            let res ;
+           if(contextRoleID=='2' && isAdmin=='1'){
+                res = await fetch("/api/clientAdmin/notifications", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        "client_id": contextClientID,
+                        
+                    }),
+                });
+           } else{
+                res = await fetch("/api/users/appNotification", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            "client_id": contextClientID,
+                            "customer_id": contextCustomerID,
+                            "role_id": contextRoleID
+                        }),
+                    });
+            }
             const response = await res.json();
             const user = response.data;
             if (response.status == 1) {
@@ -58,6 +76,86 @@ const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
         }
     }
 
+    function handleViewNavigation(type_id:any,customer_id:any,relatedId:any){
+    
+            console.log("hadndle view navigation callied and the id is ",relatedId);
+            
+            
+            if(type_id==3){
+                setGlobalState({
+                    contextUserName: contextUserName,
+                    contextClientID: contextClientID,
+                    contaxtBranchID: contaxtBranchID,
+                    contextCustomerID: contextCustomerID,
+                    contextRoleID: contextRoleID,
+                    contextProfileImage: contextProfileImage,
+                    contextEmployeeID: contextEmployeeID,
+                    contextCompanyName: contextCompanyName,
+                    contextLogoURL: contextLogoURL,
+                    contextSelectedCustId: '',
+                    contextAddFormEmpID: '',
+                    contextAnnouncementID: '',
+                    contextAddFormCustID: '',
+                    dashboard_notify_cust_id: customer_id+"",
+                    dashboard_notify_activity_related_id: relatedId,
+                    selectedClientCustomerID: '',
+                    isAdmin: isAdmin,
+                    contextPARAM8: '',
+        
+                });
+                setLeaveToBeEdited(false)
+                router.push(pageURL_leaveListingPage); 
+                // return pageURL_leaveListingPage;
+            }else if(type_id==2){
+                setGlobalState({
+                    contextUserName: contextUserName,
+                    contextClientID: contextClientID,
+                    contaxtBranchID: contaxtBranchID,
+                    contextCustomerID: contextCustomerID,
+                    contextRoleID: contextRoleID,
+                    contextProfileImage: contextProfileImage,
+                    contextEmployeeID: contextEmployeeID,
+                    contextCompanyName: contextCompanyName,
+                    contextLogoURL: contextLogoURL,
+                    contextSelectedCustId: '',
+                    contextAddFormEmpID: '',
+                    contextAnnouncementID: '',
+                    contextAddFormCustID: '',
+                    dashboard_notify_cust_id:customer_id+"",
+                    dashboard_notify_activity_related_id: relatedId,
+                    selectedClientCustomerID: '',
+                    isAdmin: isAdmin,
+                    contextPARAM8: '',
+        
+                });
+                setLeaveToBeEdited(false)
+                router.push(pageURL_ProjectsTaskPage); 
+                // return pageURL_leaveListingPage;
+            }else if(type_id==1){
+                setGlobalState({
+                    contextUserName: contextUserName,
+                    contextClientID: contextClientID,
+                    contaxtBranchID: contaxtBranchID,
+                    contextCustomerID: contextCustomerID,
+                    contextRoleID: contextRoleID,
+                    contextProfileImage: contextProfileImage,
+                    contextEmployeeID: contextEmployeeID,
+                    contextCompanyName: contextCompanyName,
+                    contextLogoURL: contextLogoURL,
+                    contextSelectedCustId: '',
+                    contextAddFormEmpID: '',
+                    contextAnnouncementID: '',
+                    contextAddFormCustID: '',
+                    dashboard_notify_cust_id: customer_id+'',
+                    dashboard_notify_activity_related_id: relatedId,
+                    selectedClientCustomerID: '',
+                    isAdmin: isAdmin,
+                    contextPARAM8: '',
+        
+                });
+                router.push(pageURL_attendanceDetails);
+            }
+        }
     return (
         <div className="">
             <div className="">
@@ -70,10 +168,7 @@ const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
                         Notification Corner
                     </div>
                     <div className="nw_user_offcanvas_listing_mainbox">
-                        {/* <div className="nw_user_offcanvas_listing">
-              <div className="nw_user_offcanvas_listing_lable">Request Category</div>
-              <div className="nw_user_offcanvas_listing_content"></div>
-            </div> */}
+                        
                         <div className="">
                             {/*activity_type_id:- 1 - attendance, 
                                                     2 - task,
@@ -85,24 +180,24 @@ const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
                                     {noti.date && <div className='nw_notification_date_listing'>{moment(noti.date, "DD/MM/YYYY").format("Do MMMM")}</div>}
                                     {noti.listing.map((notiList, i) => (
                                         notiList.type == "user" ?
-                                            <ul className="nw_notification_table_listing" key={i}>
+                                            <ul className="nw_notification_table_listing" key={i} style={{fontSize:"15px"}}>
                                                 {/* <li> */}
                                                 {notiList.activity_type_id.id === 1 ? ( //attendance
-                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userAttendance}>
+                                                    <div style={{ cursor: "pointer" }} onClick={() => contextRoleID=='2' && isAdmin=='1'? handleViewNavigation(notiList.activity_type_id.id,notiList.customer_id,notiList.activity_related_id):window.location.href = pageURL_userAttendance}>
                                                         {notiList.activity_type_id.activity_type} : {notiList.activity_details}
                                                         <span className='notification_detail_icon'>
                                                         </span>
                                                     </div>
                                                 ) : notiList.activity_type_id.id === 2 ? ( //task
-                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userTaskListingPage}>
+                                                    <div style={{ cursor: "pointer" }} onClick={() => contextRoleID=='2' && isAdmin=='1'? handleViewNavigation(notiList.activity_type_id.id,notiList.customer_id,notiList.activity_related_id):window.location.href = pageURL_userTaskListingPage}>
                                                         {notiList.activity_type_id.activity_type} : {notiList.activity_details}
                                                     </div>
                                                 ) : notiList.activity_type_id.id === 3 ? ( //leave
-                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userLeave}>
+                                                    <div style={{ cursor: "pointer" }} onClick={() => contextRoleID=='2' && isAdmin=='1'? handleViewNavigation(notiList.activity_type_id.id,notiList.customer_id,notiList.activity_related_id):window.location.href = pageURL_userLeave}>
                                                         {notiList.activity_type_id.activity_type} : {notiList.activity_details}
                                                     </div>
                                                 ) : notiList.activity_type_id.id === 5 ? ( //support
-                                                    <div style={{ cursor: "pointer" }} onClick={() => window.location.href = pageURL_userSupport}>
+                                                    <div style={{ cursor: "pointer" }} onClick={() => contextRoleID=='2' && isAdmin=='1'? handleViewNavigation(notiList.activity_type_id.id,notiList.customer_id,notiList.activity_related_id):window.location.href = pageURL_userSupport}>
                                                         {notiList.activity_type_id.activity_type} : {notiList.activity_details}
                                                     </div>
                                                 ) : (
@@ -139,7 +234,7 @@ const UserNotificationCorner = ({ onClose }: { onClose: any }) => {
                                     ))}
                                     </React.Fragment>
                                 )) : (
-                                    <div className="user_notification_list">No Notifications!</div>
+                                    <div className="user_notification_list" style={{fontSize:"23px",textAlign:"center"}}>No Notifications!</div>
                                 )}
 
                         </div>

@@ -6,7 +6,7 @@ import supabase from '@/app/api/supabaseConfig/supabase'
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
 import { SubProject } from '@/app/models/TaskModel'
-import { ALERTMSG_exceptionString, employeeDocUpload } from '@/app/pro_utils/stringConstants'
+import { ALERTMSG_exceptionString, employeeDocUpload, whatsapp_number } from '@/app/pro_utils/stringConstants'
 import router from 'next/router';
 import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
@@ -79,15 +79,26 @@ const DocUploadApp: React.FC = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const uploadDocument = async (e: React.FormEvent) => {
-        //  e.preventDefault();
+    const uploadDocument = async () => {
         if (!validate()) return;
         const formData = new FormData();
         formData.append("uploadType", employeeDocUpload);
+
+        // if (formFilledData.selectedFile == null) {
+        //     // return alert("Please select File to upload");
+        //     // setShowAlert(true);
+        //     setAlertTitle("Error")
+        //     setAlertStartContent("No documents uploaded yet!");
+        //     setAlertForSuccess(2)
+        // }
+        // if (formFilledData.docTypeID.length > 0) {
+        //     return alert("Please select type of document");
+        // }
+        formData.append("contact_number", contactNumber!);
         formData.append("client_id", userData[0].client_id);
         formData.append("customer_id", userData[0].customer_id);
-        formData.append("branch_id", userData[0].branch_id);
         formData.append("file", formFilledData.selectedFile!);
+        formData.append("branch_id", userData[0].branch_id);
         formData.append("doc_type_id", formFilledData.doc_type_id);
 
         try {
@@ -100,7 +111,7 @@ const DocUploadApp: React.FC = () => {
 
             if (response.status == 1) {
                 setLoadingCursor(false);
-                router.push(pageURL_whatsappSuccessPage)
+                router.push(`https://wa.me/` + whatsapp_number);
                 // alert(response.message)
                 // onClose();
             } else {
@@ -122,8 +133,8 @@ const DocUploadApp: React.FC = () => {
 
                 <form onSubmit={uploadDocument}>
                     <div className="form-group">
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Document Type <span className='req_text'>*</span></label>
-                        <select id="doc_type_id" name="doc_type_id" onChange={handleEmpInputChange}>
+                        <label>Document Type <span className='req_text'>*</span></label>
+                        <select name="doc_type_id" onChange={handleEmpInputChange}>
                             <option value="">Select</option>
                             {docTypes.map((type) => (
                                 <option value={type.id} key={type.id}>{type.document_name}</option>

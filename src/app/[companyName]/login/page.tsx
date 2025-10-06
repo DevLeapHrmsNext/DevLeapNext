@@ -56,7 +56,9 @@ const Login = () => {
         <div className="login_logo">
             <img
               src={getImageApiURL+"/uploads/" + clientBasicInfo.company_logo}
-              className="img-fluid"
+               className="img-fluid"
+              onError={(e) => {const target = e.target as HTMLImageElement; target.onerror = null; target.src = staticIconsBaseURL + "/images/logo.png"; }}
+             
             />
             </div>
           ) : (

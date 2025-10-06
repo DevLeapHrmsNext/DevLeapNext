@@ -21,31 +21,30 @@ export async function middleware(request: NextRequest) {
   //   }
   // }
 
+  const lowerPath = pathname.toLowerCase();
+  const allowList = [ 
+      "/login",
+      "/forgot-password",
+      "/reset-password",
+      "/reset-pass/verify-token",
+      "/clientadmin/addemployeeform",
+      "/terms-and-conditions",
+      "/privacy-policy",
+      "/clientadmin/addemployeeform/addemployeebankdetailsform",
+      "/whats-app/add-task",
+      "/whats-app/raise-support",
+      "/whats-app/upload-documents",
+      "/whats-app/apply-leave",
+      "/whats-app",
+      // "/firebase-messaging-sw.js"
+    ];
 
   // ✅ Allow password reset & confirmation pages to be accessed
-  if (pathname === "/" || pathname.toLowerCase().includes("login")
-    || pathname.toLowerCase().includes("/forgot-password")
-    || pathname.toLowerCase().includes("/reset-password")
-    || pathname.toLowerCase().includes("/reset-pass/verify-token")
-    || pathname.toLowerCase().includes("/clientadmin/addEmployeeForm")
-    || pathname.toLowerCase().includes("/terms-and-conditions")
-    || pathname.toLowerCase().includes("/privacy-policy") 
-    || pathname.toLowerCase().includes("/clientadmin/addEmployeeForm/addEmployeeBankDetailsForm")
-    || pathname.toLowerCase().includes("/whats-app/add-task") 
-    || pathname.toLowerCase().includes("/whats-app/raise-support")
-    || pathname.toLowerCase().includes("/whats-app/upload-documents")
-    || pathname.toLowerCase().includes("/whats-app/apply-leave") 
-    || pathname.toLowerCase().includes("/whats-app")
-  ){
-      console.log("Middel waare is getting called ---------123------------------------- ----- -- ",pathname);
-
-    return NextResponse.next(); // Let the request pass
+ 
+  if (pathname === "/" || allowList.some(p => lowerPath.includes(p))) {
+      console.log("Middleware called ---- ", pathname);
+      return NextResponse.next();
   }
-  // if(pathname.toLowerCase().includes( addUserDocumentsForm) || pathname.toLowerCase().includes(addUserEmploymentForm)|| 
-  // pathname.toLowerCase().includes(addUserAddressBankForm)){
-
-  //   return NextResponse.redirect(userList)
-  // }
 
   // ✅ Apply session update for all other routes
   return await updateSession(request);

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import supabase from '@/app/api/supabaseConfig/supabase'
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LeapRequestMaster, SupportForm } from '@/app/models/supportModel'
-import { ALERTMSG_FormExceptionString, raiseSupportTitle } from '@/app/pro_utils/stringConstants'
+import { ALERTMSG_FormExceptionString, whatsapp_number } from '@/app/pro_utils/stringConstants'
 import ShowAlertMessage from '@/app/components/alert'
 import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
@@ -58,7 +58,7 @@ const SupportRequestForm: React.FC = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [])
-  // Start 5 min timer when page loads
+  // start 5 min timer when page loads
   useEffect(() => {
 
     const expiryTimer = setTimeout(() => {
@@ -122,7 +122,8 @@ const SupportRequestForm: React.FC = () => {
         // setAlertTitle("Success")
         // setAlertStartContent("Help raised successfully");
         // setAlertForSuccess(1)
-        router.push(pageURL_whatsappSuccessPage)
+        // router.push(pageURL_whatsappSuccessPage)
+        router.push(`https://wa.me/` + whatsapp_number);
       } else {
         setLoadingCursor(false);
         e.preventDefault()

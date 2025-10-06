@@ -239,7 +239,7 @@ const EmployeeDocuments = () => {
                                                             <svg width="18" height="18" x="0" y="0" viewBox="0 0 64 64">
                                                                 <g>
                                                                     <g fill="#000">
-                                                                        <path fill-rule="evenodd" d="M42 2v10a8 8 0 0 0 8 8h11.977c.015.201.023.404.023.607V46c0 8.837-7.163 16-16 16H18C9.163 62 2 54.837 2 46V18C2 9.163 9.163 2 18 2zm1 30a2 2 0 0 1-2 2h-7v7a2 2 0 1 1-4 0v-7h-7a2 2 0 1 1 0-4h7v-7a2 2 0 1 1 4 0v7h7a2 2 0 0 1 2 2z" clip-rule="evenodd" fill="#ffffff" opacity="1" data-original="#000000"></path>
+                                                                        <path fillRule="evenodd" d="M42 2v10a8 8 0 0 0 8 8h11.977c.015.201.023.404.023.607V46c0 8.837-7.163 16-16 16H18C9.163 62 2 54.837 2 46V18C2 9.163 9.163 2 18 2zm1 30a2 2 0 0 1-2 2h-7v7a2 2 0 1 1-4 0v-7h-7a2 2 0 1 1 0-4h7v-7a2 2 0 1 1 4 0v7h7a2 2 0 0 1 2 2z" clipRule="evenodd" fill="#ffffff" opacity="1" data-original="#000000"></path>
                                                                         <path d="M46 2.742V12a4 4 0 0 0 4 4h10.54a7.995 7.995 0 0 0-1.081-1.241L48.093 4.152A7.998 7.998 0 0 0 46 2.742z" fill="#ffffff" opacity="1" data-original="#000000"></path>
                                                                     </g>
                                                                 </g>

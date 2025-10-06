@@ -467,12 +467,16 @@ const BranchDetails = () => {
         //   if (!formValues.time_zone_id) newErrors.time_zone_id = "required";
         console.log("This is the log for ismainbranch", branchesArray[branchIndex].is_main_branch);
 
-        if (branchesArray[branchIndex].is_main_branch==true||branchesArray[branchIndex].is_main_branch==false) 
+        if (String(branchesArray[branchIndex].is_main_branch)=="true"||String(branchesArray[branchIndex].is_main_branch)=="false") 
             {
 
             }
         else{newErrors.is_main_branch = "required";}
-        if (!branchesArray[branchIndex].is_active) newErrors.is_active = "required";
+        if (String(branchesArray[branchIndex].is_active)=="true"||String(branchesArray[branchIndex].is_active)=="false") 
+            {
+
+            }
+        else{newErrors.is_active = "required";}
 
         console.log("this is the error of form", newErrors);
 
@@ -556,6 +560,8 @@ const BranchDetails = () => {
         };
     const handleValuesChange = (e: any, id: any) => {
         const { value, name } = e.target;
+        console.log("this is handle vaues change-----",e);
+        
         setBranches((prev) => {
             const existingComponentIndex = prev.findIndex((item) => item.id === id);
             if (existingComponentIndex > -1) {
@@ -698,13 +704,13 @@ const BranchDetails = () => {
                                                 </div>
                                                 <div className="col-md-6 mb-4">
                                                     <div className="col-lg-12">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label">Is Main Branch{branchesArray[branchIndex]?.is_main_branch}<span className='req_text' style={{ color: "red" }}>*</span>:</label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label">Is Main Branch<span className='req_text' style={{ color: "red" }}>*</span>:</label>
                                                     </div>
                                                     <div className="col-lg-12 form_box">
-                                                        <select id="is_main_branch" name="is_main_branch" value={branchesArray[branchIndex]?.is_main_branch || branchesArray[branchIndex]?.is_main_branch == "true" ? "TRUE" : "FALSE"} onChange={(e) => (handleValuesChange(e, branchesArray[branchIndex].id))}>
+                                                        <select id="is_main_branch" name="is_main_branch" value={branchesArray[branchIndex]?.is_main_branch! && String(branchesArray[branchIndex]?.is_main_branch)=='true' ? "true" : "false"} onChange={(e) => (handleValuesChange(e, branchesArray[branchIndex].id))}>
                                                             {/* <option value={branchesArray[branchIndex]?.is_main_branch}>{branchesArray[branchIndex]?.is_main_branch}</option> */}
-                                                            <option value="TRUE">TRUE</option>
-                                                            <option value="FALSE">FALSE</option>
+                                                            <option value="true">TRUE</option>
+                                                            <option value="false">FALSE</option>
                                                         </select>
                                                         {errors.is_main_branch && <span className="error" style={{ color: "red" }}>{errors.is_main_branch} </span>}
 
@@ -728,10 +734,10 @@ const BranchDetails = () => {
                                                         <label htmlFor="exampleFormControlInput1" className="form-label">Is Active<span className='req_text' style={{ color: "red" }}>*</span>:</label>
                                                     </div>
                                                     <div className="col-lg-12 form_box">
-                                                        <select id="is_active" name="is_active" value={branchesArray[branchIndex]?.is_active || branchesArray[branchIndex]?.is_active == "TRUE" ? "TRUE" : "FALSE"} onChange={(e) => (handleValuesChange(e, branchesArray[branchIndex].id))}>
+                                                        <select id="is_active" name="is_active" value={branchesArray[branchIndex]?.is_active! && String(branchesArray[branchIndex]?.is_active) =='true'  ? "true" : "false"} onChange={(e) => (handleValuesChange(e, branchesArray[branchIndex].id))}>
                                                             {/* <option value={branchesArray[branchIndex]?.is_active}>{branchesArray[branchIndex]?.is_active}</option> */}
-                                                            <option value="TRUE">TRUE</option>
-                                                            <option value="FALSE">FALSE</option>
+                                                            <option value="true">TRUE</option>
+                                                            <option value="false">FALSE</option>
                                                         </select>
                                                         {errors.is_active && <span className="error" style={{ color: "red" }}>{errors.is_active} </span>}
 

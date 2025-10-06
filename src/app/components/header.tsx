@@ -8,6 +8,7 @@ import useSession from '../pro_utils/sessionmgmt';
 import { useRouter } from 'next/navigation';
 import { pageURL_clientProfilePage, pageURL_dashboard, pageURL_defaultLogin, pageURL_userEmpDashboard, pageURL_userProfile } from '../pro_utils/stringRoutes';
 import { getImageApiURL, staticIconsBaseURL } from '../pro_utils/stringConstants';
+import UserNotificationCorner from './userNotification';
 // import supabase from '../api/supabaseConfig/supabase';
 
 const LeapHeader = ({ title }: any) => {
@@ -17,6 +18,7 @@ const LeapHeader = ({ title }: any) => {
         contextCompanyName, setGlobalState } = useGlobalContext();
     const router = useRouter();
     const [isSearchVisible, setSearchVisible] = useState(false);
+    const [showNotifyDrawer, setShowNotifyDrawer] = useState(false);
     const [searchText, setSearchText] = useState('');
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -217,8 +219,13 @@ const LeapHeader = ({ title }: any) => {
                                         )}
                                     </div> */}
                                     <div className="option">
-                                        <a href="#"><img src={staticIconsBaseURL + "/images/notification_icon.png"} className="img-fluid" /><div className="option_label">Notification</div></a>
+                                        <a onClick={()=>setShowNotifyDrawer(true)}><img src={staticIconsBaseURL + "/images/notification_icon.png"} className="img-fluid" /><div className="option_label">Notification</div></a>
                                     </div>
+                                    <div className={showNotifyDrawer ? "rightpoup rightpoupopen" : "rightpoup"}>
+
+                                        {showNotifyDrawer && <UserNotificationCorner onClose={() => { setShowNotifyDrawer(false) }} />}
+                                    </div>
+
                                     <div className="headeroptions-container"
                                         style={{ position: "relative", display: "inline-block" }}
                                         onMouseEnter={() => setDropdownVisible(true)} // Show dropdown on hover
@@ -266,7 +273,7 @@ const LeapHeader = ({ title }: any) => {
                                                         <div className="user_dash_top_profile_icon">
                                                             <svg width="16" height="16" x="0" y="0" viewBox="0 0 24 24">
                                                                 <g transform="matrix(1.17,0,0,1.17,-2.0397450995445237,-2.0399100208282466)">
-                                                                    <path fill="#707070" fill-rule="evenodd" d="M12 2a1 1 0 0 1 1 1v10a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zM8.866 5.57A1 1 0 0 1 8.5 6.936a7 7 0 1 0 6.999 0 1 1 0 0 1 1-1.731 9 9 0 1 1-9.001 0 1 1 0 0 1 1.367.365z" clip-rule="evenodd" opacity="1" data-original="#000000"></path>
+                                                                    <path fill="#707070" fillRule="evenodd" d="M12 2a1 1 0 0 1 1 1v10a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zM8.866 5.57A1 1 0 0 1 8.5 6.936a7 7 0 1 0 6.999 0 1 1 0 0 1 1-1.731 9 9 0 1 1-9.001 0 1 1 0 0 1 1.367.365z" clipRule="evenodd" opacity="1" data-original="#000000"></path>
                                                                 </g>
                                                             </svg>
                                                         </div>
@@ -327,7 +334,7 @@ const LeapHeader = ({ title }: any) => {
                                                         <div className="user_dash_top_profile_icon">
                                                             <svg width="16" height="16" x="0" y="0" viewBox="0 0 24 24">
                                                                 <g transform="matrix(1.17,0,0,1.17,-2.0397450995445237,-2.0399100208282466)">
-                                                                    <path fill="#707070" fill-rule="evenodd" d="M12 2a1 1 0 0 1 1 1v10a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zM8.866 5.57A1 1 0 0 1 8.5 6.936a7 7 0 1 0 6.999 0 1 1 0 0 1 1-1.731 9 9 0 1 1-9.001 0 1 1 0 0 1 1.367.365z" clip-rule="evenodd" opacity="1" data-original="#000000"></path>
+                                                                    <path fill="#707070" fillRule="evenodd" d="M12 2a1 1 0 0 1 1 1v10a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zM8.866 5.57A1 1 0 0 1 8.5 6.936a7 7 0 1 0 6.999 0 1 1 0 0 1 1-1.731 9 9 0 1 1-9.001 0 1 1 0 0 1 1.367.365z" clipRule="evenodd" opacity="1" data-original="#000000"></path>
                                                                 </g>
                                                             </svg>
                                                         </div>
@@ -340,7 +347,7 @@ const LeapHeader = ({ title }: any) => {
                                                         <div className="user_dash_top_profile_icon">
                                                             <svg width="16" height="16" x="0" y="0" viewBox="0 0 24 24">
                                                                 <g transform="matrix(1.17,0,0,1.17,-2.0397450995445237,-2.0399100208282466)">
-                                                                    <path fill="#707070" fill-rule="evenodd" d="M12 2a1 1 0 0 1 1 1v10a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zM8.866 5.57A1 1 0 0 1 8.5 6.936a7 7 0 1 0 6.999 0 1 1 0 0 1 1-1.731 9 9 0 1 1-9.001 0 1 1 0 0 1 1.367.365z" clip-rule="evenodd" opacity="1" data-original="#000000"></path>
+                                                                    <path fill="#707070" fillRule="evenodd" d="M12 2a1 1 0 0 1 1 1v10a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zM8.866 5.57A1 1 0 0 1 8.5 6.936a7 7 0 1 0 6.999 0 1 1 0 0 1 1-1.731 9 9 0 1 1-9.001 0 1 1 0 0 1 1.367.365z" clipRule="evenodd" opacity="1" data-original="#000000"></path>
                                                                 </g>
                                                             </svg>
                                                         </div>
