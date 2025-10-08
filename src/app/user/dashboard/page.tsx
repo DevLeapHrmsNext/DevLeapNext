@@ -430,7 +430,8 @@ const Dashboard = () => {
                                                                     <div className="new_home_team_member_mainbox">
                                                                         {managerData ? <div className="new_home_team_member_listing" >
                                                                             <div className="new_home_team_member_img">
-                                                                                <img src={managerData.profile_pic ? getImageApiURL + "/uploads/" + managerData.profile_pic : staticIconsBaseURL + "/images/user/user.png"} alt="Member image" className="img-fluid" />
+                                                                                <img src={managerData.profile_pic ? getImageApiURL + "/uploads/" + managerData.profile_pic : staticIconsBaseURL + "/images/user/user.png"} alt="Member image" className="img-fluid"
+                                                                                onError={(e) => {const target = e.target as HTMLImageElement; target.onerror = null; target.src = staticIconsBaseURL + "/images/user/user.png"; }} />
                                                                             </div>
                                                                             <div className="new_home_team_member_name" style={{ color: "red" }}>
                                                                                 {managerData?.name}

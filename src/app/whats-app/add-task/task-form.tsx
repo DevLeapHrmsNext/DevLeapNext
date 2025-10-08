@@ -4,10 +4,8 @@
 import React, { useEffect, useState } from 'react'
 import supabase from '@/app/api/supabaseConfig/supabase'
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
 import { SubProject } from '@/app/models/TaskModel'
 import { ALERTMSG_exceptionString, whatsapp_number } from '@/app/pro_utils/stringConstants'
-import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
 interface AddTaskForm {
     sub_project_id: string,
@@ -47,8 +45,9 @@ const ApplyTaskApp: React.FC = () => {
         const fetchData = async () => {
             const custData = await getCustomerClientIds(contactNumber!);
             setuserData(custData);
-            console.log("custData", userData);
-            const project = await getSubProject(userData[0]?.client_id);
+            // console.log("custData:", custData[0]);
+            const project = await getSubProject(custData[0].client_id);
+            //  console.log("project:", project);
             setSubProject(project);
             const task = await getTaskTypes();
             setTask(task);
@@ -108,7 +107,7 @@ const ApplyTaskApp: React.FC = () => {
             setLoadingCursor(false);
             if (response.ok) {
                 setLoadingCursor(false);
-
+                alert("Form submitted successfully. You will be redirected to WhatsApp to chat with us.");
                 router.push(`https://wa.me/` + whatsapp_number);
                 // setShowAlert(true);
                 // setAlertTitle("Success")

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { funSendApiErrorMessage, funSendApiException, parseForm } from "@/app/pro_utils/constant";
-import { getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
+import { funGetDocumentTypeName, getAllActivitiesOfUsers } from "@/app/pro_utils/constantFunGetData";
 import supabase from "../../supabaseConfig/supabase";
 import { apiStatusSuccessCode, companyDocUpload } from "@/app/pro_utils/stringConstants";
 import fs from "fs/promises";
-import { apiUploadDocs } from "@/app/pro_utils/constantFunAddData";
+import { addErrorExceptionLog, apiUploadDocs } from "@/app/pro_utils/constantFunAddData";
 
 export async function POST(request: NextRequest) {
 
@@ -59,10 +59,42 @@ export async function POST(request: NextRequest) {
     if (error) {
       return funSendApiErrorMessage(error, "Failed To Fetch Documents");
     }
-    else {
+    //  const docTypeName = await funGetDocumentTypeName(fields.doc_type_id[0]);
+     (async () => {
+          try {
+            if (fields.contact_number[0]) {
+              const payload = {
+                apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+                campaignName: "hrms_success_msg",
+                destination: fields.contact_number[0],
+                userName: "$Name",
+                templateParams: ["uploaded your document"],// [docTypeName],
+                source: "new-landing-page form",
+                media: {},
+                buttons: [],
+                carouselCards: [],
+                location: {},
+                attributes: {},
+                paramsFallbackValue: { FirstName: "user" }
+              };
+    
+              const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+              });
+              const body = await res.text();
+              // console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+            }
+          } catch (err: any) {
+            console.log("AiSensy WhatsApp error:", err);
+            // await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString(), projectType, fields.contact_number[0] });
+          }
+        })();
+   
       return NextResponse.json({ status: 1, message: "Document uploaded", data: documents },
         { status: apiStatusSuccessCode });
-    }
+    
   } catch (error) {
 
     console.log(error);

@@ -1360,3 +1360,15 @@ export async function funGetSubProjectType(type_num:any){
     return data.sub_project_name;
   }
 }
+export async function funGetDocumentTypeName(type_num:any){
+  const { data, error } = await supabase
+  .from('leap_document_type')
+  .select('document_name')
+  .eq('id', type_num)
+  .single();
+  if(error){
+    return null;
+  }else{
+    return data.document_name;
+  }
+}

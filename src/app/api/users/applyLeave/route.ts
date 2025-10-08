@@ -49,10 +49,10 @@ export async function POST(request: NextRequest) {
         if (fields.contact_number[0]) {
           const payload = {
             apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
-            campaignName: "apply_leave",
+            campaignName: "hrms_success_msg",
             destination: fields.contact_number[0],
-            userName: "Evonix Technologies Private Limited",
-            templateParams: [leaveType],
+            userName: "$Name",
+            templateParams: ["applied for leave"],   //[leaveType],
             source: "new-landing-page form",
             media: {},
             buttons: [],

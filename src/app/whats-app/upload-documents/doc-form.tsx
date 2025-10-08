@@ -4,8 +4,6 @@
 import React, { useEffect, useState } from 'react'
 import supabase from '@/app/api/supabaseConfig/supabase'
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useGlobalContext } from '@/app/contextProviders/loggedInGlobalContext'
-import { SubProject } from '@/app/models/TaskModel'
 import { ALERTMSG_exceptionString, employeeDocUpload, whatsapp_number } from '@/app/pro_utils/stringConstants'
 import router from 'next/router';
 import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
@@ -111,6 +109,7 @@ const DocUploadApp: React.FC = () => {
 
             if (response.status == 1) {
                 setLoadingCursor(false);
+                alert("Form submitted successfully. You will be redirected to WhatsApp to chat with us.");
                 router.push(`https://wa.me/` + whatsapp_number);
                 // alert(response.message)
                 // onClose();

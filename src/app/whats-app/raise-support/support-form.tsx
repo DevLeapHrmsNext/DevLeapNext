@@ -123,6 +123,7 @@ const SupportRequestForm: React.FC = () => {
         // setAlertStartContent("Help raised successfully");
         // setAlertForSuccess(1)
         // router.push(pageURL_whatsappSuccessPage)
+        alert("Form submitted successfully. You will be redirected to WhatsApp to chat with us.");
         router.push(`https://wa.me/` + whatsapp_number);
       } else {
         setLoadingCursor(false);

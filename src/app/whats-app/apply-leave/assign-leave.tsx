@@ -44,7 +44,7 @@ const AssignLeave: React.FC = () => {
             setuserData(custData!);
             // console.log("custData", userData);
             // console.log("custData", userData[0].customer_id + userData[0].client_id + userData[0].branch_id);
-            const leavetype = await getLeave(userData[0].customer_id, userData[0].client_id, userData[0].branch_id);
+            const leavetype = await getLeave(custData[0].customer_id, custData[0].client_id, custData[0].branch_id);
             console.log("leavetype", leavetype);
             setLeave(leavetype);
             // console.log("leavetype", leavetype);
@@ -127,6 +127,7 @@ const AssignLeave: React.FC = () => {
             });
             if (response.ok) {
                 setLoadingCursor(false);
+                alert("Form submitted successfully. You will be redirected to WhatsApp to chat with us.");
                 router.push(`https://wa.me/` + whatsapp_number);
             } else {
                 setLoadingCursor(false);

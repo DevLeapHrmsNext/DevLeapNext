@@ -38,16 +38,16 @@ export async function POST(request: NextRequest) {
     if (taskError) {
       return funSendApiErrorMessage(taskError, "Failed to add task");
     }
- const projectType = await funGetSubProjectType(sub_project_id);
- (async () => {
+    const projectType = await funGetSubProjectType(sub_project_id);
+    (async () => {
       try {
         if (contact_number) {
           const payload = {
             apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
-            campaignName: "apply_leave",
+            campaignName: "hrms_success_msg",
             destination: contact_number,
-            userName: "Evonix Technologies Private Limited",
-            templateParams: [projectType],
+            userName: "$Name",
+            templateParams: ["added your task"], // [projectType],
             source: "new-landing-page form",
             media: {},
             buttons: [],
@@ -73,8 +73,8 @@ export async function POST(request: NextRequest) {
     (async () => {
       // let projectType = "";
       try {
-       
-        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", "Task added for "+ projectType, TaskData[0].id, false);
+
+        const addActivity = await addUserActivities(client_id, customer_id, "", "Work task", "Task added for " + projectType, TaskData[0].id, false);
         // console.log("throww error: ", addActivity);
         throw addActivity;
       } catch (err) {

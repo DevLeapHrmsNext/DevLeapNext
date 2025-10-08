@@ -15,13 +15,13 @@ export async function POST(request: NextRequest) {
         // const base_url = "https://v2.leaphrms.com"
 
         if (id === "1") {
-            url = baseUrl + "/whats-app/add-task?contact_number=" + phone_number + "&ts=1696000000";
+            url = baseUrl + "whats-app/add-task?contact_number=" + phone_number + "&ts=1696000000";
         } else if (id === "2") { // raise support
-            url = baseUrl + "/whats-app/raise-support?contact_number=" + phone_number + "&ts=1696000000";
+            url = baseUrl + "whats-app/raise-support?contact_number=" + phone_number + "&ts=1696000000";
         } else if (id === "3") { // upload documents
-            url = baseUrl + "/whats-app/upload-documents?contact_number=" + phone_number + "&ts=1696000000";
+            url = baseUrl + "whats-app/upload-documents?contact_number=" + phone_number + "&ts=1696000000";
         } else if (id === "4") { // apply leave
-            url = baseUrl + "/whats-app/apply-leave?contact_number=" + phone_number + "&ts=1696000000";
+            url = baseUrl + "whats-app/apply-leave?contact_number=" + phone_number + "&ts=1696000000";
         } else {
             return NextResponse.json({data:{status: 0, message: "Invalid Type Id. Please choose between 1 to 4." }}, { status: apiStatusFailureCode }
             );
