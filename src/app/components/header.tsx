@@ -73,6 +73,7 @@ const LeapHeader = ({ title }: any) => {
         const supabase = createClient();
         await supabase.auth.signOut()
         logout(contextCompanyName);
+        router.push(pageURL_defaultLogin);
 
 
         console.log("User logged out");

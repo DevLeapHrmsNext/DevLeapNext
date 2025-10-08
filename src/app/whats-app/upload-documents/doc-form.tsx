@@ -104,11 +104,11 @@ const DocUploadApp: React.FC = () => {
                 method: "POST",
                 body: formData,
             });
-            const response = await res.json();
+            // const response = await res.json();
             // console.log(response);
 
-            if (response.status == 1) {
-                setLoadingCursor(false);
+            if (res.ok) {
+                // setLoadingCursor(false);
                 alert("Form submitted successfully. You will be redirected to WhatsApp to chat with us.");
                 router.push(`https://wa.me/` + whatsapp_number);
                 // alert(response.message)
