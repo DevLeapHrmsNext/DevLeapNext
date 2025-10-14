@@ -338,3 +338,10 @@ interface whatsappCustomerInfoModel {
   client_id: string
   branch_id: string
 }
+
+interface whatsappWorkingType {
+  id: number
+  type: string
+  is_deleted: string
+}
+

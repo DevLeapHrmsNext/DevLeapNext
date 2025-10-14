@@ -78,44 +78,6 @@ async function startAttendance(fields: any, files: { file: any; }) {
 
   }
 
-  //   if(files){
-
-  //   const uploadedFile = files.file[0];
-  //           const fileBuffer = await fs.readFile(uploadedFile.path);
-  //           const fileBlob = new Blob([new Uint8Array(fileBuffer)], {
-  //               type: uploadedFile.headers["content-type"]
-  //             });
-
-  //   const formData = new FormData();
-  //   formData.append("client_id", fields.client_id[0]);
-  //   formData.append("customer_id", fields.customer_id[0]);
-  //   formData.append("docType","emp_attendance" );
-  //   formData.append("file", uploadedFile);
-
-
-
-  //   const fileUploadURL = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/api/UploadFiles", {
-  //     method: "POST",
-  //     // headers:{"Content-Type":"multipart/form-data"},
-  //     body: formData,
-  //   });
-  //   const fileUploadURL = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/api/UploadFiles", {
-  //     method: "POST",
-  //     // headers:{"Content-Type":"multipart/form-data"},
-  //     body: formData,
-  //   });
-
-  //   fileUploadResponse = await fileUploadURL.json();
-  //   if (fileUploadResponse.error) {
-  //     return NextResponse.json({ message: "File upload api call error" ,error:fileUploadResponse.error }, { status: 500 });
-  //   }
-  // }
-  //   fileUploadResponse = await fileUploadURL.json();
-  //   if (fileUploadResponse.error) {
-  //     return NextResponse.json({ message: "File upload api call error" ,error:fileUploadResponse.error }, { status: 500 });
-  //   }
-  // }
-
   const { data, error } = await supabase
     .from("leap_customer_attendance")
     .insert([
@@ -158,6 +120,37 @@ async function startAttendance(fields: any, files: { file: any; }) {
   if (latLngError) {
     return NextResponse.json({ error: "latlng Error :- " + latLngError.message }, { status: 401 });
   }
+      (async () => {
+      try {
+        if (fields.contact_number[0]) {
+          const payload = {
+            apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+            campaignName: "start_attendance",
+            destination: fields.contact_number[0],
+            userName: "$Name",
+            templateParams: [new Date(fields.punch_date_time[0])],  // ["raised ticket"],
+            source: "new-landing-page form",
+            media: {},
+            buttons: [],
+            carouselCards: [],
+            location: {},
+            attributes: {},
+            paramsFallbackValue: { FirstName: "user" }
+          };
+
+          const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const body = await res.text();
+          console.log("AiSensy response:" ,fields.contact_number[0], res.status, body);
+        }
+      } catch (err: any) {
+        console.log("AiSensy WhatsApp error:", err);
+        await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString()});
+      }
+    })();
   // else {
   (async () => {
     const date = new Date(fields.punch_date_time[0]);

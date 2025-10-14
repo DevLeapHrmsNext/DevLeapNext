@@ -6,6 +6,7 @@ import supabase from '@/app/api/supabaseConfig/supabase'
 import { useSearchParams } from 'next/navigation';
 import { employeeDocUpload, whatsapp_number } from '@/app/pro_utils/stringConstants'
 import router from 'next/router';
+import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
 interface FormCompanyUploadDocDialog {
     docTypeID: any
@@ -76,21 +77,11 @@ const DocUploadApp: React.FC = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const uploadDocument = async () => {
+    const uploadDocument = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (!validate()) return;
         const formData = new FormData();
         formData.append("uploadType", employeeDocUpload);
-
-        // if (formFilledData.selectedFile == null) {
-        //     // return alert("Please select File to upload");
-        //     // setShowAlert(true);
-        //     setAlertTitle("Error")
-        //     setAlertStartContent("No documents uploaded yet!");
-        //     setAlertForSuccess(2)
-        // }
-        // if (formFilledData.docTypeID.length > 0) {
-        //     return alert("Please select type of document");
-        // }
         formData.append("contact_number", contactNumber!);
         formData.append("client_id", userData[0].client_id);
         formData.append("customer_id", userData[0].customer_id);
@@ -99,17 +90,18 @@ const DocUploadApp: React.FC = () => {
         formData.append("doc_type_id", formFilledData.doc_type_id);
 
         try {
-            const res = await fetch("/api/clientAdmin/org_documents", {
+            const response = await fetch("/api/clientAdmin/org_documents", {
                 method: "POST",
                 body: formData,
             });
             // const response = await res.json();
             // console.log(response);
 
-            if (res.ok) {
-                // setLoadingCursor(false);
+            if (response.ok) {
+                setLoadingCursor(false);
                 alert("Form submitted successfully. You will be redirected to WhatsApp to chat with us.");
-                router.push(`https://wa.me/` + whatsapp_number);
+                // router.push(`https://wa.me/` + whatsapp_number);
+                router.push(pageURL_whatsappSuccessPage);
                 // alert(response.message)
                 // onClose();
             } else {
