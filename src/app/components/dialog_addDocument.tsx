@@ -502,11 +502,11 @@ async function getDocumentsTypes(roleID: any, docTypes: any) {
             query = query.or("document_type_id.eq.1,document_type_id.eq.6").eq("is_deleted", false);
 
         } else {
-            query = query.eq("document_type_id", 5);
+            query = query.eq("document_type_id", 2);
         }
     }
     if (roleID == "4" || roleID == "5" || roleID == "9") {
-        query = query.eq("document_type_id", 5);
+        query = query.eq("document_type_id", 2);
     }
 
 

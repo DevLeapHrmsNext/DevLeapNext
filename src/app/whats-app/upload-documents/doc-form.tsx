@@ -3,10 +3,9 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import supabase from '@/app/api/supabaseConfig/supabase'
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ALERTMSG_exceptionString, employeeDocUpload, whatsapp_number } from '@/app/pro_utils/stringConstants'
+import { useSearchParams } from 'next/navigation';
+import { employeeDocUpload, whatsapp_number } from '@/app/pro_utils/stringConstants'
 import router from 'next/router';
-import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
 interface FormCompanyUploadDocDialog {
     docTypeID: any
