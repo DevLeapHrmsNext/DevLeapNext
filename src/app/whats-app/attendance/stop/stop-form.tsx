@@ -28,6 +28,10 @@ const AttendanceStopForm: React.FC = () => {
   const contactNumber = searchParams.get("contact_number");
   const id = searchParams.get("id"); // attendance record id to stop
   const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
+    const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+
+  const [error, setError] = useState("");
   const router = useRouter()
   useEffect(() => {
     setLoadingCursor(true);
@@ -41,6 +45,7 @@ const AttendanceStopForm: React.FC = () => {
     };
 
     fetchData();
+    getLocation();
     const handleScroll = () => {
       setScrollPosition(window.scrollY); // Update scroll position
       const element = document.querySelector('.mainbox');
@@ -65,7 +70,23 @@ const AttendanceStopForm: React.FC = () => {
 
     return () => clearTimeout(expiryTimer);
   }, []);
-
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setError("");
+        },
+        (err) => {
+          setError(err.message);
+          console.error('Error getting user location:', err);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by your browser.');
+    }
+  };
   const [formValues, setFormValues] = useState<attendanceModel>({working_type_id:''
   });
 
@@ -135,7 +156,14 @@ const AttendanceStopForm: React.FC = () => {
         }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
         <form onSubmit={handleSubmit}>
 
-
+{latitude && longitude && (
+        <div>
+          <p>Latitude: {latitude}</p>
+          <p>Longitude: {longitude}</p>
+          <input type="hidden" name="latitude" value={latitude} />
+          <input type="hidden" name="longitude" value={longitude} />
+        </div>
+      )}
           <div className="form-group">
             <button type="submit" className="submit-btn">Stop Attendance</button>
           </div>
