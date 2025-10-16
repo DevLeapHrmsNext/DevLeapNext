@@ -9,9 +9,9 @@ import ShowAlertMessage from '@/app/components/alert'
 import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
 interface attendanceModel {
-  working_type_id: string;
+  pauseReason: string;
 }
-const AttendanceStartForm: React.FC = () => {
+const AttendancePauseForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [workArray, setWork] = useState<whatsappWorkingType[]>([]);
   const [loadingCursor, setLoadingCursor] = useState(false);
@@ -26,6 +26,7 @@ const AttendanceStartForm: React.FC = () => {
   const [alertvalue2, setAlertValue2] = useState('');
   const searchParams = useSearchParams();
   const contactNumber = searchParams.get("contact_number");
+  const id = searchParams.get("id"); // attendance record id to stop
   const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
   const router = useRouter()
   useEffect(() => {
@@ -65,7 +66,7 @@ const AttendanceStartForm: React.FC = () => {
     return () => clearTimeout(expiryTimer);
   }, []);
 
-  const [formValues, setFormValues] = useState<attendanceModel>({working_type_id:''
+  const [formValues, setFormValues] = useState<attendanceModel>({pauseReason:''
   });
 
   const handleInputChange = async (e: any) => {
@@ -76,7 +77,7 @@ const AttendanceStartForm: React.FC = () => {
 
   const validate = () => {
     const newErrors: Partial<attendanceModel> = {};
-    if (!formValues.working_type_id) newErrors.working_type_id = "required";
+    if (!formValues.pauseReason) newErrors.pauseReason = "required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -90,25 +91,24 @@ const AttendanceStartForm: React.FC = () => {
         method: "POST",
         body: JSON.stringify({
           "contact_number": contactNumber,
-          "attendance_type": 1, // start attendance
-          "client_id": userData[0].client_id,
-          "customer_id": userData[0].customer_id,
-          "punch_date_time": new Date(),
-          "working_type_id": formValues.working_type_id,
-          "lat": 0,
-          "lng": 0
+          "attendance_type": 3, // pause attendance
+          "attendance_id": id, // id of the attendance record to pause
+          "punch_date_time":  new Date(),
+          "pause_reason": formValues.pauseReason,
+          "lng": 0,
+          "lat": 0
         }),
       });
       if (response.ok) {
         setLoadingCursor(false);
-        alert("Attendance started successfully. You will be redirected to WhatsApp to chat with us.");
+        alert("Attendance paused successfully. You will be redirected to WhatsApp to chat with us.");
         router.push(`https://wa.me/` + whatsapp_number);
       } else {
         setLoadingCursor(false);
         e.preventDefault()
         setShowAlert(true);
         setAlertTitle("Error")
-        setAlertStartContent("Failed to start attendance.");
+        setAlertStartContent("Failed to pause attendance.");
         setAlertForSuccess(2)
       }
     } catch (error) {
@@ -138,13 +138,13 @@ const AttendanceStartForm: React.FC = () => {
 
           <div className="form-group">
             <label>Working Type  <span className='req_text'>*</span></label>
-            <select name="working_type_id" value={formValues.working_type_id} onChange={handleInputChange}>
+            <select name="pauseReason" value={formValues.pauseReason} onChange={handleInputChange}>
               <option value="">Select</option>
               {workArray.map((type, index) => (
                 <option value={type.id} key={index}>{type.type}</option>
               ))}
             </select>
-            {errors.working_type_id && <span className="error">{errors.working_type_id}</span>}
+            {errors.pauseReason && <span className="error">{errors.pauseReason}</span>}
           </div>
 
           <div className="form-group">
@@ -156,7 +156,7 @@ const AttendanceStartForm: React.FC = () => {
   )
 }
 
-export default AttendanceStartForm
+export default AttendancePauseForm
 
 async function getCustomerClientIds(contact_number: string) {
   const { data, error } = await supabase

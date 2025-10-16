@@ -100,8 +100,8 @@ const DocUploadApp: React.FC = () => {
             if (response.ok) {
                 setLoadingCursor(false);
                 alert("Form submitted successfully. You will be redirected to WhatsApp to chat with us.");
-                // router.push(`https://wa.me/` + whatsapp_number);
-                router.push(pageURL_whatsappSuccessPage);
+                router.push(`https://wa.me/` + whatsapp_number);
+                // router.push(pageURL_whatsappSuccessPage);
                 // alert(response.message)
                 // onClose();
             } else {

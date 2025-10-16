@@ -13,11 +13,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
 const supabase = await createClient(supabaseUrl, supabaseAnonKey);
 
 import { parseForm, funSendApiErrorMessage, funSendApiException, funCalculateTimeDifference, formatDateToISO, setUploadFileName } from '@/app/pro_utils/constant';
-import fs from "fs/promises";
-import { apiStatusFailureCode, apiwentWrong, } from '@/app/pro_utils/stringConstants';
-import { log } from 'console';
+import { apiwentWrong, } from '@/app/pro_utils/stringConstants';
 import { addErrorExceptionLog, addUserActivities, apiUploadDocs } from '@/app/pro_utils/constantFunAddData';
-import path from 'path';
 
 export const runtime = "nodejs";
 
@@ -63,7 +60,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-
 async function startAttendance(fields: any, files: { file: any; }) {
   // if (!files || !files.file) {
   //   return NextResponse.json({ error: "No files received." }, { status: 400 });
@@ -102,33 +98,15 @@ async function startAttendance(fields: any, files: { file: any; }) {
       },
     ]).select();
   if (error) {
-    return NextResponse.json({ message: "Start Attendance error :- ", error: error.message }, { status: 401 });
-  }
-
-
-  const { data: latLngData, error: latLngError } = await supabase
-    .from("leap_customer_attendance_geolocation")
-    .insert([
-      {
-        attendance_id: data[0].attendance_id,
-        start_location: [`SRID=4326;POINT(${fields.lng[0]} ${fields.lat[0]})`],// [(fields.lat[0],fields.lng[0])],
-        created_at: new Date(),
-      },
-    ]).select();
-
-
-  if (latLngError) {
-    return NextResponse.json({ error: "latlng Error :- " + latLngError.message }, { status: 401 });
-  }
-      (async () => {
+    (async () => {
       try {
         if (fields.contact_number[0]) {
           const payload = {
             apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
-            campaignName: "start_attendance",
+            campaignName: "attendance_success_msg",
             destination: fields.contact_number[0],
             userName: "$Name",
-            templateParams: [new Date(fields.punch_date_time[0])],  // ["raised ticket"],
+            templateParams: ["$Name", "started"],
             source: "new-landing-page form",
             media: {},
             buttons: [],
@@ -144,14 +122,61 @@ async function startAttendance(fields: any, files: { file: any; }) {
             body: JSON.stringify(payload)
           });
           const body = await res.text();
-          console.log("AiSensy response:" ,fields.contact_number[0], res.status, body);
+          console.log("AiSensy response:", fields.contact_number[0], res.status, body);
         }
       } catch (err: any) {
         console.log("AiSensy WhatsApp error:", err);
-        await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString()});
+        await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
       }
     })();
-  // else {
+    return NextResponse.json({ message: "Start Attendance error :- ", error: error.message }, { status: 401 });
+  }
+
+  const { data: latLngData, error: latLngError } = await supabase
+    .from("leap_customer_attendance_geolocation")
+    .insert([
+      {
+        attendance_id: data[0].attendance_id,
+        start_location: [`SRID=4326;POINT(${fields.lng[0]} ${fields.lat[0]})`],
+        created_at: new Date(),
+      },
+    ]).select();
+
+  if (latLngError) {
+    return NextResponse.json({ error: "latlng Error :- " + latLngError.message }, { status: 401 });
+  }
+  (async () => {
+    try {
+      if (fields.contact_number[0]) {
+        const payload = {
+          apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+          campaignName: "attendance_success_msg",
+          destination: fields.contact_number[0],
+          userName: "$Name",
+          templateParams: ["$Name", "started", new Date(fields.punch_date_time[0])],
+          source: "new-landing-page form",
+          media: {},
+          buttons: [],
+          carouselCards: [],
+          location: {},
+          attributes: {},
+          paramsFallbackValue: { FirstName: "user" }
+        };
+
+        const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const body = await res.text();
+        console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+      }
+    } catch (err: any) {
+      console.log("AiSensy WhatsApp error:", err);
+      await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
+    }
+  })();
+
   (async () => {
     const date = new Date(fields.punch_date_time[0]);
     const hours = date.getUTCHours().toString().padStart(2, '0');
@@ -172,11 +197,6 @@ async function startAttendance(fields: any, files: { file: any; }) {
     }
   })();
 
-  // if (addActivity == "1") {
-  //   return NextResponse.json({ message: "Attendance started successfully but no Activity Added", status: 1, data: data, latLngData });
-
-  // }
-  // }
   return NextResponse.json({ message: "Attendance started successfully", status: 1, data: data, latLngData });
 }
 
@@ -202,6 +222,37 @@ async function stopAttendance(fields: any) {
       .select();
 
     if (error) {
+      (async () => {
+        try {
+          if (fields.contact_number[0]) {
+            const payload = {
+              apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+              campaignName: "attendance_success_msg",
+              destination: fields.contact_number[0],
+              userName: "$Name",
+              templateParams: ["$Name", "stopped"],
+              source: "new-landing-page form",
+              media: {},
+              buttons: [],
+              carouselCards: [],
+              location: {},
+              attributes: {},
+              paramsFallbackValue: { FirstName: "user" }
+            };
+
+            const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            const body = await res.text();
+            console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+          }
+        } catch (err: any) {
+          console.log("AiSensy WhatsApp error:", err);
+          await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
+        }
+      })();
       return NextResponse.json({ message: "Stop Attendance Error :-", error: error.message }, { status: 401 });
     }
 
@@ -217,6 +268,37 @@ async function stopAttendance(fields: any) {
     if (latLngError) {
       return NextResponse.json({ error: "latlng Stop error :- " + latLngError.message }, { status: 401 });
     }
+    (async () => {
+      try {
+        if (fields.contact_number[0]) {
+          const payload = {
+            apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+            campaignName: "attendance_success_msg",
+            destination: fields.contact_number[0],
+            userName: "$Name",
+            templateParams: ["$Name", "stopped", new Date(fields.punch_date_time[0])],
+            source: "new-landing-page form",
+            media: {},
+            buttons: [],
+            carouselCards: [],
+            location: {},
+            attributes: {},
+            paramsFallbackValue: { FirstName: "user" }
+          };
+
+          const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const body = await res.text();
+          console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+        }
+      } catch (err: any) {
+        console.log("AiSensy WhatsApp error:", err);
+        await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
+      }
+    })();
 
     (async () => {
       const date = new Date(fields.punch_date_time[0]);
@@ -288,6 +370,37 @@ async function pauseAttendance(fields: any) {
       .select();
 
     if (error) {
+      (async () => {
+        try {
+          if (fields.contact_number[0]) {
+            const payload = {
+              apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+              campaignName: "attendance_success_msg",
+              destination: fields.contact_number[0],
+              userName: "$Name",
+              templateParams: ["$Name", "paused"],
+              source: "new-landing-page form",
+              media: {},
+              buttons: [],
+              carouselCards: [],
+              location: {},
+              attributes: {},
+              paramsFallbackValue: { FirstName: "user" }
+            };
+
+            const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            const body = await res.text();
+            console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+          }
+        } catch (err: any) {
+          console.log("AiSensy WhatsApp error:", err);
+          await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
+        }
+      })();
       return NextResponse.json({ message: "Stop Attendance Error :-", error: error.message }, { status: 401 });
     }
 
@@ -304,7 +417,37 @@ async function pauseAttendance(fields: any) {
     if (latLngError) {
       return NextResponse.json({ error: "latlng Stop error :- " + latLngError.message }, { status: 401 });
     }
+    (async () => {
+      try {
+        if (fields.contact_number[0]) {
+          const payload = {
+            apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+            campaignName: "attendance_success_msg",
+            destination: fields.contact_number[0],
+            userName: "$Name",
+            templateParams: ["$Name", "paused", new Date(fields.punch_date_time[0])],
+            source: "new-landing-page form",
+            media: {},
+            buttons: [],
+            carouselCards: [],
+            location: {},
+            attributes: {},
+            paramsFallbackValue: { FirstName: "user" }
+          };
 
+          const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const body = await res.text();
+          console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+        }
+      } catch (err: any) {
+        console.log("AiSensy WhatsApp error:", err);
+        await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
+      }
+    })();
 
     (async () => {
       const date = new Date(fields.punch_date_time[0]);
@@ -327,9 +470,6 @@ async function pauseAttendance(fields: any) {
       }
     })();
     return NextResponse.json({ message: "Attendance Paused Successfull", status: 1, data: data, latLngData });
-
-
-
 
 
   } catch (err) {
@@ -378,6 +518,37 @@ async function resumeAttendance(fields: any) {
 
 
     if (error) {
+      (async () => {
+      try {
+        if (fields.contact_number[0]) {
+          const payload = {
+            apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+            campaignName: "attendance_success_msg",
+            destination: fields.contact_number[0],
+            userName: "$Name",
+            templateParams: ["$Name", "resumed"],
+            source: "new-landing-page form",
+            media: {},
+            buttons: [],
+            carouselCards: [],
+            location: {},
+            attributes: {},
+            paramsFallbackValue: { FirstName: "user" }
+          };
+
+          const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const body = await res.text();
+          console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+        }
+      } catch (err: any) {
+        console.log("AiSensy WhatsApp error:", err);
+        await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
+      }
+    })();
       return NextResponse.json({ message: "Stop Attendance Error :-", error: error.message }, { status: 401 });
     }
 
@@ -394,6 +565,37 @@ async function resumeAttendance(fields: any) {
     if (latLngError) {
       return NextResponse.json({ error: "latlng Stop error :- " + latLngError.message }, { status: 401 });
     }
+    (async () => {
+    try {
+      if (fields.contact_number[0]) {
+        const payload = {
+          apiKey: process.env.NEXT_PUBLIC_AISENSY_API_KEY,
+          campaignName: "attendance_success_msg",
+          destination: fields.contact_number[0],
+          userName: "$Name",
+          templateParams: ["$Name", "resumed", new Date(fields.punch_date_time[0])],
+          source: "new-landing-page form",
+          media: {},
+          buttons: [],
+          carouselCards: [],
+          location: {},
+          attributes: {},
+          paramsFallbackValue: { FirstName: "user" }
+        };
+
+        const res = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const body = await res.text();
+        console.log("AiSensy response:", fields.contact_number[0], res.status, body);
+      }
+    } catch (err: any) {
+      console.log("AiSensy WhatsApp error:", err);
+      await addErrorExceptionLog(fields.client_id[0], fields.customer_id[0], "AiSensy WhatsApp error", { exception: err.toString() });
+    }
+  })();
 
     (async () => {
       const date = new Date(fields.punch_date_time[0]);

@@ -11,7 +11,7 @@ import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 interface attendanceModel {
   working_type_id: string;
 }
-const AttendanceStartForm: React.FC = () => {
+const AttendanceResumeForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [workArray, setWork] = useState<whatsappWorkingType[]>([]);
   const [loadingCursor, setLoadingCursor] = useState(false);
@@ -26,6 +26,7 @@ const AttendanceStartForm: React.FC = () => {
   const [alertvalue2, setAlertValue2] = useState('');
   const searchParams = useSearchParams();
   const contactNumber = searchParams.get("contact_number");
+  const id = searchParams.get("id"); // attendance record id to stop
   const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
   const router = useRouter()
   useEffect(() => {
@@ -74,41 +75,33 @@ const AttendanceStartForm: React.FC = () => {
   }
   const [errors, setErrors] = useState<Partial<attendanceModel>>({});
 
-  const validate = () => {
-    const newErrors: Partial<attendanceModel> = {};
-    if (!formValues.working_type_id) newErrors.working_type_id = "required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
     setLoadingCursor(true);
     try {
       const response = await fetch("/api/markattendance", {
         method: "POST",
         body: JSON.stringify({
           "contact_number": contactNumber,
-          "attendance_type": 1, // start attendance
-          "client_id": userData[0].client_id,
-          "customer_id": userData[0].customer_id,
+          "attendance_type": 4, // resume attendance
+          "attendance_id": id, // id of the attendance record to resume
           "punch_date_time": new Date(),
-          "working_type_id": formValues.working_type_id,
           "lat": 0,
           "lng": 0
         }),
       });
       if (response.ok) {
         setLoadingCursor(false);
-        alert("Attendance started successfully. You will be redirected to WhatsApp to chat with us.");
+        alert("Attendance resumed successfully. You will be redirected to WhatsApp to chat with us.");
         router.push(`https://wa.me/` + whatsapp_number);
       } else {
         setLoadingCursor(false);
         e.preventDefault()
         setShowAlert(true);
         setAlertTitle("Error")
-        setAlertStartContent("Failed to start attendance.");
+        setAlertStartContent("Failed to resume attendance.");
         setAlertForSuccess(2)
       }
     } catch (error) {
@@ -156,7 +149,7 @@ const AttendanceStartForm: React.FC = () => {
   )
 }
 
-export default AttendanceStartForm
+export default AttendanceResumeForm
 
 async function getCustomerClientIds(contact_number: string) {
   const { data, error } = await supabase
