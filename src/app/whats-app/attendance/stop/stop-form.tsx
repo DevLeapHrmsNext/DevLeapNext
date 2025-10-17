@@ -8,12 +8,8 @@ import { ALERTMSG_FormExceptionString, whatsapp_number } from '@/app/pro_utils/s
 import ShowAlertMessage from '@/app/components/alert'
 import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
-interface attendanceModel {
-  working_type_id: string;
-}
 const AttendanceStopForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [workArray, setWork] = useState<whatsappWorkingType[]>([]);
   const [loadingCursor, setLoadingCursor] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
@@ -28,8 +24,8 @@ const AttendanceStopForm: React.FC = () => {
   const contactNumber = searchParams.get("contact_number");
   const id = searchParams.get("id"); // attendance record id to stop
   const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
-    const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
   const [error, setError] = useState("");
   const router = useRouter()
@@ -39,8 +35,6 @@ const AttendanceStopForm: React.FC = () => {
     const fetchData = async () => {
       const custData = await getCustomerClientIds(contactNumber!);
       setuserData(custData);
-      const workType = await getWorkType();
-      setWork(workType);
       setLoadingCursor(false);
     };
 
@@ -87,25 +81,10 @@ const AttendanceStopForm: React.FC = () => {
       setError('Geolocation is not supported by your browser.');
     }
   };
-  const [formValues, setFormValues] = useState<attendanceModel>({working_type_id:''
-  });
 
-  const handleInputChange = async (e: any) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
-  }
-  const [errors, setErrors] = useState<Partial<attendanceModel>>({});
-
-  const validate = () => {
-    const newErrors: Partial<attendanceModel> = {};
-    if (!formValues.working_type_id) newErrors.working_type_id = "required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
     setLoadingCursor(true);
     try {
       const response = await fetch("/api/markattendance", {
@@ -115,8 +94,8 @@ const AttendanceStopForm: React.FC = () => {
           "attendance_id": id, // id of the attendance record to stop
           "attendance_type": 2, // stop attendance
           "punch_date_time": new Date(),
-          "lng":0,
-          "lat":0
+          "lng": 0,
+          "lat": 0
         }),
       });
       if (response.ok) {
@@ -156,14 +135,14 @@ const AttendanceStopForm: React.FC = () => {
         }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
         <form onSubmit={handleSubmit}>
 
-{latitude && longitude && (
-        <div>
-          <p>Latitude: {latitude}</p>
-          <p>Longitude: {longitude}</p>
-          <input type="hidden" name="latitude" value={latitude} />
-          <input type="hidden" name="longitude" value={longitude} />
-        </div>
-      )}
+          {latitude && longitude && (
+            <div>
+              <p>Latitude: {latitude}</p>
+              <p>Longitude: {longitude}</p>
+              <input type="hidden" name="latitude" value={latitude} />
+              <input type="hidden" name="longitude" value={longitude} />
+            </div>
+          )}
           <div className="form-group">
             <button type="submit" className="submit-btn">Stop Attendance</button>
           </div>
@@ -183,23 +162,4 @@ async function getCustomerClientIds(contact_number: string) {
 
   if (error) throw error;
   return data;
-}
-
-async function getWorkType() {
-
-  let query = supabase
-    .from('leap_working_type')
-    .select()
-    .neq('is_deleted', true);
-
-  const { data, error } = await query;
-  if (error) {
-    // console.log(error);
-
-    return [];
-  } else {
-    // console.log(data);
-    return data;
-  }
-
 }
