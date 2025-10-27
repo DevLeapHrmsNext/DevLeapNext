@@ -13,7 +13,6 @@ interface attendanceModel {
 }
 const AttendancePauseForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [workArray, setWork] = useState<whatsappWorkingType[]>([]);
   const [loadingCursor, setLoadingCursor] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
@@ -28,6 +27,10 @@ const AttendancePauseForm: React.FC = () => {
   const contactNumber = searchParams.get("contact_number");
   const id = searchParams.get("id"); // attendance record id to stop
   const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+
+  const [error, setError] = useState("");
   const router = useRouter()
   useEffect(() => {
     setLoadingCursor(true);
@@ -35,12 +38,11 @@ const AttendancePauseForm: React.FC = () => {
     const fetchData = async () => {
       const custData = await getCustomerClientIds(contactNumber!);
       setuserData(custData);
-      const workType = await getWorkType();
-      setWork(workType);
       setLoadingCursor(false);
     };
 
     fetchData();
+    getLocation();
     const handleScroll = () => {
       setScrollPosition(window.scrollY); // Update scroll position
       const element = document.querySelector('.mainbox');
@@ -66,7 +68,8 @@ const AttendancePauseForm: React.FC = () => {
     return () => clearTimeout(expiryTimer);
   }, []);
 
-  const [formValues, setFormValues] = useState<attendanceModel>({pauseReason:''
+  const [formValues, setFormValues] = useState<attendanceModel>({
+    pauseReason: ''
   });
 
   const handleInputChange = async (e: any) => {
@@ -74,7 +77,23 @@ const AttendancePauseForm: React.FC = () => {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   }
   const [errors, setErrors] = useState<Partial<attendanceModel>>({});
-
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setError("");
+        },
+        (err) => {
+          setError(err.message);
+          console.error('Error getting user location:', err);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by your browser.');
+    }
+  };
   const validate = () => {
     const newErrors: Partial<attendanceModel> = {};
     if (!formValues.pauseReason) newErrors.pauseReason = "required";
@@ -93,10 +112,10 @@ const AttendancePauseForm: React.FC = () => {
           "contact_number": contactNumber,
           "attendance_type": 3, // pause attendance
           "attendance_id": id, // id of the attendance record to pause
-          "punch_date_time":  new Date(),
+          "punch_date_time": new Date(),
           "pause_reason": formValues.pauseReason,
-          "lng": 0,
-          "lat": 0
+          "lng": longitude,
+          "lat": latitude
         }),
       });
       if (response.ok) {
@@ -137,18 +156,20 @@ const AttendancePauseForm: React.FC = () => {
         <form onSubmit={handleSubmit}>
 
           <div className="form-group">
-            <label>Working Type  <span className='req_text'>*</span></label>
-            <select name="pauseReason" value={formValues.pauseReason} onChange={handleInputChange}>
-              <option value="">Select</option>
-              {workArray.map((type, index) => (
-                <option value={type.id} key={index}>{type.type}</option>
-              ))}
-            </select>
+            <label>Pause reason: <span className='req_text'>*</span></label>
+            <textarea name="pauseReason" rows={3} value={formValues.pauseReason} onChange={handleInputChange} />
             {errors.pauseReason && <span className="error">{errors.pauseReason}</span>}
           </div>
-
+{latitude && longitude && (
+            <div>
+              <p>Latitude: {latitude}</p>
+              <p>Longitude: {longitude}</p>
+              <input type="hidden" name="latitude" value={latitude} />
+              <input type="hidden" name="longitude" value={longitude} />
+            </div>
+          )}
           <div className="form-group">
-            <button type="submit" className="submit-btn">Start Attendance</button>
+            <button type="submit" className="submit-btn">Pause Attendance</button>
           </div>
         </form>
       </div>
@@ -166,23 +187,4 @@ async function getCustomerClientIds(contact_number: string) {
 
   if (error) throw error;
   return data;
-}
-
-async function getWorkType() {
-
-  let query = supabase
-    .from('leap_working_type')
-    .select()
-    .neq('is_deleted', true);
-
-  const { data, error } = await query;
-  if (error) {
-    // console.log(error);
-
-    return [];
-  } else {
-    // console.log(data);
-    return data;
-  }
-
 }

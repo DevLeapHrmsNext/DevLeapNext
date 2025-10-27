@@ -15,7 +15,10 @@ const AttendanceResumeForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [workArray, setWork] = useState<whatsappWorkingType[]>([]);
   const [loadingCursor, setLoadingCursor] = useState(false);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
+  const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [alertForSuccess, setAlertForSuccess] = useState(0);
   const [alertTitle, setAlertTitle] = useState('');
@@ -41,6 +44,7 @@ const AttendanceResumeForm: React.FC = () => {
     };
 
     fetchData();
+    getLocation();
     const handleScroll = () => {
       setScrollPosition(window.scrollY); // Update scroll position
       const element = document.querySelector('.mainbox');
@@ -66,16 +70,23 @@ const AttendanceResumeForm: React.FC = () => {
     return () => clearTimeout(expiryTimer);
   }, []);
 
-  const [formValues, setFormValues] = useState<attendanceModel>({working_type_id:''
-  });
-
-  const handleInputChange = async (e: any) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
-  }
-  const [errors, setErrors] = useState<Partial<attendanceModel>>({});
-
-
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setError("");
+        },
+        (err) => {
+          setError(err.message);
+          console.error('Error getting user location:', err);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by your browser.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,8 +99,8 @@ const AttendanceResumeForm: React.FC = () => {
           "attendance_type": 4, // resume attendance
           "attendance_id": id, // id of the attendance record to resume
           "punch_date_time": new Date(),
-          "lat": 0,
-          "lng": 0
+          "lat": latitude,
+          "lng": longitude
         }),
       });
       if (response.ok) {
@@ -128,20 +139,17 @@ const AttendanceResumeForm: React.FC = () => {
           setShowAlert(false)
         }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
         <form onSubmit={handleSubmit}>
+          {latitude && longitude && (
+            <div>
+              <p>Latitude: {latitude}</p>
+              <p>Longitude: {longitude}</p>
+              <input type="hidden" name="latitude" value={latitude} />
+              <input type="hidden" name="longitude" value={longitude} />
+            </div>
+          )}
 
           <div className="form-group">
-            <label>Working Type  <span className='req_text'>*</span></label>
-            <select name="working_type_id" value={formValues.working_type_id} onChange={handleInputChange}>
-              <option value="">Select</option>
-              {workArray.map((type, index) => (
-                <option value={type.id} key={index}>{type.type}</option>
-              ))}
-            </select>
-            {errors.working_type_id && <span className="error">{errors.working_type_id}</span>}
-          </div>
-
-          <div className="form-group">
-            <button type="submit" className="submit-btn">Start Attendance</button>
+            <button type="submit" className="submit-btn">Resume Attendance</button>
           </div>
         </form>
       </div>

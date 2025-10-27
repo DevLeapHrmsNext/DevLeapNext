@@ -94,8 +94,8 @@ const AttendanceStopForm: React.FC = () => {
           "attendance_id": id, // id of the attendance record to stop
           "attendance_type": 2, // stop attendance
           "punch_date_time": new Date(),
-          "lng": 0,
-          "lat": 0
+          "lng": longitude,
+          "lat": latitude
         }),
       });
       if (response.ok) {
@@ -135,14 +135,14 @@ const AttendanceStopForm: React.FC = () => {
         }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
         <form onSubmit={handleSubmit}>
 
-          {latitude && longitude && (
+          {/* {latitude && longitude && (
             <div>
               <p>Latitude: {latitude}</p>
               <p>Longitude: {longitude}</p>
               <input type="hidden" name="latitude" value={latitude} />
               <input type="hidden" name="longitude" value={longitude} />
             </div>
-          )}
+          )} */}
           <div className="form-group">
             <button type="submit" className="submit-btn">Stop Attendance</button>
           </div>

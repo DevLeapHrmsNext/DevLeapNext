@@ -15,6 +15,9 @@ const AttendanceStartForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [workArray, setWork] = useState<whatsappWorkingType[]>([]);
   const [loadingCursor, setLoadingCursor] = useState(false);
+  const [image, setImage] = useState("");
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertForSuccess, setAlertForSuccess] = useState(0);
@@ -26,6 +29,7 @@ const AttendanceStartForm: React.FC = () => {
   const [alertvalue2, setAlertValue2] = useState('');
   const searchParams = useSearchParams();
   const contactNumber = searchParams.get("contact_number");
+  const [error, setError] = useState("");
   const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
   const router = useRouter()
   useEffect(() => {
@@ -40,6 +44,7 @@ const AttendanceStartForm: React.FC = () => {
     };
 
     fetchData();
+    getLocation();
     const handleScroll = () => {
       setScrollPosition(window.scrollY); // Update scroll position
       const element = document.querySelector('.mainbox');
@@ -54,7 +59,7 @@ const AttendanceStartForm: React.FC = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [])
-  // start 5 min timer when page loads
+
   useEffect(() => {
 
     const expiryTimer = setTimeout(() => {
@@ -65,7 +70,8 @@ const AttendanceStartForm: React.FC = () => {
     return () => clearTimeout(expiryTimer);
   }, []);
 
-  const [formValues, setFormValues] = useState<attendanceModel>({working_type_id:''
+  const [formValues, setFormValues] = useState<attendanceModel>({
+    working_type_id: ''
   });
 
   const handleInputChange = async (e: any) => {
@@ -73,6 +79,34 @@ const AttendanceStartForm: React.FC = () => {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   }
   const [errors, setErrors] = useState<Partial<attendanceModel>>({});
+
+
+  const handleCapture = (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImage(URL.createObjectURL(file));
+      // You can now process the image file here, e.g., send it to your server
+      console.log('Captured file:', file);
+    }
+  };
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setError("");
+        },
+        (err) => {
+          setError(err.message);
+          console.error('Error getting user location:', err);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by your browser.');
+    }
+  };
 
   const validate = () => {
     const newErrors: Partial<attendanceModel> = {};
@@ -95,8 +129,9 @@ const AttendanceStartForm: React.FC = () => {
           "customer_id": userData[0].customer_id,
           "punch_date_time": new Date(),
           "working_type_id": formValues.working_type_id,
-          "lat": 0,
-          "lng": 0
+          "files": image,
+          "lat": latitude,
+          "lng": longitude
         }),
       });
       if (response.ok) {
@@ -146,6 +181,37 @@ const AttendanceStartForm: React.FC = () => {
             </select>
             {errors.working_type_id && <span className="error">{errors.working_type_id}</span>}
           </div>
+
+          <div className="form-group">
+            <label htmlFor="selfie-capture">Capture Selfie:</label>
+            <input
+              type="file"
+              id="selfie-capture"
+              accept="image/*"
+              capture="user"
+              onChange={handleCapture}
+            />
+          </div>
+
+          {image && (
+            <div style={{ marginTop: '1rem' }}>
+              <h4>Preview: {image}</h4>
+              <img
+                src={image}
+                alt="Selfie preview"
+                style={{ maxWidth: '50%', height: 'auto', borderRadius: '4px' }}
+              />
+            </div>
+          )}
+
+          {latitude && longitude && (
+            <div>
+              <p>Latitude: {latitude}</p>
+              <p>Longitude: {longitude}</p>
+              <input type="hidden" name="latitude" value={latitude} />
+              <input type="hidden" name="longitude" value={longitude} />
+            </div>
+          )}
 
           <div className="form-group">
             <button type="submit" className="submit-btn">Start Attendance</button>

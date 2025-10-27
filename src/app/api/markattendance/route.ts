@@ -112,7 +112,7 @@ async function startAttendance(fields: any, files: { file: any; }) {
             buttons: [],
             carouselCards: [],
             location: {},
-            attributes: {},
+            attributes: {"AttendanceID" : "data.attendance_id"},
             paramsFallbackValue: { FirstName: "user" }
           };
 
