@@ -10,6 +10,7 @@ import { pageURL_whatsappSuccessPage } from '@/app/pro_utils/stringRoutes';
 
 interface attendanceModel {
   working_type_id: string;
+  selectedFile: File | null
 }
 const AttendanceStartForm: React.FC = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -31,7 +32,7 @@ const AttendanceStartForm: React.FC = () => {
   const contactNumber = searchParams.get("contact_number");
   const [error, setError] = useState("");
   const [userData, setuserData] = useState<whatsappCustomerInfoModel[]>([]);
-  const router = useRouter()
+  const router = useRouter();
   useEffect(() => {
     setLoadingCursor(true);
 
@@ -71,7 +72,8 @@ const AttendanceStartForm: React.FC = () => {
   }, []);
 
   const [formValues, setFormValues] = useState<attendanceModel>({
-    working_type_id: ''
+    working_type_id: '',
+    selectedFile: null,
   });
 
   const handleInputChange = async (e: any) => {
@@ -115,24 +117,25 @@ const AttendanceStartForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    const formData = new FormData();
     if (!validate()) return;
     setLoadingCursor(true);
+    
+    formData.append("contact_number", contactNumber!);
+    formData.append("attendanceId", "1");
+    formData.append("client_id", userData[0].client_id!);
+    formData.append("customer_id", userData[0].customer_id!);
+    formData.append("punch_date_time", new Date().toISOString());
+    formData.append("working_type_id", formValues.working_type_id);
+    formData.append("lat", latitude.toString());
+    formData.append("lng", longitude.toString());
+    formData.append("files", image);
+    
     try {
       const response = await fetch("/api/markattendance", {
         method: "POST",
-        body: JSON.stringify({
-          "contact_number": contactNumber,
-          "attendance_type": 1, // start attendance
-          "client_id": userData[0].client_id,
-          "customer_id": userData[0].customer_id,
-          "punch_date_time": new Date(),
-          "working_type_id": formValues.working_type_id,
-          "files": image,
-          "lat": latitude,
-          "lng": longitude
-        }),
+        body: formData,
       });
       if (response.ok) {
         setLoadingCursor(false);
@@ -140,7 +143,7 @@ const AttendanceStartForm: React.FC = () => {
         router.push(`https://wa.me/` + whatsapp_number);
       } else {
         setLoadingCursor(false);
-        e.preventDefault()
+        // e.preventDefault()
         setShowAlert(true);
         setAlertTitle("Error")
         setAlertStartContent("Failed to start attendance.");
@@ -148,7 +151,7 @@ const AttendanceStartForm: React.FC = () => {
       }
     } catch (error) {
       setLoadingCursor(false);
-      e.preventDefault()
+      // e.preventDefault()
       console.log("Error submitting form:", error);
       setShowAlert(true);
       setAlertTitle("Exception")
