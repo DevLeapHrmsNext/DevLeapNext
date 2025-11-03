@@ -354,6 +354,10 @@ console.log("All Errors", allErrors);
                 },
             }));
         }
+
+        console.log(addressFormValues);
+        
+
     };
     const handleEmergencyContactChange = (e: any, index: any) => {
         const { name, value, } = e.target;

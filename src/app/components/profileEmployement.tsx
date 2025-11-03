@@ -290,7 +290,7 @@ export const UserEmployement = () => {
         if (newPassword.password) {
             formData.append("new_password", newPassword.password + "");
         }
-        formData.append("password", userData?.email_id + "");
+      
         formData.append("authUuid", userData.authUuid);
         try {
 

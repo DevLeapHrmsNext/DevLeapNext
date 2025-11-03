@@ -158,7 +158,7 @@ const LoginForm = () => {
         isAdmin: userData[0].user_role == 2 ? "1" : "0",
         contextPARAM8: '',
       });
-
+console.log("this is the login page goto dashboard function-----------------   "+pageURL_dashboard);
       { userData[0].user_role != 2 ? router.push(pageURL_userEmpDashboard) : router.push(pageURL_dashboard) }
 
     } catch (e) {
@@ -220,6 +220,7 @@ const LoginForm = () => {
       isAdmin: loginData!.user_role==2 ? "1" : "0",
       contextPARAM8: '',
     })
+    
     { loginData!.user_role != 2 ? router.push(pageURL_userEmpDashboard) : router.push(pageURL_dashboard) }
 
   }

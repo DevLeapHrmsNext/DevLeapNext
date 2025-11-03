@@ -20,7 +20,7 @@ export async function DELETE(request: NextRequest) {
       .eq('asset_type', fdata.id);
     console.log("hasAsset", hasAsset, "errAssetAsigned", errAssetAsigned);
       
-    if(!hasAsset){  
+    if(hasAsset?.length==0){  
     const { error } = await supabase
       .from('leap_asset_type')
       .update({ 

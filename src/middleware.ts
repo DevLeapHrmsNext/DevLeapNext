@@ -36,6 +36,8 @@ export async function middleware(request: NextRequest) {
       "/whats-app/upload-documents",
       "/whats-app/apply-leave",
       "/whats-app",
+      "/whats-app/leave-details",
+      "/whats-app/support-details"
       // "/firebase-messaging-sw.js"
     ];
 

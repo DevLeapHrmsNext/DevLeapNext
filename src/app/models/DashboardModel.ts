@@ -60,6 +60,7 @@ export interface DashboardModel {
     updated_at: string
     leap_user_role: LeapUserRole
     leap_client_designations: LeapDesignation
+    leap_client_departments: LeapDepartment
     leap_relations: any
     leap_customer_attendance: LeapCustomerAttendance[]
   }

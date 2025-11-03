@@ -615,6 +615,9 @@ const BranchDetails = () => {
                                 {branchesArray.map((branch, index) => (
                                     <div onClick={(e) => {
                                         setBranchIndex(index);
+                                        if(branchesArray[index]?.is_main_branch ==null){
+                                                
+                                        }
                                         for (let i = 0; i < timeZone.length; i++) {
                                             if (branch.time_zone_id) {
                                                 if (parseInt(branch.time_zone_id) == timeZone[i].id) {
@@ -650,7 +653,7 @@ const BranchDetails = () => {
                                             <div className="row">
                                                 <div className="col-md-6">
                                                     <div className="col-lg-12">
-                                                        <label htmlFor="exampleFormControlInput1" className="form-label">Branch Number<span className='req_text' style={{ color: "red" }}>*</span> :  </label>
+                                                        <label htmlFor="exampleFormControlInput1" className="form-label">Branch Name<span className='req_text' style={{ color: "red" }}>*</span> :  </label>
                                                     </div>
                                                     <div className="col-lg-12 form_box">
                                                         <input type="text" className="form-control" id="branch_number" value={branchesArray[branchIndex]?.branch_number || ""} name="branch_number" readOnly={contextRoleID!="2"} />
@@ -707,8 +710,17 @@ const BranchDetails = () => {
                                                         <label htmlFor="exampleFormControlInput1" className="form-label">Is Main Branch<span className='req_text' style={{ color: "red" }}>*</span>:</label>
                                                     </div>
                                                     <div className="col-lg-12 form_box">
-                                                        <select id="is_main_branch" name="is_main_branch" value={branchesArray[branchIndex]?.is_main_branch! && String(branchesArray[branchIndex]?.is_main_branch)=='true' ? "true" : "false"} onChange={(e) => (handleValuesChange(e, branchesArray[branchIndex].id))}>
+                                                        <select id="is_main_branch" name="is_main_branch"
+                                                        value={
+                                                                branchesArray[branchIndex]?.is_main_branch == null
+                                                                ? "" // no value if null or undefined
+                                                                : String(branchesArray[branchIndex]?.is_main_branch) === "true"
+                                                                    ? "true"
+                                                                    : "false"
+                                                            } 
+                                                         onChange={(e) => (handleValuesChange(e, branchesArray[branchIndex].id))}>
                                                             {/* <option value={branchesArray[branchIndex]?.is_main_branch}>{branchesArray[branchIndex]?.is_main_branch}</option> */}
+                                                            <option value="">Select</option>
                                                             <option value="true">TRUE</option>
                                                             <option value="false">FALSE</option>
                                                         </select>

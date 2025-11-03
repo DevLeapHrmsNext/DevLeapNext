@@ -53,21 +53,21 @@ const UserListProfile = () => {
         const fetchData = async () => {
             setLoading(true);
             const designations = await getDesignations(contextClientID);
-            
+
             const department = await getDepartments(contextClientID);
-            
+
             const branch = await getBranches(contextClientID);
-            
+
 
             const emplyee = await getEmployeesData(contextClientID);
-            
-            if(designations.length>0 && department.length>0 && branch.length>0 && emplyee.length>0){
+
+            if (designations.length > 0 && department.length > 0 && branch.length > 0 && emplyee.length > 0) {
                 setLoading(false);
                 setDepartment(department);
                 setBranchArray(branch);
                 setDesignations(designations);
                 setUserData(emplyee);
-            }else{
+            } else {
                 setLoading(false);
                 setShowAlert(true);
                 setAlertTitle("Error")
@@ -96,15 +96,30 @@ const UserListProfile = () => {
     }, []);
 
     const fetchUsers = async (filterID: any, value: any) => {
+        console.log('this is th efilter id', filterID);
+
         setLoading(true);
         try {
             const formData = new FormData();
             formData.append("client_id", contextClientID);
-            if (filterID == 1 ) formData.append("branch_id", filters.branchID.length > 0 && filters.branchID == value ? filters.branchID : value);
+            if (filterID == 1) formData.append("branch_id", filters.branchID.length > 0 && filters.branchID == value ? filters.branchID : value);
             if (filters.branchID.length > 0) formData.append("branch_id", filters.branchID);
-            if (filterID == 2 || filters.departmentID.length > 0) formData.append("department_id", filters.departmentID.length > 0 && filters.departmentID == value ? filters.departmentID : value);
-            if (filterID == 3 || filters.DesignationID.length > 0) formData.append("designation_id", filters.DesignationID.length > 0 && filters.DesignationID == value ? filters.departmentID : value);
-            if (filterID == 4 || filters.sortBy.length > 0) formData.append("sortOrder", filters.sortBy.length > 0 && filters.sortBy == value ? filters.sortBy : value);
+            if (filterID == 2) {
+                formData.append("department_id", filters.departmentID.length > 0 && filters.departmentID == value ? filters.departmentID : value);
+            } else if (filters.departmentID.length > 0) {
+                formData.append("department_id", filters.departmentID);
+            }
+            if (filterID == 3) {
+                formData.append("designation_id", filters.DesignationID.length > 0 && filters.DesignationID == value ? filters.DesignationID : value);
+            } else if (filters.DesignationID.length > 0) {
+                formData.append("designation_id", filters.DesignationID);
+            }
+            if (filterID == 4) {
+                formData.append("sortOrder", filters.sortBy.length > 0 && filters.sortBy == value ? filters.sortBy : value);
+            }
+            else if (filters.sortBy.length > 0) {
+                formData.append("sortOrder", filters.sortBy);
+            }
             for (const [key, value] of formData.entries()) {
                 console.log(`${key}: ${value}`);
             }
@@ -113,21 +128,21 @@ const UserListProfile = () => {
                 method: "POST",
                 body: formData,
             });
-           
-                const data = await response.json();
-                if(data.status==1){
-                    setLoading(false);
-                    setUserData(data.data);
-                }else{
-                    setLoading(false);
+
+            const data = await response.json();
+            if (data.status == 1) {
+                setLoading(false);
+                setUserData(data.data);
+            } else {
+                setLoading(false);
                 setShowAlert(true);
                 setAlertTitle("Error")
                 setAlertStartContent("Failed to get data");
                 setAlertForSuccess(2)
-                }
-                
-            
-            
+            }
+
+
+
         } catch (e) {
             console.log(e);
             setLoading(false);
@@ -180,111 +195,111 @@ const UserListProfile = () => {
                 <LeapHeader title="Welcome!" />
             </header>
             <main className="flex-grow">
-            <LeftPannel menuIndex={leftMenuEmployeeListPageNumbers} subMenuIndex={0} showLeftPanel={true} rightBoxUI={
-                
-               
-                <div>
-                    <LoadingDialog isLoading={isLoading} />
-                    {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
-                        setShowAlert(false)
-                    }} onCloseClicked={function (): void {
-                        setShowAlert(false)
-                    }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
-                    <div className='container employee_mainbox'>
+                <LeftPannel menuIndex={leftMenuEmployeeListPageNumbers} subMenuIndex={0} showLeftPanel={true} rightBoxUI={
+
+
+                    <div>
+                        <LoadingDialog isLoading={isLoading} />
+                        {showAlert && <ShowAlertMessage title={alertTitle} startContent={alertStartContent} midContent={alertMidContent && alertMidContent.length > 0 ? alertMidContent : ""} endContent={alertEndContent} value1={alertValue1} value2={alertvalue2} onOkClicked={function (): void {
+                            setShowAlert(false)
+                        }} onCloseClicked={function (): void {
+                            setShowAlert(false)
+                        }} showCloseButton={false} imageURL={''} successFailure={alertForSuccess} />}
+                        <div className='container employee_mainbox'>
 
 
 
 
-                        <div className='inner_heading_sticky'>
-                            <div className="row heading25 pt-2" style={{ alignItems: "center" }}>
-                                <div className="col-lg-7">
-                                    Employee <span>List</span>
+                            <div className='inner_heading_sticky'>
+                                <div className="row heading25 pt-2" style={{ alignItems: "center" }}>
+                                    <div className="col-lg-7">
+                                        Employee <span>List</span>
+                                    </div>
+                                    <div className="col-lg-5 mb-1" style={{ textAlign: "right" }}>
+                                        <div className="filtermenu red_button" onClick={filter_whitebox}>Filter</div>&nbsp;
+                                        <a href="/clientadmin/addEmployeeForm" className="red_button">Add New User</a>&nbsp;
+                                        <a className="red_button" onClick={(e) => setShowUploadDialog(true)}>Bulk Upload</a>
+
+                                    </div>
                                 </div>
-                                <div className="col-lg-5 mb-1" style={{ textAlign: "right" }}>
-                                    <div className="filtermenu red_button" onClick={filter_whitebox}>Filter</div>&nbsp;
-                                    <a href="/clientadmin/addEmployeeForm" className="red_button">Add New User</a>&nbsp;
-                                    <a className="red_button" onClick={(e) => setShowUploadDialog(true)}>Bulk Upload</a>
 
-                                </div>
-                            </div>
-                            
-                            {/* <div className="row">
+                                {/* <div className="row">
                                 <div className="col-lg-12">
                                     {showUploadDialog && <BulkUploadForm uploadType={bulkUploadTypeEmployee} onClose={() => setShowUploadDialog(false)} />}
                                 </div>
                             </div> */}
-                            <div className="row">
-                                <div className="col-lg-12">
-                                    <div className="filter_whitebox" id="filter_whitebox">
-                                        <div className="row">
-                                            <div className="col-lg-3">
-                                                <div className="form_box mb-1">
-                                                    <select id="branchID" name="branchID" onChange={handleFilterChange}>
-                                                        <option value="">Branch:</option>
-                                                        {branchArray.map((branch, index) => (
-                                                            <option value={branch.id} key={branch.id}>{branch.branch_number}</option>
-                                                        ))}
-                                                    </select>
+                                <div className="row">
+                                    <div className="col-lg-12">
+                                        <div className="filter_whitebox" id="filter_whitebox">
+                                            <div className="row">
+                                                <div className="col-lg-3">
+                                                    <div className="form_box mb-1">
+                                                        <select id="branchID" name="branchID" onChange={handleFilterChange}>
+                                                            <option value="">Branch:</option>
+                                                            {branchArray.map((branch, index) => (
+                                                                <option value={branch.id} key={branch.id}>{branch.branch_number}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="col-lg-3">
-                                                <div className="form_box mb-1">
-                                                    <select id="departmentID" name="departmentID" onChange={handleFilterChange}>
-                                                        <option value="">Department:</option>
-                                                        {departmentArray.map((dep, index) => (
-                                                            <option value={dep.department_id} key={dep.department_id}>{dep.department_name}</option>
-                                                        ))}
-                                                    </select>
+                                                <div className="col-lg-3">
+                                                    <div className="form_box mb-1">
+                                                        <select id="departmentID" name="departmentID" onChange={handleFilterChange}>
+                                                            <option value="">Department:</option>
+                                                            {departmentArray.map((dep, index) => (
+                                                                <option value={dep.department_id} key={dep.department_id}>{dep.department_name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="col-lg-3">
-                                                <div className="form_box mb-1">
-                                                    <select id="DesignationID" name="DesignationID" onChange={handleFilterChange}>
-                                                        <option value="">Designation:</option>
-                                                        {designationArray.map((designation, index) => (
-                                                            <option value={designation.designation_id} key={designation.designation_id}>{designation.designation_name}</option>
-                                                        ))}
-                                                    </select>
+                                                <div className="col-lg-3">
+                                                    <div className="form_box mb-1">
+                                                        <select id="DesignationID" name="DesignationID" onChange={handleFilterChange}>
+                                                            <option value="">Designation:</option>
+                                                            {designationArray.map((designation, index) => (
+                                                                <option value={designation.designation_id} key={designation.designation_id}>{designation.designation_name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="col-lg-3">
-                                                <div className="form_box mb-1">
-                                                    <select
-                                                        name="sortBy" onChange={handleFilterChange}>
-                                                        <option value="">Sort By:</option>
-                                                        <option value="1"> A-Z</option>
-                                                        <option value="2">Z-A</option>
-                                                    </select>
+                                                <div className="col-lg-3">
+                                                    <div className="form_box mb-1">
+                                                        <select
+                                                            name="sortBy" onChange={handleFilterChange}>
+                                                            <option value="">Sort By:</option>
+                                                            <option value="1"> A-Z</option>
+                                                            <option value="2">Z-A</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>                
 
+                            </div>
+                            <div className={showUploadDialog ? "rightpoup rightpoupopen" : "rightpoup"}>
+                                {showUploadDialog && <BulkUploadForm uploadType={bulkUploadTypeEmployee} onClose={() => setShowUploadDialog(false)} />}
+                            </div>
+
+                            {
+                                userData! && userData.length > 0 && designationArray!
+                                    && designationArray.length > 0 && departmentArray! && departmentArray.length > 0 && branchArray! && branchArray.length > 0 ?
+
+                                    <div className="row mt-4" id="top">
+                                        {userData.map((card, index) => (
+                                            <div className="col-lg-3 mb-5" key={index}>
+                                                <div className="userlist">
+                                                    <UserProfile card={card} />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div> : <PageErrorCenterContent content={isLoading ? "" : userData.length == 0 ? "No employee Added" : "Something went wrong"} />}
                         </div>
-                        <div className={showUploadDialog ? "rightpoup rightpoupopen" : "rightpoup"}>
-                            {showUploadDialog && <BulkUploadForm uploadType={bulkUploadTypeEmployee} onClose={() => setShowUploadDialog(false)} />}
-                        </div>
-
-                        {
-                userData! && userData.length > 0 && designationArray!
-                && designationArray.length > 0 && departmentArray! && departmentArray.length > 0 && branchArray! && branchArray.length > 0 ?
-
-                        <div className="row mt-4" id="top">
-                            {userData.map((card, index) => (
-                                <div className="col-lg-3 mb-5" key={index}>
-                                    <div className="userlist">
-                                        <UserProfile card={card} />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>: <PageErrorCenterContent content={isLoading?"":userData.length == 0?"No employee Added":"Something went wrong"} />}
                     </div>
-                </div>
-                
-            } />
-            {/* </div> */}
+
+                } />
+                {/* </div> */}
             </main>
             <div>
                 <Footer />

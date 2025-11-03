@@ -23,8 +23,14 @@ import { Navigation } from 'swiper/modules';
 
 
 // Import Swiper styles
+// @ts-ignore: suppress missing type declarations for side-effect import of swiper navigation CSS
+// @ts-ignore
 import 'swiper/css';
+// @ts-ignore: suppress missing type declarations for side-effect import of swiper navigation CSS
+// @ts-ignore
 import 'swiper/css/navigation';
+// @ts-ignore: suppress missing type declarations for side-effect import of swiper pagination CSS
+// @ts-ignore
 import 'swiper/css/pagination';
 
 
@@ -546,7 +552,7 @@ const Dashboard = () => {
                                                             <div className="col-lg-2 text-center"><b>{employee.emp_id}</b></div>
                                                             <div className="col-lg-2 text-center"><img src={employee.profile_pic != null && employee.profile_pic.length > 0 ? getImageApiURL+"/uploads/" + employee.profile_pic : staticIconsBaseURL+"/images/user/user.png"} className="img-fluid" style={{ maxHeight: "55px", borderRadius: "40px" }} /></div>
                                                             <div className="col-lg-3 text-center"><b>{employee.name}</b></div>
-                                                            <div className="col-lg-3 text-center">{employee.leap_client_designations?.leap_client_departments?.department_name?.toString() || "--"}</div>
+                                                            <div className="col-lg-3 text-center">{employee.leap_client_departments?.department_name?.toString() || "--"}</div>
                                                             <div className="col-lg-2 text-center" style={{ color: employee.employment_status ? "#b9ff3e" : "#ed2024" }}><b>{employee.employment_status ? "Active" : "InActive"}</b></div>
                                                         </div>
                                                     ))}

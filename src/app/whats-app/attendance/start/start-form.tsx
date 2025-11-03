@@ -121,29 +121,32 @@ const AttendanceStartForm: React.FC = () => {
     const formData = new FormData();
     if (!validate()) return;
     setLoadingCursor(true);
-    
+
+    formData.append("attendance_type", "1");
     formData.append("contact_number", contactNumber!);
-    formData.append("attendanceId", "1");
-    formData.append("client_id", userData[0].client_id!);
-    formData.append("customer_id", userData[0].customer_id!);
+    
+    formData.append("client_id", "3");
+    formData.append("customer_id", "85");
     formData.append("punch_date_time", new Date().toISOString());
     formData.append("working_type_id", formValues.working_type_id);
     formData.append("lat", latitude.toString());
     formData.append("lng", longitude.toString());
-    formData.append("files", image);
+    formData.append("file", image);
     
     try {
-      const response = await fetch("/api/markattendance", {
+      const res = await fetch("/api/markattendance", {
         method: "POST",
         body: formData,
       });
-      if (response.ok) {
+      const response = await res.json();
+      if (response.status == 1) {
         setLoadingCursor(false);
         alert("Attendance started successfully. You will be redirected to WhatsApp to chat with us.");
-        router.push(`https://wa.me/` + whatsapp_number);
+        // router.push(`https://wa.me/` + whatsapp_number);
       } else {
         setLoadingCursor(false);
         // e.preventDefault()
+        alert("Attendance h successfully. You will be redirected to WhatsApp to chat with us.");
         setShowAlert(true);
         setAlertTitle("Error")
         setAlertStartContent("Failed to start attendance.");
@@ -152,6 +155,7 @@ const AttendanceStartForm: React.FC = () => {
     } catch (error) {
       setLoadingCursor(false);
       // e.preventDefault()
+       alert("Attendance stopped successfully. You will be redirected to WhatsApp to chat with us.");
       console.log("Error submitting form:", error);
       setShowAlert(true);
       setAlertTitle("Exception")

@@ -3536,13 +3536,9 @@ background-color: #fff;
 
 .horizontal_scrolling {
   float: left;
-  width: 100%;
-  max-width: 100%;
-  max-height : 120%;
-  
-  display: inherit;
-
-  /* flex-wrap: nowrap;   prevent wrapping */
+  width: auto;
+  display: flex;
+  flex-wrap: nowrap;   /* prevent wrapping */
   overflow-x: auto;    /* horizontal scroll */
   overflow-y: hidden;  /* hide vertical scroll */
   direction: ltr;

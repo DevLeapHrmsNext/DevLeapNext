@@ -164,16 +164,18 @@ const Support = () => {
     const [showCalendar, setShowCalendar] = useState(false);
     const ref = useRef(null);
     const [state, setState] = useState<Range[]>([
-        {
-            startDate: new Date() || null,
-            endDate: new Date() || null,
-            key: 'selection'
-        }
+        // {
+        //     startDate:  null,
+        //     endDate:  null,
+        //     key: 'selection'
+        // }
     ]);
     const handleChange = (ranges: RangeKeyDict) => {
         setState([ranges.selection]);
         setShowCalendar(false)
-        if (ranges.selection.startDate == ranges.selection.endDate) {
+       
+        if (ranges.selection.startDate?.getTime() == ranges.selection.endDate?.getTime()) {
+            
             setFilters((prev) => ({ ...prev, ['start_date']: ranges.selection.startDate }));
         } else {
             setFilters((prev) => ({ ...prev, ['start_date']: ranges.selection.startDate }));
@@ -182,7 +184,8 @@ const Support = () => {
         }
         fetchData('', '', ranges.selection.startDate, ranges.selection.endDate);
     };
-    const formattedRange = state[0].startDate! == state[0].endDate! ? format(state[0].startDate!, 'yyyy-MM-dd') : `${format(state[0].startDate!, 'yyyy-MM-dd')} to ${format(state[0].endDate!, 'yyyy-MM-dd')}`;
+    const formattedRange =state! && state.length>0?
+     state[0].startDate!.getTime() == state[0].endDate!.getTime() ? format(state[0].startDate!, 'yyyy-MM-dd') : `${format(state[0].startDate!, 'yyyy-MM-dd')} to ${format(state[0].endDate!, 'yyyy-MM-dd')}`:"--";
     const formatDateYYYYMMDD = (date: any, isTime = false) => {
         if (!date) return '';
         const parsedDate = moment(date);

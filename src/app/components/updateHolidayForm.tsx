@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import supabase from '@/app/api/supabaseConfig/supabase';
 import { useGlobalContext } from '../contextProviders/loggedInGlobalContext';
-import { Holiday, LeapHolidayTypes } from '../models/HolidayModel';
+import { Holiday, LeapHolidayTypes, SingleHoliday } from '../models/HolidayModel';
 import { staticIconsBaseURL } from '../pro_utils/stringConstants';
 import LoadingDialog from './PageLoader';
 import ShowAlertMessage from './alert';
@@ -10,36 +10,28 @@ import ShowAlertMessage from './alert';
 
 
 const UpdateHolidayForm = ({ onClose, id, }: { onClose: () => void, id: any, }) => {
-    const [formHolidayValues, setHolidayValues] = useState<Holiday>({
+    const [formHolidayValues, setHolidayValues] = useState<SingleHoliday>({
         id: 0,
-        holiday_name: '',
-        holiday_type_id: '',
-        date: '',
-        client_id: '',
-        branch_id: '',
-        created_at: '',
-        updated_at: '',
-        holiday_year:'',
-        leap_holiday_types: {
-            id: '',
-            created_at: '',
-            updated_at: '',
-            holiday_type: '',
-        },
-        leap_client_branch_details: {
-            branch_id: '',
-            branch_number: ''
-        },
-        leap_holiday_year: {
+         holiday_name: '',
+         holiday_type_id: {
+                id: 0,
+                holiday_type: ''
+         },
+         date: '',
+         client_id: 0,
+         branch_id: 0,
+         created_at: '',
+         updated_at: '',
+         holiday_year: {
             id: 0,
-            to_date: '',
-            client_id: '',
-            from_date: '',
             list_name: '',
-            created_at: '',
-            description: '',
-        }
-
+            is_deleted: false,
+            show_employee: false,
+         },
+         holiday_image: '',
+         leap_client_branch_details: {
+                branch_number:''
+         }
     });
 
     const [branchArray, setBranchArray] = useState<ClientBranchTableModel[]>([]);
@@ -83,6 +75,7 @@ const UpdateHolidayForm = ({ onClose, id, }: { onClose: () => void, id: any, }) 
                     }),
                 });
                 const response = await res.json();
+
                 const holidayData = response.data.holidays[0];
                 setHolidayValues(holidayData);
 
@@ -107,14 +100,15 @@ const UpdateHolidayForm = ({ onClose, id, }: { onClose: () => void, id: any, }) 
 
     const handleSubmit = async (e: React.FormEvent) => {
         const formData = new FormData();
+
         e.preventDefault();
         if (!validate()) return;
-
+        setLoading(true);
         formData.append("client_id", contextClientID);
         formData.append("id", id);
         formData.append("holiday_name", formHolidayValues.holiday_name);
         formData.append("date", formHolidayValues.date);
-        formData.append("holiday_type_id", formHolidayValues.holiday_type_id);
+        formData.append("holiday_type_id", formHolidayValues.holiday_type_id.id+"");
 
         try {
             const response = await fetch("/api/commonapi/updateHolidays", {
@@ -191,8 +185,15 @@ const UpdateHolidayForm = ({ onClose, id, }: { onClose: () => void, id: any, }) 
                             <div className="form_box mb-3">
                                 <label htmlFor="formFile" className="form-label">Holiday Type:</label>
                                 <select id="holiday_type_id" name="holiday_type_id" 
-                                value={formHolidayValues.holiday_type_id || ""}
-                                onChange={(e) => setHolidayValues((prev) => ({ ...prev, ['holiday_type_id']: e.target.value }))}>
+                                value={formHolidayValues.holiday_type_id.id}
+                                onChange={(e) => 
+                                setHolidayValues((prev) => ({
+                                    ...prev,
+                                    holiday_type_id: {
+                                    ...prev.holiday_type_id,
+                                    id: Number(e.target.value), // convert to number if needed
+                                    },
+                                }))}>
                                     {!formHolidayValues.holiday_type_id  && <option value="">Select Holiday Type</option>}
                                     {holidayTypeArray.map((type) => (
                                         <option value={type.id} key={type.id}>{type.holiday_type}</option>
@@ -210,7 +211,7 @@ const UpdateHolidayForm = ({ onClose, id, }: { onClose: () => void, id: any, }) 
                         </div>
                     </div>
                 </form>
-                {showResponseMessage && <div className="row md-5"><label>Holiday Added Successfully</label></div>}
+                {showResponseMessage && <div className="row md-5"><label>Holiday Updated Successfully</label></div>}
             </div>
         </div>
     )

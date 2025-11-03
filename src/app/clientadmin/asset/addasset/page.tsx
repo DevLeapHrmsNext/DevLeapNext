@@ -18,9 +18,9 @@ import { Navigation } from 'swiper/modules';
 
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+// import 'swiper/css';
+// import 'swiper/css/navigation';
+// import 'swiper/css/pagination';
 import LoadingDialog from '@/app/components/PageLoader'
 import ShowAlertMessage from '@/app/components/alert'
 
@@ -139,7 +139,7 @@ const AddAsset: React.FC = () => {
     if (!formValues.asset_type) newErrors.asset_type = "required";
     if (!formValues.device_code) newErrors.device_code = "required";
     if (!formValues.purchased_at) newErrors.purchased_at = "required";
-    if (!formValues.warranty_date) newErrors.warranty_date = "required";
+    // if (!formValues.warranty_date) newErrors.warranty_date = "required";
     // if (!formValues.configuration) newErrors.configuration = "required";
     if (!formValues.condition) newErrors.condition = "required";
     // if (!formValues.billUrl) newErrors.billUrl = "required";
@@ -176,7 +176,9 @@ const AddAsset: React.FC = () => {
     formData.append("asset_type", formValues.asset_type);
     formData.append("device_code", formValues.device_code);
     formData.append("purchased_at", formValues.purchased_at);
-    formData.append("warranty_date", formValues.warranty_date);
+    if(formValues.warranty_date && formValues.warranty_date.length>0){
+      formData.append("warranty_date", formValues.warranty_date);
+    }
     formData.append("configuration", formValues.configuration);
     formData.append("condition", formValues.condition);
     formData.append("remark", formValues.remark);

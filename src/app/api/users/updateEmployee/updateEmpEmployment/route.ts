@@ -45,12 +45,12 @@ export async function POST(request: NextRequest) {
           const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
-    if (parseInt(fdata.role_id) == 2) {
+    if (parseInt(fdata.role_id) == 2 && formData.get('new_password')) {
       console.log('if condition called ');
 
       authQuery = supabaseAdmin.auth.admin.updateUserById(
         fdata.authUuid,
-        { email: formData.get('email_id') as string ,password:"123qwe"}
+        { email: formData.get('email_id') as string ,password:formData.get('new_password') as string }
       )
     } else {
       authQuery = supabase.auth.updateUser({ email: formData.get('email_id') as string });

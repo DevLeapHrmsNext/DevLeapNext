@@ -46,3 +46,35 @@ export interface LeapHolidayYear {
   created_at: string
   description: string
 }
+
+
+
+export interface SingleHoliday {
+  id: number
+  holiday_name: string
+  holiday_type_id: HolidayTypeId
+  date: string
+  client_id: number
+  branch_id: number
+  created_at: any
+  updated_at: string
+  holiday_year: HolidayYear
+  holiday_image: any
+  leap_client_branch_details: SingleLeapClientBranchDetails
+}
+
+export interface HolidayTypeId {
+  id: number
+  holiday_type: string
+}
+
+export interface HolidayYear {
+  id: number
+  list_name: string
+  is_deleted: boolean
+  show_employee: boolean
+}
+
+export interface SingleLeapClientBranchDetails {
+  branch_number: string
+}

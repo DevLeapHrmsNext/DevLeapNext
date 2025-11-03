@@ -304,7 +304,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
                                                     </div>
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Branch<span className='req_text'>*</span>:</label>
+                                                            <label htmlFor="formFile" className="form-label">Branch:</label>
                                                             <select id="branchID" name="branchID" onChange={handleInputChange}>
                                                                 <option value="">Select</option>
                                                                 {branchArray.map((branch, index) => (
@@ -318,7 +318,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Designation<span className='req_text'>*</span>:</label>
+                                                            <label htmlFor="formFile" className="form-label">Designation:</label>
                                                             <select id="designationID" name="designationID" onChange={handleInputChange}>
                                                                 <option value="">Select</option>
                                                                 {designationArray.map((designation, index) => (
@@ -335,7 +335,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
                                                 <div className="row">
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Department<span className='req_text'>*</span>: </label>
+                                                            <label htmlFor="formFile" className="form-label">Department: </label>
                                                             <select id="departmentID" name="departmentID" onChange={handleInputChange}>
                                                                 <option value="">Select</option>
                                                                 {departmentArray.map((dep, index) => (
@@ -347,7 +347,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
                                                     </div>
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Reporting Manager/Team Lead<span className='req_text'>*</span>: </label>
+                                                            <label htmlFor="formFile" className="form-label">Reporting Manager/Team Lead: </label>
                                                             <select id="managerID" name="managerID" onChange={handleInputChange}>
                                                                 <option value="">Select</option>
                                                                 {managerArray.map((manager, index) => (
@@ -361,7 +361,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Employment Type<span className='req_text'>*</span>: </label>
+                                                            <label htmlFor="formFile" className="form-label">Employment Type: </label>
                                                             <select id="employmentType" name="employmentType" onChange={handleInputChange}>
                                                                 <option value="">Select</option>
                                                                 {EmploymentTypeArray.map((employement, index) => (
@@ -379,7 +379,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
                                                 <div className="row">
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Date of Joining<span className='req_text'>*</span>: </label>
+                                                            <label htmlFor="formFile" className="form-label">Date of Joining: </label>
                                                             <input type="date" id="dateOfJoining" name="dateOfJoining" value={employmentForm.dateOfJoining} onChange={handleInputChange} />
                                                             {errors.dateOfJoining && <span className='error' style={{ color: "red" }}>{errors.dateOfJoining}</span>}
                                                         </div>
@@ -387,7 +387,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="exampleFormControlInput1" className="form-label" >Work Location<span className='req_text'>*</span>:</label>
+                                                            <label htmlFor="exampleFormControlInput1" className="form-label" >Work Location:</label>
                                                             <input type="text" className="form-control" id="workLocation" name="workLocation" value={employmentForm.workLocation} onChange={handleInputChange} placeholder="Enter Location" />
                                                             {errors.workLocation && <span className='error' style={{ color: "red" }}>{errors.workLocation}</span>}
                                                         </div>
@@ -396,7 +396,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Probation Period<span className='req_text'>*</span>:</label>
+                                                            <label htmlFor="formFile" className="form-label">Probation Period:</label>
                                                             <input type="text" className="form-control" onKeyDown={(e) => {
                                                                 if (e.key !== "Backspace" && e.key !== "Delete" && isNaN(Number(e.key))) {
                                                                     e.preventDefault();
@@ -437,7 +437,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Payroll Type<span className='req_text'>*</span>: </label>
+                                                            <label htmlFor="formFile" className="form-label">Payroll Type: </label>
                                                             <select id="payrollTypeID" name="payrollTypeID" onChange={handleInputChange}>
                                                                 <option value="">Select</option>
                                                                 {salaryPayableTypesArray.map((sal, index) => (
@@ -451,7 +451,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Salary Effective Date<span className='req_text'>*</span>: </label>
+                                                            <label htmlFor="formFile" className="form-label">Salary Effective Date: </label>
                                                             <input type="date" id="salEffectiveDate" name="salEffectiveDate" value={employmentForm.salEffectiveDate} onChange={handleInputChange} />
                                                             {errors.salEffectiveDate && <span className='error' style={{ color: "red" }}>{errors.salEffectiveDate}</span>}
 
@@ -478,7 +478,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="exampleFormControlInput1" className="form-label" >Gross Salary<span className='req_text'>*</span>:</label>
+                                                            <label htmlFor="exampleFormControlInput1" className="form-label" >Gross Salary:</label>
                                                             <input type="text" className="form-control" onKeyDown={(e) => {
                                                                 if (e.key !== "Backspace" && e.key !== "Delete" && isNaN(Number(e.key))) {
                                                                     e.preventDefault();
@@ -492,7 +492,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Total Deduction<span className='req_text'>*</span>:</label>
+                                                            <label htmlFor="formFile" className="form-label">Total Deduction:</label>
                                                             <input type="text" className="form-control" onKeyDown={(e) => {
                                                                 if (e.key !== "Backspace" && e.key !== "Delete" && isNaN(Number(e.key))) {
                                                                     e.preventDefault();
@@ -505,7 +505,7 @@ const AddEmployeeEmployementDetails: React.FC = () => {
 
                                                     <div className="col-md-4">
                                                         <div className="form_box mb-3">
-                                                            <label htmlFor="formFile" className="form-label">Net Pay<span className='req_text'>*</span>:</label>
+                                                            <label htmlFor="formFile" className="form-label">Net Pay:</label>
                                                             <input type="text" className="form-control" onKeyDown={(e) => {
                                                                 if (e.key !== "Backspace" && e.key !== "Delete" && isNaN(Number(e.key))) {
                                                                     e.preventDefault();

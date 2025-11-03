@@ -215,7 +215,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
                     <div className="col-lg-9 mb-3">{ssupportRequestData?.leap_request_priority.priority_name}</div>
                     <div className="col-lg-3"><div className="label">Description:</div></div>
                     <div className="col-lg-9 mb-3">{ssupportRequestData?.description}</div>
-                    <div className="col-lg-3 mb-2"><div className="label">Previous updates:</div></div>
+                    <div className="col-lg-3 mb-2"><div className="label">Previous updates:{ssupportRequestData?.leap_client_employee_requests_updates.length}</div></div>
                     <div className="col-lg-12 mb-4">
                         <div style={{ borderRadius: "10px", padding: "8px", boxShadow: "0 0px 10px #cccccc63" }}>
                             {ssupportRequestData?.leap_client_employee_requests_updates && ssupportRequestData?.leap_client_employee_requests_updates.length > 0 ?
@@ -230,7 +230,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
                                     </div>
                                     <div className="row">
                                         <div className="col-lg-12">
-                                            <div className='horizontal_scrolling' style={{ display: "inherit", width: "100%", maxWidth: "100%", maxHeight: "120px", overflowX: "hidden" }}>
+                                            <div className='horizontal_scrolling' style={{ display: "inherit", width: "100%", maxWidth: "100%", maxHeight: "120px",overflowY: "auto", overflowX: "hidden" }}>
                                                 {ssupportRequestData?.leap_client_employee_requests_updates && ssupportRequestData?.leap_client_employee_requests_updates.length > 0 && (
                                                     ssupportRequestData?.leap_client_employee_requests_updates.map((updatedData) => (
                                                         <div className="row list_listbox" key={updatedData.request_updates_id}>
@@ -242,7 +242,7 @@ const DialogUpdateSupportRequest = ({ onClose, supportRequestID }: { onClose: ()
                                                             ) : updatedData.status === 3 ? (
                                                                 <><div className="col-lg-2 text-center" style={{ color: "red" }}>{updatedData.leap_request_status.status}</div></>
                                                             ) :
-                                                                <><div className="col-lg-2 text-center" style={{ color: "red" }}>{updatedData.leap_request_status.status}</div></>
+                                                                <><div className="col-lg-2 text-center" style={{ color: "orange" }}>{updatedData.leap_request_status.status}</div></>
                                                             }
                                                             <div className="col-lg-5 text-center">{updatedData.comments}</div>
                                                             <div className="col-lg-2 text-center">{formatDateYYYYMMDD(updatedData.created_at)}</div>

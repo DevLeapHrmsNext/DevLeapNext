@@ -183,7 +183,7 @@ const EmployeeProfile = () => {
                         <div className="row mb-4">
                             <div className="col-lg-12 profile_btn_list">
 
-                                <div onClick={(e) => setViewIndex(0)} className={viewIndex == 0 ? "selected" : ""}>Employement Details</div>
+                                <div onClick={(e) => setViewIndex(0)} className={viewIndex == 0 ? "selected" : ""}>Employment Details</div>
                                 <div onClick={(e) => setViewIndex(1)} className={viewIndex == 1 ? "selected" : ""}>Address Details</div>
                                 <div onClick={(e) => setViewIndex(2)} className={viewIndex == 2 ? "selected" : ""}>Bank Details</div>
                                 <div onClick={(e) => setViewIndex(3)} className={viewIndex == 3 ? "selected" : ""}>Leave Details</div>

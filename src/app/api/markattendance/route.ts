@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       timeout(5000) // 5 seconds
     ]) as { fields: any; files: any };
     // const { fields, files } = await parseForm(request);
-    if (fields.attendance_type == 1) {
+    if (fields.attendance_type == "1") {
       return startAttendance(fields, files)
     }
     else if (fields.attendance_type == 2) {

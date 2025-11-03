@@ -40,10 +40,11 @@ export async function POST(request: NextRequest) {
         }
         if (holiday_year) {
             query = query.eq('holiday_year', holiday_year);
-        }else{
-            query = query.gte('date', formatDateYYYYMMDD(getFirstDateOfYear())) // `to_date` must be >= `fromDate`
-            .lte('date', formatDateYYYYMMDD(getLastDateOfYear()));
         }
+        // else{
+        //     query = query.gte('date', formatDateYYYYMMDD(getFirstDateOfYear())) // `to_date` must be >= `fromDate`
+        //     .lte('date', formatDateYYYYMMDD(getLastDateOfYear()));
+        // }
         if (show_employee ) {
             query = query.eq('holiday_year.show_employee', true);
         }
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
         // if (holidayError) {
         //     return funSendApiErrorMessage("failed to get Upcoming holiday",holidayError);
         // }
+        console.log(holidayData);
         
         const holidaysByMonth = holidayData.reduce((acc, holiday) => {
             const monthName = new Date(holiday.date).toLocaleString("en-US", { month: "long" }); // Get month name
